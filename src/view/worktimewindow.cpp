@@ -1,6 +1,7 @@
 // ---------------------------- //
 // ---------------------------- //
 #include "helperwt.h"
+#include "dayworktime.h"
 // ---------------------------- //
 #include "worktimewindow.h"
 #include "ui_worktimewindow.h"
@@ -126,6 +127,539 @@ void WorkTimeWindow::selectDate()
     emit userSelectDate( gui->WorkCalendar->selectedDate() );
 
     updateTitles();
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::setTypesDay
+ * \param list Список названий типов дней
+ *
+ * Выпадающий список "Тип дня" заполняется вариантами из списка \a list.
+ */
+void WorkTimeWindow::setTypesDay( QStringList list )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#call WorkTimeWindow::setTypesDay( " << list << ")";
+#endif
+
+    gui->TypeDayCBox->blockSignals( true );
+
+    gui->TypeDayCBox->clear();
+    gui->TypeDayCBox->addItems( list );
+
+    gui->TypeDayCBox->blockSignals( false );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::setTypeDay
+ * \param type Тип дня (индекс)
+ *
+ * Если тип дня отличный от рабочего, список интервалов и поля
+ * для ввода времени начала и времени конца блокируются.
+ */
+void WorkTimeWindow::setTypeDay( int type )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#call WorkTimeWindow::setTypeDay( " << type << ")";
+#endif
+
+    gui->TypeDayCBox->blockSignals( true );
+    gui->TypeDayCBox->setCurrentIndex( type );
+    gui->TypeDayCBox->blockSignals( false );
+
+
+    if( DayWorkTime::TypesDay(type) != DayWorkTime::WorkDay )
+    {
+        gui->IntervalsList ->setEnabled( false );
+        gui->TimeStartValue->setEnabled( false );
+        gui->TimeEndValue  ->setEnabled( false );
+
+        gui->IntervalsList->setCurrentRow( -1 );
+    }
+    else
+    {
+        gui->IntervalsList ->setEnabled( true );
+        gui->TimeStartValue->setEnabled( true );
+        gui->TimeEndValue  ->setEnabled( true );
+
+        gui->IntervalsList->setCurrentRow( gui->IntervalsList->count() - 1 );
+    }
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::setTimeStart
+ * \param time Время начала интервала
+ * \param id Идентификатор интервала дня
+ */
+void WorkTimeWindow::setTimeStart( WTime time, int id )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#call WorkTimeWindow::setTimeStart( " << time.toString() << ", " << id << ")";
+#endif
+
+    if( gui->IntervalsList->isEnabled() && gui->IntervalsList->currentRow() != id )
+        gui->IntervalsList->setCurrentRow( id );
+
+    gui->TimeStartValue->blockSignals( true );
+    gui->TimeStartValue->setTime( time.toQTime() );
+    gui->TimeStartValue->blockSignals( false );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::setTimeEnd
+ * \param time Время конца интервала
+ * \param id Идентификатор интервала дня
+ */
+void WorkTimeWindow::setTimeEnd( WTime time, int id )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#call WorkTimeWindow::setTimeEnd( " << time.toString() << ", " << id << ")";
+#endif
+
+    if( gui->IntervalsList->isEnabled() && gui->IntervalsList->currentRow() != id )
+        gui->IntervalsList->setCurrentRow( id );
+
+    gui->TimeEndValue->blockSignals( true );
+    gui->TimeEndValue->setTime( time.toQTime() );
+    gui->TimeEndValue->blockSignals( false );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::setIntervals
+ * \param list Список названий интевалов
+ *
+ * Список интевалов запоняется интервалами из списка \a list.
+ *
+ * Если нет ни одного интервала и тип дня - Рабочий, интервал будет добавлен автоматически.
+ * После заполнения списка интервалами автоматически выбирается последний.
+ */
+void WorkTimeWindow::setIntervals( QStringList list )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#call WorkTimeWindow::setIntervals( " << list << ")";
+#endif
+
+    gui->IntervalsList->blockSignals( true );
+
+    gui->IntervalsList->clear();
+
+    for( int interval = 0; interval < list.count(); interval++ )
+    {
+        QListWidgetItem * Interval = new QListWidgetItem( list.at(interval), gui->IntervalsList );
+        Interval->setFlags( Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable );
+
+        gui->IntervalsList->addItem( Interval );
+    }
+
+    if( gui->IntervalsList->count() == 0 && gui->TypeDayCBox->currentIndex() == DayWorkTime::WorkDay )
+        addInterval();
+
+    selectInterval( gui->IntervalsList->count() - 1 );
+
+    gui->IntervalsList->blockSignals( false );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::setNote
+ * \param note Текст заметки
+ */
+void WorkTimeWindow::setNote( QString note )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#call WorkTimeWindow::setNote( " << note << ")";
+#endif
+
+    gui->NoteEdit->blockSignals( true );
+    gui->NoteEdit->setText( note );
+    gui->NoteEdit->blockSignals( false );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::setTimeWorkedInDay
+ * \param time Время, сколько отработано за день
+ */
+void WorkTimeWindow::setTimeWorkedInDay( WTime time )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#call WorkTimeWindow::setTimeWorkedInDay( " << time.toString() << ")";
+#endif
+
+    gui->WorkedDayValue->setText( time.toString() );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::setTimeStatisticInDay
+ * \param time Время, сколько недоработано или переработано за день
+ * \param Title Заголовок: недоработано или переработано за день
+ */
+void WorkTimeWindow::setTimeStatisticInDay( WTime time, QString title )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#call WorkTimeWindow::setTimeStatisticInDay( " << time.toString() << ", " << Title << ")";
+#endif
+
+    gui->StatisticDayLabel->setText( title );
+    gui->StatisticDayValue->setText( time.toString() );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::setTimeNeedInDay
+ * \param time Время, сколько нужно отработать за день
+ */
+void WorkTimeWindow::setTimeNeedInDay( WTime time )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#call WorkTimeWindow::setTimeNeedInDay( " << time.toString() << ")";
+#endif
+
+    gui->NeedDayValue->blockSignals( true );
+    gui->NeedDayValue->setTime( time.toQTime() );
+    gui->NeedDayValue->blockSignals( false );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::setTimeWorkedInWeek
+ * \param time Время, сколько отработано за неделю
+ */
+void WorkTimeWindow::setTimeWorkedInWeek( WTime time )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#call WorkTimeWindow::setTimeWorkedInWeek( " << time.toString() << ")";
+#endif
+
+    gui->WorkedWeekValue->setText( time.toString() );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::setTimeStatisticInWeek
+ * \param time Время, сколько недоработано или переработано за неделю
+ * \param Title Заголовок: недоработано или переработано за неделю
+ */
+void WorkTimeWindow::setTimeStatisticInWeek( WTime time, QString title )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#call WorkTimeWindow::setTimeStatisticInWeek( " << time.toString() << ", " << Title << ")";
+#endif
+
+    gui->StatisticWeekLabel->setText( title );
+    gui->StatisticWeekValue->setText( time.toString() );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::setTimeNeedInWeek
+ * \param time Время, сколько нужно отработать за неделю
+ */
+void WorkTimeWindow::setTimeNeedInWeek( WTime time )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#call WorkTimeWindow::setTimeNeedInWeek( " << time.toString() << ")";
+#endif
+
+    gui->NeedWeekValue->setText( time.toString() );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::setTimeWorkedInMonth
+ * \param time Время, сколько отработано за месяц
+ */
+void WorkTimeWindow::setTimeWorkedInMonth( WTime time )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#call WorkTimeWindow::setTimeWorkedInMonth( " << time.toString() << ")";
+#endif
+
+    gui->WorkedMonthValue->setText( time.toString() );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::setTimeStatisticInMonth
+ * \param time Время, сколько недоработано или переработано за месяц
+ * \param Title Заголовок: недоработано или переработано за месяц
+ */
+void WorkTimeWindow::setTimeStatisticInMonth( WTime time, QString title )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#call WorkTimeWindow::setTimeStatisticInMonth( " << time.toString() << ", " << Title << ")";
+#endif
+
+    gui->StatisticMonthLabel->setText( title );
+    gui->StatisticMonthValue->setText( time.toString() );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::setTimeNeedInMonth
+ * \param time Время, сколько нужно отработать за месяц
+ */
+void WorkTimeWindow::setTimeNeedInMonth( WTime time )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#call WorkTimeWindow::setTimeNeedInMonth( " << time.toString() << ")";
+#endif
+
+    gui->NeedMonthValue->setText( time.toString() );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::setTimeWorkedToDay
+ * \param time Время, сколько отработано c 1-го числа месяца до выбранного дня
+ */
+void WorkTimeWindow::setTimeWorkedToDay( WTime time )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#call WorkTimeWindow::setTimeWorkedToDay( " << time.toString() << ")";
+#endif
+
+    gui->WorkedToDayValue->setText( time.toString() );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::setTimeStatisticToDay
+ * \param time Время, сколько недоработано или переработано c 1-го числа месяца до выбранного дня
+ * \param Title Заголовок: недоработано или переработано c 1-го числа месяца до выбранного дня
+ */
+void WorkTimeWindow::setTimeStatisticToDay( WTime time, QString title )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#call WorkTimeWindow::setTimeStatisticToDay( " << time.toString() << ", " << Title << ")";
+#endif
+
+    gui->StatisticToDayLabel->setText( title );
+    gui->StatisticToDayValue->setText( time.toString() );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::setTimeNeedToDay
+ * \param time Время, сколько нужно отработать c 1-го числа месяца до выбранного дня
+ */
+void WorkTimeWindow::setTimeNeedToDay( WTime time )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#call WorkTimeWindow::setTimeNeedToDay( " << time.toString() << ")";
+#endif
+
+    gui->NeedToDayValue->setText( time.toString() );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::setTimeEscape
+ * \param time Время, во сколько сегодня нужно закончить работать
+ */
+void WorkTimeWindow::setTimeEscape( WTime time )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#call WorkTimeWindow::setTimeEscape( " << time.toString() << ")";
+#endif
+
+    gui->EscapeValue->setText( time.toString() );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::setInfoEscape
+ * \param info Подсказка со временем, сколько останется недоработано
+ *
+ * В случае, если время ухода будет больше, чем максимальное время конца
+ *  рабочего дня, будет отображена подсказка, сколько времени останется отработать.
+ */
+void WorkTimeWindow::setInfoEscape( QString info )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#call WorkTimeWindow::setInfoEscape( " << info << ")";
+#endif
+
+    if( info.isEmpty() )
+    {
+        gui->EsapeInfo->clear();
+        gui->EsapeInfo->hide();
+    }
+    else
+    {
+        gui->EsapeInfo->setText( info );
+        gui->EsapeInfo->show();
+    }
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::setTimeReverseTimer
+ * \param time Таймер обратного отсчета рабочего времени
+ */
+void WorkTimeWindow::setTimeReverseTimer( WTimeExt time )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#call WorkTimeWindow::setTimeReverseTimer( " << time.toString() << ")";
+#endif
+
+    gui->ReverseTimer->setText( time.toString() );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::setColorDay
+ * \param date День, цвет которого в календаре нужно изменить
+ * \param color Цвет дня
+ */
+void WorkTimeWindow::setColorDay( QDate date, QColor color )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#call WorkTimeWindow::setColorDay( " << date.toString("dd.MM.yyyy") << ", " << color.name() << ")";
+#endif
+
+    QTextCharFormat TextCharFormat = gui->WorkCalendar->dateTextFormat( date );
+
+    TextCharFormat.setForeground( color );
+
+    gui->WorkCalendar->setDateTextFormat( date, TextCharFormat );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::setColorDays
+ * \param Colors Список названий цветов дял всего месяца
+ */
+void WorkTimeWindow::setColorDays( QStringList Colors )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#call WorkTimeWindow::setColorDays( " << Colors << ")";
+#endif
+
+    const QDate SelectedDate = gui->WorkCalendar->selectedDate();
+
+    for( int day = 1; day <= Colors.count(); day++ )
+    {
+        QDate Date( SelectedDate.year(), SelectedDate.month(), day );
+
+        QTextCharFormat TextCharFormat = gui->WorkCalendar->dateTextFormat( Date );
+
+        TextCharFormat.setForeground( QColor(Colors.at(day - 1)) );
+
+        gui->WorkCalendar->setDateTextFormat( Date, TextCharFormat );
+    }
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::setColorLight
+ * \param color Цвет подсветки
+ *
+ * Устанавливается цвет подсветки, означающий, есть ли недоработки.
+ */
+void WorkTimeWindow::setColorLight( QColor color )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#call WorkTimeWindow::setColorLight( " << color.name() << ")";
+#endif
+
+    gui->ReverseTimer->setStyleSheet( QString("border-radius   : 1;    " \
+                                              "color           : white;" \
+                                              "background-color: %1;"
+                                              ).arg( color.name()) );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::updateTimeEnd
+ * \param id   Идентификатор интервала дня
+ * \param time Время конца интервала
+ *
+ * Обновляется время конца рабочего дня по таймеру.
+ */
+void WorkTimeWindow::updateTimeEnd( int id, WTime time )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#call WorkTimeWindow::updateTimeEnd( " << id << ", " << time.toString() << ")";
+#endif
+
+    if( gui->WorkCalendar->selectedDate() == QDate::currentDate() )
+    {
+        if( gui->TimeEndValue->hasFocus() == false )
+        {
+            if( gui->IntervalsList->currentRow() == id )
+            {
+                gui->TimeEndValue->setTime( time.toQTime() );
+            }
+        }
+    }
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::selectInterval
+ * \param id Идентификатор интервала дня
+ *
+ * Если \a id >= 0, поля ввода времени начала и конца интервала разблокируются.
+ * Иначе поля ввода времени начала и конца блокируются и устанавливается время "00:00".
+ */
+void WorkTimeWindow::selectInterval( const int id )
+{
+#ifdef QT_INFO_CALL_FUNC
+    qDebug() << "#Call WorkTimeWindow::selectInterval(" << id << ")";
+#endif
+
+    gui->TimeStartValue->blockSignals( true );
+    gui->TimeEndValue  ->blockSignals( true );
+
+    if( id >= 0 )
+    {
+        gui->TimeStartValue->setEnabled( true );
+        gui->TimeEndValue  ->setEnabled( true );
+
+        emit userSelectInterval( id );
+    }
+    else
+    {
+        gui->TimeStartValue->setEnabled( false );
+        gui->TimeEndValue  ->setEnabled( false );
+
+        gui->TimeStartValue->setTime( QTime(0, 0) );
+        gui->TimeEndValue  ->setTime( QTime(0, 0) );
+    }
+
+    gui->TimeStartValue->blockSignals( false );
+    gui->TimeEndValue  ->blockSignals( false );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::addInterval
+ * Добавление нового интервала.
+ *
+ * Испускается сигнал \sa WorkTimeWindow::userAddInterval.
+ */
+void WorkTimeWindow::addInterval()
+{
+#ifdef QT_INFO_CALL_FUNC
+    qDebug() << "#Call WorkTimeWindow::addInterval()";
+#endif
+
+    gui->IntervalsList->blockSignals( true );
+
+    QListWidgetItem* NewIntervalItem = new QListWidgetItem( DayWorkTime::nameDay(DayWorkTime::WorkDay), gui->IntervalsList );
+    NewIntervalItem->setFlags( Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable );
+
+    emit userAddInterval( NewIntervalItem->text() );
+
+    gui->IntervalsList->blockSignals( false );
+
+    gui->IntervalsList->setCurrentRow( gui->IntervalsList->count() - 1 );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -303,6 +837,9 @@ void WorkTimeWindow::connectSingnalSlot()
     connect( gui->ChangesButton    , SIGNAL(clicked(bool)), SLOT(ChangesClick    ()) );
     connect( gui->SettingsButton   , SIGNAL(clicked(bool)), SLOT(SettingsClick   ()) );
     connect( gui->UpdateButton     , SIGNAL(clicked(bool)), SLOT(UpdateClick     ()) );
+
+    // -------------------------------- INTERVALS LIST -------------------------------- //
+    connect( gui->IntervalsList, SIGNAL(currentRowChanged(int)), SLOT(selectInterval(int)) );
 
     // -------------------------------- CHANGE TIME -------------------------------- //
     connect( gui->TimeStartValue, SIGNAL(timeChanged    (QTime)), SLOT(changeTimeStart      (QTime)) );

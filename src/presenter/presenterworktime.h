@@ -11,7 +11,7 @@ class PresenterWorkTime : public QObject
 {
     Q_OBJECT
 
-    IWorkTime * View ;
+    IWorkTime * ViewWT;
 
 public:
 

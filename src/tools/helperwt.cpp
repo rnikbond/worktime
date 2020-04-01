@@ -1,14 +1,15 @@
 // ---------------------------- //
+#include <QDir>
 #include <QDate>
 #include <QDebug>
 #include <QLocale>
+#include <QApplication>
 // ---------------------------- //
 #include "helperwt.h"
 // ---------------------------- //
 
 HelperWT::HelperWT( QObject * parent ) : QObject( parent )
 {
-
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -19,6 +20,36 @@ HelperWT::HelperWT( QObject * parent ) : QObject( parent )
 const QDate HelperWT::currentDate()
 {
     return QDate::currentDate();
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief HelperWT::pathToWorkTime
+ * \return Абсолютный путь к программе
+ */
+const QString HelperWT::pathToWorkTime()
+{
+    return QDir::toNativeSeparators( QApplication::applicationFilePath() );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief HelperWT::pathToWorkTime
+ * \return Абсолютный путь к старой программе
+ */
+const QString HelperWT::pathToOldWorkTime()
+{
+    return QDir::toNativeSeparators( QApplication::applicationDirPath() + "/old_WorkTime.exe" );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief HelperWT::pathToWorkTime
+ * \return Абсолютный путь к новой программе
+ */
+const QString HelperWT::pathToNewWorkTime()
+{
+    return QDir::toNativeSeparators( QApplication::applicationDirPath() + "/new_WorkTime.exe" );
 }
 // ------------------------------------------------------------------------------------ //
 

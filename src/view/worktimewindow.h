@@ -27,6 +27,44 @@ public:
     explicit WorkTimeWindow( QWidget * parent = 0 );
     ~WorkTimeWindow();
 
+public: // Interface functions
+
+    // Инициализация общих элементов
+    void setTypesDay( QStringList list );
+
+    void setTypeDay   ( int         type         );
+    void setTimeStart ( WTime       time, int id );
+    void setTimeEnd   ( WTime       time, int id );
+    void setIntervals ( QStringList list         );
+    void setNote      ( QString     note         );
+
+    void setTimeWorkedInDay   ( WTime time                );
+    void setTimeStatisticInDay( WTime time, QString title );
+    void setTimeNeedInDay     ( WTime time                );
+
+    void setTimeWorkedInWeek   ( WTime time                );
+    void setTimeStatisticInWeek( WTime time, QString title );
+    void setTimeNeedInWeek     ( WTime time                );
+
+    void setTimeWorkedInMonth   ( WTime time                );
+    void setTimeStatisticInMonth( WTime time, QString title );
+    void setTimeNeedInMonth     ( WTime time                );
+
+    void setTimeWorkedToDay   ( WTime time                );
+    void setTimeStatisticToDay( WTime time, QString title );
+    void setTimeNeedToDay     ( WTime time                );
+
+    void setTimeEscape      ( WTime time    );
+    void setInfoEscape      ( QString info  );
+    void setTimeReverseTimer( WTimeExt time );
+
+    void setColorDay ( QDate date, QColor color );
+    void setColorDays( QStringList Colors       );
+
+    void setColorLight( QColor color );
+
+    void updateTimeEnd( int id, WTime time );
+
 private:
 
     void configuringGUI();
@@ -40,6 +78,10 @@ private slots:
     // Calendar slots
     void selectDate();
     void todayClick();
+
+    // Intervals list
+    void addInterval();
+    void selectInterval( const int id );
 
     // Change time slots
     void changeTimeStart( QTime time );
@@ -61,6 +103,9 @@ private slots:
 signals:
 
     void userSelectDate( const QDate & date );
+    void userSelectInterval( const int id );
+
+    void userAddInterval( const QString & title );
 };
 // ------------------------------------------------------------------------------------ //
 

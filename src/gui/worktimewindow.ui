@@ -96,6 +96,9 @@
         </item>
         <item row="0" column="1">
          <widget class="QLineEdit" name="WorkedToDayValue">
+          <property name="text">
+           <string>00:00</string>
+          </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
           </property>
@@ -116,6 +119,9 @@
         </item>
         <item row="1" column="1">
          <widget class="QLineEdit" name="StatisticToDayValue">
+          <property name="text">
+           <string>00:00</string>
+          </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
           </property>
@@ -136,6 +142,9 @@
         </item>
         <item row="2" column="1">
          <widget class="QLineEdit" name="NeedToDayValue">
+          <property name="text">
+           <string>00:00</string>
+          </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
           </property>
@@ -334,7 +343,7 @@
       <item>
        <widget class="QToolBox" name="StatisticToolBox">
         <property name="currentIndex">
-         <number>0</number>
+         <number>2</number>
         </property>
         <widget class="QWidget" name="DayPage">
          <property name="geometry">
@@ -385,6 +394,9 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="text">
+             <string>00:00</string>
+            </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
             </property>
@@ -410,6 +422,9 @@
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
+            </property>
+            <property name="text">
+             <string>00:00</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
@@ -499,6 +514,9 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="text">
+             <string>00:00</string>
+            </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
             </property>
@@ -525,6 +543,9 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="text">
+             <string>00:00</string>
+            </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
             </property>
@@ -550,6 +571,9 @@
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
+            </property>
+            <property name="text">
+             <string>00:00</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
@@ -599,6 +623,9 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="text">
+             <string>00:00</string>
+            </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
             </property>
@@ -625,6 +652,9 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="text">
+             <string>00:00</string>
+            </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
             </property>
@@ -650,6 +680,9 @@
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
+            </property>
+            <property name="text">
+             <string>00:00</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>

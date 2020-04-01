@@ -19,7 +19,7 @@ PresenterWorkTime::PresenterWorkTime( IWorkTime * View, QObject * parent ) : QOb
     qDebug() << "#Call PresenterWorkTime::PresenterWorkTime(...)";
 #endif
 
-    this->View = View;
+    ViewWT = View;
 
     connectView( View );
 }

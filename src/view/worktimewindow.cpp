@@ -35,6 +35,66 @@ WorkTimeWindow::~WorkTimeWindow()
 // ------------------------------------------------------------------------------------ //
 
 /*!
+ * \brief WorkTimeWindow::changeTimeStart
+ * \param time Изменное пользователем время начала интервала
+ *
+ * Вызывается при измении пользователем времени начала интервала.
+ * Происходит испускание сигнала
+ */
+void WorkTimeWindow::changeTimeStart( QTime time )
+{
+
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::changeTimeEnd
+ * \param time Изменное пользователем время конца интервала
+ *
+ * Вызывается при измении пользователем времени конца интервала.
+ * Происходит испускание сигнала
+ */
+void WorkTimeWindow::changeTimeEnd( QTime time )
+{
+
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::changeTimeNeed
+ * \param time Изменное пользователем время, сколько нужно отработать за выбранный день
+ *
+ * Вызывается при измении пользователем времени конца интервала,
+ * сколько нужно отработать за выбранный день.
+ * Происходит испускание сигнала
+ */
+void WorkTimeWindow::changeTimeNeed( QTime time )
+{
+
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::finishChangeTimeStart
+ * Вызывается при окончании редактирования времени начала интервала.
+ */
+void WorkTimeWindow::finishChangeTimeStart()
+{
+
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::finishChangeTimeEnd
+ * Вызывается при окончании редактирования времени конца интервала.
+ */
+void WorkTimeWindow::finishChangeTimeEnd()
+{
+
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
  * \brief WorkTimeWindow::todayClick
  * Выбор сегодняшнего дня в календаре
  */
@@ -243,6 +303,13 @@ void WorkTimeWindow::connectSingnalSlot()
     connect( gui->ChangesButton    , SIGNAL(clicked(bool)), SLOT(ChangesClick    ()) );
     connect( gui->SettingsButton   , SIGNAL(clicked(bool)), SLOT(SettingsClick   ()) );
     connect( gui->UpdateButton     , SIGNAL(clicked(bool)), SLOT(UpdateClick     ()) );
+
+    // -------------------------------- CHANGE TIME -------------------------------- //
+    connect( gui->TimeStartValue, SIGNAL(timeChanged    (QTime)), SLOT(changeTimeStart      (QTime)) );
+    connect( gui->TimeEndValue  , SIGNAL(timeChanged    (QTime)), SLOT(changeTimeEnd        (QTime)) );
+    connect( gui->NeedDayValue  , SIGNAL(timeChanged    (QTime)), SLOT(changeTimeNeed       (QTime)) );
+    connect( gui->TimeStartValue, SIGNAL(editingFinished(     )), SLOT(finishChangeTimeStart(     )) );
+    connect( gui->TimeEndValue  , SIGNAL(editingFinished(     )), SLOT(finishChangeTimeEnd  (     )) );
 }
 // ------------------------------------------------------------------------------------ //
 

@@ -4,6 +4,8 @@
 // ---------------------------- //
 #include <QWidget>
 // ---------------------------- //
+#include "wtime.h"
+#include "wtimeext.h"
 #include "iworktime.h"
 // ---------------------------- //
 namespace Ui { class WorkTimeWindow; }
@@ -15,9 +17,9 @@ class WorkTimeWindow : public QWidget, public IWorkTime
 
     enum
     {
-        DayPage  ,
-        WeekPage ,
-        MonthPage
+        DayPage  , ///< Страница "День"
+        WeekPage , ///< Страница "Неделя"
+        MonthPage  ///< Страница "Месяц"
     };
 
 public:
@@ -38,6 +40,13 @@ private slots:
     // Calendar slots
     void selectDate();
     void todayClick();
+
+    // Change time slots
+    void changeTimeStart( QTime time );
+    void changeTimeEnd  ( QTime time );
+    void changeTimeNeed ( QTime time );
+    void finishChangeTimeStart();
+    void finishChangeTimeEnd  ();
 
     // Menu slots
     void MenuClick       ();

@@ -10,6 +10,8 @@
 // ---------------------------- //
 namespace Ui { class WorkTimeWindow; }
 // ---------------------------- //
+class QListWidgetItem;
+// ---------------------------- //
 
 class WorkTimeWindow : public QWidget, public IWorkTime
 {
@@ -79,8 +81,14 @@ private slots:
     void selectDate();
     void todayClick();
 
+    void changeTypeDay( int type );
+
     // Intervals list
+    void contextMenuIntervals( QPoint MenuPoint );
+    void renameInterval( QListWidgetItem * RenamedInterval );
+    void clearTime();
     void addInterval();
+    void removeInterval();
     void selectInterval( const int id );
 
     // Change time slots
@@ -89,6 +97,9 @@ private slots:
     void changeTimeNeed ( QTime time );
     void finishChangeTimeStart();
     void finishChangeTimeEnd  ();
+
+    // Change note
+    void changeNote();
 
     // Menu slots
     void MenuClick       ();
@@ -102,8 +113,15 @@ private slots:
 
 signals:
 
-    void userSelectDate( const QDate & date );
-    void userSelectInterval( const int id );
+    void userSelectDate     ( const QDate & date                  );
+    void userSelectInterval ( const int id                        );
+    void userRenameInterval ( const int id, const QString & title );
+    void userRemoveInterval ( const int id                        );
+    void userChangeTypeDay  ( int     type                        );
+    void userChangeTimeStart( int id, WTime time                  );
+    void userChangeTimeEnd  ( int id, WTime time                  );
+    void userChangeTimeNeed ( WTime   time                        );
+    void userChangeNote     ( QString note                        );
 
     void userAddInterval( const QString & title );
 };

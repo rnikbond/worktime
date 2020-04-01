@@ -1,4 +1,5 @@
 // ---------------------------- //
+#include <QMenu>
 // ---------------------------- //
 #include "helperwt.h"
 #include "dayworktime.h"
@@ -40,11 +41,16 @@ WorkTimeWindow::~WorkTimeWindow()
  * \param time Изменное пользователем время начала интервала
  *
  * Вызывается при измении пользователем времени начала интервала.
- * Происходит испускание сигнала
+ * Происходит испускание сигнала WorkTimeWindow::userChangeTimeStart.
  */
 void WorkTimeWindow::changeTimeStart( QTime time )
 {
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#call WorkTimeWindow::changeTimeStart( " << time << " )";
+#endif
 
+    if( gui->IntervalsList->currentRow() >= 0 )
+        emit userChangeTimeStart( gui->IntervalsList->currentRow(), WTime(time) );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -53,11 +59,16 @@ void WorkTimeWindow::changeTimeStart( QTime time )
  * \param time Изменное пользователем время конца интервала
  *
  * Вызывается при измении пользователем времени конца интервала.
- * Происходит испускание сигнала
+ * Происходит испускание сигнала WorkTimeWindow::userChangeTimeEnd.
  */
 void WorkTimeWindow::changeTimeEnd( QTime time )
 {
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#call WorkTimeWindow::changeTimeEnd( " << time << " )";
+#endif
 
+    if( gui->IntervalsList->currentRow() >= 0 )
+        emit userChangeTimeEnd( gui->IntervalsList->currentRow(), WTime(time) );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -67,31 +78,66 @@ void WorkTimeWindow::changeTimeEnd( QTime time )
  *
  * Вызывается при измении пользователем времени конца интервала,
  * сколько нужно отработать за выбранный день.
- * Происходит испускание сигнала
+ * Происходит испускание сигнала WorkTimeWindow::userChangeTimeNeed.
  */
 void WorkTimeWindow::changeTimeNeed( QTime time )
 {
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#call WorkTimeWindow::changeTimeNeed( " << time << " )";
+#endif
 
+    emit userChangeTimeNeed( WTime(time) );
 }
 // ------------------------------------------------------------------------------------ //
 
 /*!
  * \brief WorkTimeWindow::finishChangeTimeStart
  * Вызывается при окончании редактирования времени начала интервала.
+ *
+ * Испускается сигнал WorkTimeWindow::userChangeTimeStart.
  */
 void WorkTimeWindow::finishChangeTimeStart()
 {
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#call WorkTimeWindow::finishChangeTimeStart()";
+#endif
 
+    if( gui->IntervalsList->currentRow() >= 0 )
+        emit userChangeTimeStart( gui->IntervalsList->currentRow(), WTime(gui->TimeStartValue->time())  );
 }
 // ------------------------------------------------------------------------------------ //
 
 /*!
  * \brief WorkTimeWindow::finishChangeTimeEnd
  * Вызывается при окончании редактирования времени конца интервала.
+ *
+ * Испускается сигнал WorkTimeWindow::userChangeTimeEnd.
  */
 void WorkTimeWindow::finishChangeTimeEnd()
 {
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#call WorkTimeWindow::finishChangeTimeEnd()";
+#endif
 
+    if( gui->IntervalsList->currentRow() >= 0 )
+        emit userChangeTimeEnd( gui->IntervalsList->currentRow(), WTime(gui->TimeEndValue->time()) );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::changeNote
+ *
+ * Редактирование заметки.
+ *
+ * Испускается сигнал WorkTimeWindow::userChangeNote.
+ */
+void WorkTimeWindow::changeNote()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#call WorkTimeWindow::changeNote()";
+#endif
+
+    emit userChangeNote( gui->NoteEdit->toPlainText() );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -107,6 +153,40 @@ void WorkTimeWindow::todayClick()
 
     gui->WorkCalendar->setSelectedDate( HelperWT::currentDate() );
     selectDate();
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::changeTypeDay
+ * \param type Тип дня, выбранный пользователем
+ *
+ * Испускается сигнал \a WorkTimeWindow::userChangeTypeDay.
+ *
+ * Если пользователь выбрал рабочий день, поля ввода времени начала и конца интервала,
+ * а также список интервалов активитуется. Если не рабочий день - блокируются.
+ */
+void WorkTimeWindow::changeTypeDay( int type )
+{
+    emit userChangeTypeDay( type );
+
+    gui->WorkCalendar->setFocus();
+
+    if( DayWorkTime::TypesDay(type) != DayWorkTime::WorkDay )
+    {
+        gui->IntervalsList ->setEnabled( false );
+        gui->TimeStartValue->setEnabled( false );
+        gui->TimeEndValue  ->setEnabled( false );
+
+        gui->IntervalsList->setCurrentRow( -1 );
+    }
+    else
+    {
+        gui->IntervalsList ->setEnabled( true );
+        gui->TimeStartValue->setEnabled( true );
+        gui->TimeEndValue  ->setEnabled( true );
+
+        gui->IntervalsList->setCurrentRow( gui->IntervalsList->count() - 1 );
+    }
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -610,7 +690,7 @@ void WorkTimeWindow::updateTimeEnd( int id, WTime time )
  */
 void WorkTimeWindow::selectInterval( const int id )
 {
-#ifdef QT_INFO_CALL_FUNC
+#ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call WorkTimeWindow::selectInterval(" << id << ")";
 #endif
 
@@ -639,6 +719,92 @@ void WorkTimeWindow::selectInterval( const int id )
 // ------------------------------------------------------------------------------------ //
 
 /*!
+ * \brief WorkTimeWindow::contextMenuIntervals
+ * \param MenuPoint Координата курсора
+ *
+ * Вызывается контестное меню при клике правой кнопкой мыши  в списке интервалов.
+ */
+void WorkTimeWindow::contextMenuIntervals( QPoint MenuPoint )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call WorkTimeWindow::contextMenuIntervals( QPoint(" << MenuPoint << ") )";
+#endif
+
+    QMenu IntervalsContextMenu;
+
+    IntervalsContextMenu.addAction( tr("Добавить интервал"), this, SLOT(addInterval()) );
+
+    if( gui->IntervalsList->currentRow() >= 0 )
+    {
+        IntervalsContextMenu.addAction( tr("Очистить время"), this, SLOT(clearTime()) );
+
+        if( gui->IntervalsList->count() > 1 )
+            IntervalsContextMenu.addAction( tr("Удалить интервал" ), this, SLOT(removeInterval()) );
+    }
+
+    IntervalsContextMenu.exec( gui->IntervalsList->mapToGlobal(MenuPoint) );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::renameInterval
+ * \param RenamedInterval Указатель на интервал в списке интервалов
+ *
+ * Если при переименовывании интервала название интервала пустое, испускается
+ * сигнал \a WorkTimeWindow::userRenameInterval.
+ * Если не пустое, испускается сигнал WorkTimeWindow::userSelectDate.
+ */
+void WorkTimeWindow::renameInterval( QListWidgetItem * RenamedInterval )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call WorkTimeWindow::renameInterval( " << RenamedInterval->text() << ")";
+#endif
+
+    int intervalID = gui->IntervalsList->currentRow();
+
+    if( intervalID != -1 )
+    {
+        if( RenamedInterval->text().isEmpty() == false )
+        {
+            emit userRenameInterval( intervalID, RenamedInterval->text() );
+        }
+        else
+        {
+            emit userSelectDate( gui->WorkCalendar->selectedDate() );
+            gui->IntervalsList->setCurrentRow( intervalID );
+        }
+    }
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::clearTime
+ *
+ * Очистка времени интервала
+ *
+ * Испускаются сигналы \a WorkTimeWindow::userChangeTimeStart и \a WorkTimeWindow::userChangeTimeEnd
+ */
+void WorkTimeWindow::clearTime()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call WorkTimeWindow::clearTime()";
+#endif
+
+    gui->TimeStartValue->blockSignals( true );
+    gui->TimeEndValue  ->blockSignals( true );
+
+    gui->TimeStartValue->setTime( QTime(0, 0) );
+    gui->TimeEndValue  ->setTime( QTime(0, 0) );
+
+    emit userChangeTimeStart( gui->IntervalsList->currentRow(), WTime() );
+    emit userChangeTimeEnd  ( gui->IntervalsList->currentRow(), WTime() );
+
+    gui->TimeStartValue->blockSignals( false );
+    gui->TimeEndValue  ->blockSignals( false );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
  * \brief WorkTimeWindow::addInterval
  * Добавление нового интервала.
  *
@@ -646,7 +812,7 @@ void WorkTimeWindow::selectInterval( const int id )
  */
 void WorkTimeWindow::addInterval()
 {
-#ifdef QT_INFO_CALL_FUNC
+#ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call WorkTimeWindow::addInterval()";
 #endif
 
@@ -658,6 +824,27 @@ void WorkTimeWindow::addInterval()
     emit userAddInterval( NewIntervalItem->text() );
 
     gui->IntervalsList->blockSignals( false );
+
+    gui->IntervalsList->setCurrentRow( gui->IntervalsList->count() - 1 );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::removeInterval
+ *
+ * Удаление интервала
+ */
+void WorkTimeWindow::removeInterval()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call WorkTimeWindow::removeInterval()";
+#endif
+
+    int IntervalRow = gui->IntervalsList->currentRow();
+
+    emit userRemoveInterval( IntervalRow );
+
+    gui->IntervalsList->takeItem( IntervalRow );
 
     gui->IntervalsList->setCurrentRow( gui->IntervalsList->count() - 1 );
 }
@@ -797,7 +984,7 @@ void WorkTimeWindow::UpdateClick()
   */
 void WorkTimeWindow::updateTitles()
 {
-#ifdef QT_INFO_CALL_FUNC
+#ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call WorkTimeWindow::updateTitles()";
 #endif
 
@@ -838,8 +1025,13 @@ void WorkTimeWindow::connectSingnalSlot()
     connect( gui->SettingsButton   , SIGNAL(clicked(bool)), SLOT(SettingsClick   ()) );
     connect( gui->UpdateButton     , SIGNAL(clicked(bool)), SLOT(UpdateClick     ()) );
 
+    // -------------------------------- TYPE DAY -------------------------------- //
+    connect( gui->TypeDayCBox, SIGNAL(currentIndexChanged(int)), SLOT(changeTypeDay(int)) );
+
     // -------------------------------- INTERVALS LIST -------------------------------- //
-    connect( gui->IntervalsList, SIGNAL(currentRowChanged(int)), SLOT(selectInterval(int)) );
+    connect( gui->IntervalsList, SIGNAL(currentRowChanged         (int             )), SLOT(selectInterval      (int             )) );
+    connect( gui->IntervalsList, SIGNAL(customContextMenuRequested(QPoint          )), SLOT(contextMenuIntervals(QPoint          )) );
+    connect( gui->IntervalsList, SIGNAL(itemChanged               (QListWidgetItem*)), SLOT(renameInterval      (QListWidgetItem*)) );
 
     // -------------------------------- CHANGE TIME -------------------------------- //
     connect( gui->TimeStartValue, SIGNAL(timeChanged    (QTime)), SLOT(changeTimeStart      (QTime)) );
@@ -847,6 +1039,9 @@ void WorkTimeWindow::connectSingnalSlot()
     connect( gui->NeedDayValue  , SIGNAL(timeChanged    (QTime)), SLOT(changeTimeNeed       (QTime)) );
     connect( gui->TimeStartValue, SIGNAL(editingFinished(     )), SLOT(finishChangeTimeStart(     )) );
     connect( gui->TimeEndValue  , SIGNAL(editingFinished(     )), SLOT(finishChangeTimeEnd  (     )) );
+
+    // -------------------------------- NOTE -------------------------------- //
+    connect( gui->NoteEdit, SIGNAL(textChanged()), SLOT(changeNote()) );
 }
 // ------------------------------------------------------------------------------------ //
 

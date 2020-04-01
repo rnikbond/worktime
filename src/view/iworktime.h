@@ -53,11 +53,17 @@ public: // Members
 
 public: // Signals
 
-    virtual void userSelectDate    ( const QDate   & date ) = 0;
-    virtual void userSelectInterval( const int id         ) = 0;
+    virtual void userSelectDate    ( const QDate   & date                ) = 0;
+    virtual void userSelectInterval( const int id                        ) = 0;
+    virtual void userRemoveInterval( const int id                        ) = 0;
+    virtual void userRenameInterval( const int id, const QString & title ) = 0;
 
-    virtual void userAddInterval( const QString & title ) = 0;
-
+    virtual void userAddInterval    ( const QString & title ) = 0;
+    virtual void userChangeTypeDay  ( int     type          ) = 0;
+    virtual void userChangeTimeStart( int id, WTime time    ) = 0;
+    virtual void userChangeTimeEnd  ( int id, WTime time    ) = 0;
+    virtual void userChangeTimeNeed ( WTime   time          ) = 0;
+    virtual void userChangeNote     ( QString note          ) = 0;
 };
 
 #endif // IWORKTIME

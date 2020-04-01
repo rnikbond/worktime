@@ -9,10 +9,15 @@ TEMPLATE = app
 #DEFINES += WT_INFO_CALL_FUNC
 
 INCLUDEPATH += src
+INCLUDEPATH += src/view
 
-HEADERS += 
-SOURCES += src/main.cpp
-FORMS   += 
+HEADERS += src/view/worktimewindow.h \
+           src/view/iworktime.h
+
+SOURCES += src/main.cpp \
+           src/view/worktimewindow.cpp
+
+FORMS   += src/gui/worktimewindow.ui
 
 #RESOURCES += resources/resource.qrc
 #RC_FILE   += resources/application.rc

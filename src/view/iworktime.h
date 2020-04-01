@@ -2,8 +2,8 @@
 #ifndef IWORKTIME
 #define IWORKTIME
 // ---------------------------- //
-class WTime      ;
-class WTimeExt   ;
+#include "wtime.h"
+#include "wtimeext.h"
 // ---------------------------- //
 class QDate      ;
 class QColor     ;

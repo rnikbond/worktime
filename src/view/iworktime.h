@@ -17,7 +17,7 @@ public: // Members
 
 public: // Signals
 
-    virtual void selectDate( const QDate & date ) = 0;
+    virtual void userSelectDate( const QDate & date ) = 0;
 
 };
 

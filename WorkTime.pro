@@ -10,12 +10,15 @@ TEMPLATE = app
 
 INCLUDEPATH += src
 INCLUDEPATH += src/view
+INCLUDEPATH += src/tools
 
 HEADERS += src/view/worktimewindow.h \
-           src/view/iworktime.h
+           src/view/iworktime.h \
+           src/tools/helperwt.h
 
 SOURCES += src/main.cpp \
-           src/view/worktimewindow.cpp
+           src/view/worktimewindow.cpp \
+           src/tools/helperwt.cpp
 
 FORMS   += src/gui/worktimewindow.ui
 

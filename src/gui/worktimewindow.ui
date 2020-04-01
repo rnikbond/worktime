@@ -749,6 +749,19 @@
        </widget>
       </item>
       <item>
+       <widget class="QPushButton" name="ChangesButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Изменения</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="SettingsButton">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
@@ -762,20 +775,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="ShowChangesButton">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string>Изменения</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="UpdateWorkTimeButton">
+       <widget class="QPushButton" name="UpdateButton">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
           <horstretch>0</horstretch>

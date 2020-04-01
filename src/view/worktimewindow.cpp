@@ -40,6 +40,10 @@ WorkTimeWindow::~WorkTimeWindow()
  */
 void WorkTimeWindow::todayClick()
 {
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#call WorkTimeWindow::todayClick()";
+#endif
+
     gui->WorkCalendar->setSelectedDate( HelperWT::currentDate() );
     selectDate();
 }
@@ -53,8 +57,8 @@ void WorkTimeWindow::todayClick()
  * При выборе дня испускается сигнал \a  userSelectDate(QDate) и
  * вызывается метод \sa WorkTimeWindow::updateTitles() для смены названий заголовков.
  */
- void WorkTimeWindow::selectDate()
- {
+void WorkTimeWindow::selectDate()
+{
 #ifdef WT_INFO_CALL_FUNC
     qDebug() << "#call WorkTimeWindow::selectDate()";
 #endif
@@ -62,8 +66,134 @@ void WorkTimeWindow::todayClick()
     emit userSelectDate( gui->WorkCalendar->selectedDate() );
 
     updateTitles();
- }
- // ------------------------------------------------------------------------------------ //
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::MenuClick
+ * Скрытие/Отображение меню и статистики за день/неделю/месяц
+ *
+ * При отображении меню для каленаря устанавливается короткий формат дней недели.
+ * При скрытом меню для каленаря устанавливается длинный формат дней недели.
+ */
+void WorkTimeWindow::MenuClick()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#call WorkTimeWindow::MenuClick()";
+#endif
+
+    bool visibleState = !gui->MenuGBox->isVisible();
+
+    gui->MenuGBox     ->setVisible( visibleState );
+    gui->StatisticGBox->setVisible( visibleState );
+
+    if( visibleState )
+    {
+        gui->WorkCalendar->setHorizontalHeaderFormat( QCalendarWidget::ShortDayNames );
+    }
+    else
+    {
+        gui->WorkCalendar->setHorizontalHeaderFormat( QCalendarWidget::LongDayNames );
+    }
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::SalaryClick
+ * Вызов окна "Зарплата"
+ */
+void WorkTimeWindow::SalaryClick()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#call WorkTimeWindow::SalaryClick()";
+#endif
+
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::TableTimeClick
+ * Вызов окна "Таблица времени"
+ */
+void WorkTimeWindow::TableTimeClick()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#call WorkTimeWindow::TableTimeClick()";
+#endif
+
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::ScheduleClick
+ * Вызов окна "Расписание"
+ */
+void WorkTimeWindow::ScheduleClick()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#call WorkTimeWindow::ScheduleClick()";
+#endif
+
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::SeveralDaysClick
+ * Выозов окна "Несколько дней"
+ */
+void WorkTimeWindow::SeveralDaysClick()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#call WorkTimeWindow::SeveralDaysClick()";
+#endif
+
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::ChangesClick
+ * Вызов окна "Изменения"
+ */
+void WorkTimeWindow::ChangesClick()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#call WorkTimeWindow::ChangesClick()";
+#endif
+
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::SettingsClick
+ * Вызов окна "Настройки"
+ */
+void WorkTimeWindow::SettingsClick()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#call WorkTimeWindow::SettingsClick()";
+#endif
+
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::UpdateClick
+ * Обновление программы WorkTime.
+ * При обновлении с сервера будет скопировано обновление с названием "new_WorkTime.exe" и сохранено
+ * в том же каталоге, что и программа.
+ * После успешного копирования текущая программа будет переименована в "old_WorkTime.exe".
+ * После этого новая программа будет переименована в "WorkTime.exe".
+ * Если все вышеописанные пункты были успешно выполнены, будет запущен процесс с новой программой,
+ * а текущая программа будет закрыта при помощи метода \a qApp->quit().
+ */
+void WorkTimeWindow::UpdateClick()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#call WorkTimeWindow::UpdateClick()";
+#endif
+
+}
+// ------------------------------------------------------------------------------------ //
 
  /*!
   * \brief WorkTimeWindow::updateTitles
@@ -71,8 +201,8 @@ void WorkTimeWindow::todayClick()
   * Смена заголовка группы объектов: Статистика до выбранного дня.
   * Смена заголовка группы объектов: Статистика за день/неделю/месяц.
   */
- void WorkTimeWindow::updateTitles()
- {
+void WorkTimeWindow::updateTitles()
+{
 #ifdef QT_INFO_CALL_FUNC
     qDebug() << "#Call WorkTimeWindow::updateTitles()";
 #endif
@@ -87,33 +217,48 @@ void WorkTimeWindow::todayClick()
     gui->StatisticToolBox->setItemText( MonthPage, tr("%1").arg(QLocale().monthName(Date.month())) );
 
     gui->StatisticToDayGBox->setTitle( tr("С 1 по %2 %3").arg(Date.day()).arg(HelperWT::nameMonthInGenitiveCase(Date, false)) );
- }
- // ------------------------------------------------------------------------------------ //
+}
+// ------------------------------------------------------------------------------------ //
 
  /*!
   * \brief WorkTimeWindow::connectSingnalSlot
   * Соединение сигналов со слотами
   */
- void WorkTimeWindow::connectSingnalSlot()
- {
+void WorkTimeWindow::connectSingnalSlot()
+{
+#ifdef WT_INFO_CALL_FUNC
+     qDebug() << "#call WorkTimeWindow::connectSingnalSlot()";
+#endif
+
+    // -------------------------------- CALENDAR -------------------------------- //
     connect( gui->WorkCalendar, SIGNAL(selectionChanged(    )), SLOT(selectDate()) );
     connect( gui->TodayButton , SIGNAL(clicked         (bool)), SLOT(todayClick()) );
- }
- // ------------------------------------------------------------------------------------ //
 
- /*!
-  * \brief WorkTimeWindow::configuringGUI
-  *
-  * Устанавливается заголовок основного окна программы.
-  * Устаналивается стиль рамки окна: Qt::CustomizeWindowHint | Qt::WindowCloseButtonHint.
-  * Для календаря убирается вертикальный заголовок и устаналивается длинные названия
-  * дней недели. Также устанавливается цвет выходных дней.
-  */
- void WorkTimeWindow::configuringGUI()
- {
- #ifdef WT_INFO_CALL_FUNC
+    // -------------------------------- MENU -------------------------------- //
+    connect( gui->MenuButton       , SIGNAL(clicked(bool)), SLOT(MenuClick       ()) );
+    connect( gui->SalaryButton     , SIGNAL(clicked(bool)), SLOT(SalaryClick     ()) );
+    connect( gui->TableTimeButton  , SIGNAL(clicked(bool)), SLOT(TableTimeClick  ()) );
+    connect( gui->ScheduleButton   , SIGNAL(clicked(bool)), SLOT(ScheduleClick   ()) );
+    connect( gui->SeveralDaysButton, SIGNAL(clicked(bool)), SLOT(SeveralDaysClick()) );
+    connect( gui->ChangesButton    , SIGNAL(clicked(bool)), SLOT(ChangesClick    ()) );
+    connect( gui->SettingsButton   , SIGNAL(clicked(bool)), SLOT(SettingsClick   ()) );
+    connect( gui->UpdateButton     , SIGNAL(clicked(bool)), SLOT(UpdateClick     ()) );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::configuringGUI
+ *
+ * Устанавливается заголовок основного окна программы.
+ * Устаналивается стиль рамки окна: Qt::CustomizeWindowHint | Qt::WindowCloseButtonHint.
+ * Для календаря убирается вертикальный заголовок и устаналивается длинные названия
+ * дней недели. Также устанавливается цвет выходных дней.
+ */
+void WorkTimeWindow::configuringGUI()
+{
+#ifdef WT_INFO_CALL_FUNC
      qDebug() << "#call WorkTimeWindow::initialize()";
- #endif
+#endif
 
      gui->setupUi( this );
 
@@ -130,5 +275,5 @@ void WorkTimeWindow::todayClick()
 
      gui->WorkCalendar->setWeekdayTextFormat( Qt::Saturday, WeekendFomat );
      gui->WorkCalendar->setWeekdayTextFormat( Qt::Sunday  , WeekendFomat );
- }
- // ------------------------------------------------------------------------------------ //
+}
+// ------------------------------------------------------------------------------------ //

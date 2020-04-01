@@ -35,8 +35,19 @@ private:
 
 private slots:
 
+    // Calendar slots
     void selectDate();
     void todayClick();
+
+    // Menu slots
+    void MenuClick       ();
+    void SalaryClick     ();
+    void TableTimeClick  ();
+    void ScheduleClick   ();
+    void SeveralDaysClick();
+    void ChangesClick    ();
+    void SettingsClick   ();
+    void UpdateClick     ();
 
 signals:
 

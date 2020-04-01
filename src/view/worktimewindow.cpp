@@ -1,5 +1,6 @@
 // ---------------------------- //
 #include <QMenu>
+#include <QMouseEvent>
 // ---------------------------- //
 #include "helperwt.h"
 #include "dayworktime.h"
@@ -20,6 +21,8 @@ WorkTimeWindow::WorkTimeWindow( QWidget * parent ) : QWidget( parent ), gui( new
 #ifdef WT_INFO_CALL_FUNC
     qDebug() << "#call WorkTimeWindow::WorkTimeWindow(...)";
 #endif
+
+    isMoveWindow = false;
 
     configuringGUI();
     connectSingnalSlot();
@@ -187,6 +190,21 @@ void WorkTimeWindow::changeTypeDay( int type )
 
         gui->IntervalsList->setCurrentRow( gui->IntervalsList->count() - 1 );
     }
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::closeWorkTime
+ *
+ * Закрытие программы
+ */
+void WorkTimeWindow::closeWorkTime()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#call WorkTimeWindow::closeWorkTime()";
+#endif
+
+    qApp->quit();
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -1011,6 +1029,9 @@ void WorkTimeWindow::connectSingnalSlot()
      qDebug() << "#call WorkTimeWindow::connectSingnalSlot()";
 #endif
 
+    // -------------------------------- WINDOW -------------------------------- //
+    connect( gui->CloseButton, SIGNAL(clicked(bool)), SLOT(closeWorkTime()) );
+
     // -------------------------------- CALENDAR -------------------------------- //
     connect( gui->WorkCalendar, SIGNAL(selectionChanged(    )), SLOT(selectDate()) );
     connect( gui->TodayButton , SIGNAL(clicked         (bool)), SLOT(todayClick()) );
@@ -1061,8 +1082,10 @@ void WorkTimeWindow::configuringGUI()
 
      gui->setupUi( this );
 
-     setWindowTitle( tr("WorkTime") );
-     setWindowFlags( Qt::CustomizeWindowHint | Qt::WindowCloseButtonHint );
+     setWindowFlags( Qt::Tool | Qt::FramelessWindowHint );
+
+     gui->HeaderWidget->setWindowOpacity( 1.0 );
+     gui->HeaderWidget->setStyleSheet( "border: 1px solid black;" );
 
      gui->WorkCalendar->setSelectionMode         ( QCalendarWidget::SingleSelection  );
      gui->WorkCalendar->setHorizontalHeaderFormat( QCalendarWidget::LongDayNames     );
@@ -1070,9 +1093,66 @@ void WorkTimeWindow::configuringGUI()
 
      QTextCharFormat WeekendFomat = gui->WorkCalendar->weekdayTextFormat( Qt::Saturday );
 
-     //WeekendFomat.setForeground( QBrush( DayWorkTime::colorDay(DayWorkTime::Weekend)) );
+     WeekendFomat.setForeground( QBrush( DayWorkTime::colorDay(DayWorkTime::Weekend)) );
 
      gui->WorkCalendar->setWeekdayTextFormat( Qt::Saturday, WeekendFomat );
      gui->WorkCalendar->setWeekdayTextFormat( Qt::Sunday  , WeekendFomat );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::mousePressEvent
+ * \param MouseEvent
+ *
+ * Событие нажатия кнопки мыши
+ */
+void WorkTimeWindow::mousePressEvent( QMouseEvent * MouseEvent )
+{
+    if( MouseEvent->buttons() & Qt::LeftButton )
+    {
+        if( gui->HeaderWidget->geometry().contains(MouseEvent->pos()) )
+        {
+            isMoveWindow  = true;
+            WindowPosition = MouseEvent->globalPos();
+        }
+    }
+
+    QWidget::mousePressEvent( MouseEvent );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::mouseReleaseEvent
+ * \param MouseEvent
+ *
+ * Событие отпускания кнопки мыши
+ */
+void WorkTimeWindow::mouseReleaseEvent( QMouseEvent * MouseEvent )
+{
+    isMoveWindow = false;
+
+    QWidget::mouseReleaseEvent( MouseEvent );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::mouseMoveEven
+ * \param MouseEvent
+ *
+ * Событие перемещения курсора
+ */
+void WorkTimeWindow::mouseMoveEvent( QMouseEvent * MouseEvent )
+{
+    if( isMoveWindow && (MouseEvent->buttons() & Qt::LeftButton) )
+    {
+        QPoint Delta = MouseEvent->globalPos() - WindowPosition;
+
+        move( x() + Delta.x(), y() + Delta.y() );
+
+        WindowPosition = MouseEvent->globalPos();
+    }
+
+
+    QWidget::mouseMoveEvent( MouseEvent );
 }
 // ------------------------------------------------------------------------------------ //

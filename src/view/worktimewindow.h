@@ -24,6 +24,9 @@ class WorkTimeWindow : public QWidget, public IWorkTime
         MonthPage  ///< Страница "Месяц"
     };
 
+    bool   isMoveWindow;
+    QPoint WindowPosition;
+
 public:
 
     explicit WorkTimeWindow( QWidget * parent = 0 );
@@ -77,6 +80,10 @@ private:
 
 private slots:
 
+    // Window
+
+    void closeWorkTime();
+
     // Calendar slots
     void selectDate();
     void todayClick();
@@ -124,6 +131,12 @@ signals:
     void userChangeNote     ( QString note                        );
 
     void userAddInterval( const QString & title );
+
+protected:
+
+    void mousePressEvent  ( QMouseEvent * MouseEvent );
+    void mouseReleaseEvent( QMouseEvent * MouseEvent );
+    void mouseMoveEvent   ( QMouseEvent * MouseEvent );
 };
 // ------------------------------------------------------------------------------------ //
 

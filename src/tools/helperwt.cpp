@@ -24,6 +24,16 @@ const QDate HelperWT::currentDate()
 // ------------------------------------------------------------------------------------ //
 
 /*!
+ * \brief HelperWT::pathToDataBase
+ * \return Абсолютный путь к базе данных
+ */
+const QString HelperWT::pathToDataBase()
+{
+    return QDir::homePath() + "/AppData/worktime/WorkTime.db";
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
  * \brief HelperWT::pathToWorkTime
  * \return Абсолютный путь к программе
  */

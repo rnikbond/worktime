@@ -1,7 +1,8 @@
 // ---------------------------- //
 #include <QColor>
 // ---------------------------- //
-#include "iworktime.h"
+#include "iviewworktime.h"
+#include "imodelworktime.h"
 // ---------------------------- //
 #include "presenterworktime.h"
 // ---------------------------- //
@@ -15,15 +16,38 @@
  *
  * \sa PresenterWorkTime::connectView
  */
-PresenterWorkTime::PresenterWorkTime( IWorkTime * View, QObject * parent ) : QObject( parent )
+PresenterWorkTime::PresenterWorkTime( QObject * parent ) : QObject( parent )
 {
 #ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call PresenterWorkTime::PresenterWorkTime(...)";
 #endif
 
-    ViewWT = View;
+    ViewWT  = NULL;
+    ModelWT = NULL;
+}
+// ------------------------------------------------------------------------------------ //
+
+void PresenterWorkTime::setView( IViewWorkTime * View  )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call PresenterWorkTime::setView(...)";
+#endif
+
+    ViewWT  = View;
 
     connectView( View );
+}
+// ------------------------------------------------------------------------------------ //
+
+void PresenterWorkTime::setModel( IModelWorkTime * Model )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call PresenterWorkTime::setModel(...)";
+#endif
+
+    ModelWT = Model;
+
+    connectModel( Model );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -38,7 +62,7 @@ void PresenterWorkTime::refreshFull()
     qDebug() << "#Call PresenterWorkTime::refreshFull()";
 #endif
 
-    //ViewWT->setColorDays( Model->colorsDays() );
+    ViewWT->setColorDays( ModelWT->colorMonthDays() );
 
     refreshTimeMonth();
     refreshTimeWeek ();
@@ -57,9 +81,9 @@ void PresenterWorkTime::refreshDataDay()
     qDebug() << "#Call PresenterWorkTime::refreshDataDay()";
 #endif
 
-//    ViewWT->setTypeDay  ( Model->typeDay  () );
-//    ViewWT->setIntervals( Model->intervals() );
-//    ViewWT->setNote     ( Model->note     () );
+    ViewWT->setTypeDay  ( ModelWT->typeDay  () );
+    ViewWT->setIntervals( ModelWT->intervals() );
+    ViewWT->setNote     ( ModelWT->note     () );
 
     refreshTimeDay();
 }
@@ -77,19 +101,19 @@ void PresenterWorkTime::refreshTimeDay()
     qDebug() << "#Call PresenterWorkTime::refreshTimeDay()";
 #endif
 
-//    WTime StatisticTimeInDay = Model->timeStatisticInDay();
-//    WTime StatisticTimeToDay = Model->timeStatisticToDay();
+    WTime StatisticTimeInDay = ModelWT->timeStatisticInDay();
+    WTime StatisticTimeToDay = ModelWT->timeStatisticToDay();
 
-//    QString InfoInDay = Model->infoStatisticInDay();
-//    QString InfoToDay = Model->infoStatisticToDay();
+    QString InfoInDay = ModelWT->infoStatisticInDay();
+    QString InfoToDay = ModelWT->infoStatisticToDay();
 
-//    ViewWT->setTimeWorkedInDay   ( Model->timeWorkedInDay() );
-//    ViewWT->setTimeStatisticInDay( StatisticTimeInDay, InfoInDay );
-//    ViewWT->setTimeNeedInDay     ( Model->timeNeedInDay() );
+    ViewWT->setTimeWorkedInDay   ( ModelWT->timeWorkedInDay() );
+    ViewWT->setTimeStatisticInDay( StatisticTimeInDay, InfoInDay );
+    ViewWT->setTimeNeedInDay     ( ModelWT->timeNeedInDay() );
 
-//    ViewWT->setTimeWorkedToDay   ( Model->timeWorkedToDay() );
-//    ViewWT->setTimeStatisticToDay( StatisticTimeToDay, InfoToDay );
-//    ViewWT->setTimeNeedToDay     ( Model->timeNeedToDay() );
+    ViewWT->setTimeWorkedToDay   ( ModelWT->timeWorkedToDay() );
+    ViewWT->setTimeStatisticToDay( StatisticTimeToDay, InfoToDay );
+    ViewWT->setTimeNeedToDay     ( ModelWT->timeNeedToDay() );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -104,12 +128,12 @@ void PresenterWorkTime::refreshTimeWeek()
     qDebug() << "#Call PresenterWorkTime::refreshTimeWeek()";
 #endif
 
-//    WTime StatisticTime = Model->timeStatisticInWeek();
-//    QString Info = Model->infoStatisticInWeek();
+    WTime StatisticTime = ModelWT->timeStatisticInWeek();
+    QString Info = ModelWT->infoStatisticInWeek();
 
-//    ViewWT->setTimeWorkedInWeek   ( Model->timeWorkedInWeek() );
-//    ViewWT->setTimeStatisticInWeek( StatisticTime, Info );
-//    ViewWT->setTimeNeedInWeek     ( Model->timeNeedInWeek() );
+    ViewWT->setTimeWorkedInWeek   ( ModelWT->timeWorkedInWeek() );
+    ViewWT->setTimeStatisticInWeek( StatisticTime, Info );
+    ViewWT->setTimeNeedInWeek     ( ModelWT->timeNeedInWeek() );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -124,12 +148,12 @@ void PresenterWorkTime::refreshTimeMonth()
     qDebug() << "#Call PresenterWorkTime::refreshTimeMonth()";
 #endif
 
-//    WTime StatisticTime = Model->timeStatisticInMonth();
-//    QString Info = Model->infoStatisticInMonth();
+    WTime StatisticTime = ModelWT->timeStatisticInMonth();
+    QString Info = ModelWT->infoStatisticInMonth();
 
-//    ViewWT->setTimeWorkedInMonth   ( Model->timeWorkedInMonth() );
-//    ViewWT->setTimeStatisticInMonth( StatisticTime, Info );
-//    ViewWT->setTimeNeedInMonth     ( Model->timeNeedInMonth() );
+    ViewWT->setTimeWorkedInMonth   ( ModelWT->timeWorkedInMonth() );
+    ViewWT->setTimeStatisticInMonth( StatisticTime, Info );
+    ViewWT->setTimeNeedInMonth     ( ModelWT->timeNeedInMonth() );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -231,6 +255,10 @@ void PresenterWorkTime::userSelectDate( const QDate & date )
 #ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call PresenterWorkTime::userSelectDate( " << date << " )";
 #endif
+
+    ModelWT->setDate( date );
+
+    refreshDataDay();
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -243,6 +271,9 @@ void PresenterWorkTime::userSelectInterval( int id )
 #ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call PresenterWorkTime::userSelectInterval( " << id << " )";
 #endif
+
+    ViewWT->setTimeStart( ModelWT->timeStart(id), id );
+    ViewWT->setTimeEnd  ( ModelWT->timeEnd  (id), id );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -255,6 +286,8 @@ void PresenterWorkTime::userRemoveInterval( int id )
 #ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call PresenterWorkTime::userRemoveInterval( " << id << " )";
 #endif
+
+    ModelWT->removeInterval( id );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -268,6 +301,8 @@ void PresenterWorkTime::userRenameInterval( int id, QString title )
 #ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call PresenterWorkTime::userRenameInterval( " << id << ", " << title << " )";
 #endif
+
+    ModelWT->renameInterval( id, title );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -281,6 +316,8 @@ void PresenterWorkTime::userChangeTimeStart( int id, WTime time )
 #ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call PresenterWorkTime::userRenameInterval( " << id << ", " << time.toString() << " )";
 #endif
+
+    ModelWT->setTimeStart( id, time );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -294,6 +331,8 @@ void PresenterWorkTime::userChangeTimeEnd( int id, WTime time )
 #ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call PresenterWorkTime::userChangeTimeEnd( " << id << ", " << time.toString() << " )";
 #endif
+
+    ModelWT->setTimeEnd( id, time );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -306,6 +345,8 @@ void PresenterWorkTime::userChangeTimeNeed( WTime time )
 #ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call PresenterWorkTime::userChangeTimeNeed( " << time.toString() << " )";
 #endif
+
+    ModelWT->setTimeNeed( time );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -318,6 +359,8 @@ void PresenterWorkTime::userAddInterval( QString title )
 #ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call PresenterWorkTime::userAddInterval( " << title << " )";
 #endif
+
+    ModelWT->addInterval( title );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -330,6 +373,10 @@ void PresenterWorkTime::userChangeTypeDay( int type )
 #ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call PresenterWorkTime::userChangeTypeDay( " << type << " )";
 #endif
+
+    ModelWT->setTypeDay( type );
+
+    refreshDataDay();
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -342,6 +389,23 @@ void PresenterWorkTime::userChangeNote( QString note )
 #ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call PresenterWorkTime::userChangeNote( " << note << " )";
 #endif
+
+    ModelWT->setNote( note );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief PresenterWorkTime::connectModel
+ *
+ * Соединение сигналов от Model
+ */
+void PresenterWorkTime::connectModel( IModelWorkTime * Model )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call PresenterWorkTime::connectModel()";
+#endif
+
+    //QObject * ModelObj = dynamic_cast<QObject*>( Model );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -351,7 +415,7 @@ void PresenterWorkTime::userChangeNote( QString note )
  *
  * Соединение сигналов от View со слотами.
  */
-void PresenterWorkTime::connectView( IWorkTime * View )
+void PresenterWorkTime::connectView( IViewWorkTime * View )
 {
 #ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call PresenterWorkTime::PresenterWorkTime(...)";

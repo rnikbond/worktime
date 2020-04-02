@@ -7,22 +7,28 @@
 #include "wtime.h"
 #include "wtimeext.h"
 // ---------------------------- //
-class IWorkTime;
+class IViewWorkTime ;
+class IModelWorkTime;
 // ---------------------------- //
 
 class PresenterWorkTime : public QObject
 {
     Q_OBJECT
 
-    IWorkTime * ViewWT;
+    IViewWorkTime  * ViewWT ;
+    IModelWorkTime * ModelWT;
 
 public:
 
-    explicit PresenterWorkTime( IWorkTime * View, QObject * parent = 0 );
+    explicit PresenterWorkTime( QObject * parent = 0 );
+
+    void setView ( IViewWorkTime  * View  );
+    void setModel( IModelWorkTime * Model );
 
 private:
 
-    void connectView( IWorkTime * View );
+    void connectModel( IModelWorkTime * Model );
+    void connectView ( IViewWorkTime  * View  );
 
     void refreshFull     ();
     void refreshDataDay  ();

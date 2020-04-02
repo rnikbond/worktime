@@ -1,17 +1,17 @@
 // ---------------------------- //
-#ifndef IWORKTIME
-#define IWORKTIME
+#ifndef IVIEWWORKTIME
+#define IVIEWWORKTIME
+// ---------------------------- //
+#include <QDate>
+#include <QColor>
+#include <QString>
+#include <QStringList>
 // ---------------------------- //
 #include "wtime.h"
 #include "wtimeext.h"
 // ---------------------------- //
-class QDate      ;
-class QColor     ;
-class QString    ;
-class QStringList;
-// ---------------------------- //
 
-class IWorkTime
+class IViewWorkTime
 {
 
 public: // Members
@@ -66,5 +66,5 @@ public: // Signals
     virtual void userChangeNote     ( QString note          ) = 0;
 };
 
-#endif // IWORKTIME
+#endif // IVIEWWORKTIME
 

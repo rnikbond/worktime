@@ -6,14 +6,14 @@
 // ---------------------------- //
 #include "wtime.h"
 #include "wtimeext.h"
-#include "iworktime.h"
+#include "iviewworktime.h"
 // ---------------------------- //
 namespace Ui { class WorkTimeWindow; }
 // ---------------------------- //
 class QListWidgetItem;
 // ---------------------------- //
 
-class WorkTimeWindow : public QWidget, public IWorkTime
+class WorkTimeWindow : public QWidget, public IViewWorkTime
 {
     Q_OBJECT
 

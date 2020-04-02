@@ -1082,7 +1082,7 @@ void WorkTimeWindow::configuringGUI()
 
      gui->setupUi( this );
 
-     setWindowFlags( Qt::Tool | Qt::FramelessWindowHint );
+     setWindowFlags( Qt::CustomizeWindowHint | Qt::WindowCloseButtonHint );
 
      gui->HeaderWidget->setWindowOpacity( 1.0 );
      gui->HeaderWidget->setStyleSheet( "border: 1px solid black;" );

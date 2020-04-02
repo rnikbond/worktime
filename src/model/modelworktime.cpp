@@ -96,7 +96,7 @@ int ModelWorkTime::typeDay()
  */
 QStringList ModelWorkTime::intervals()
 {
-#ifdef QT_INFO_CALL_FUNC
+#ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call ModelWorkTime::intervals()";
 #endif
 
@@ -111,7 +111,7 @@ QStringList ModelWorkTime::intervals()
  */
 QString ModelWorkTime::note()
 {
-#ifdef QT_INFO_CALL_FUNC
+#ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call ModelWorkTime::note()";
 #endif
 
@@ -553,7 +553,7 @@ void ModelWorkTime::setTimeStart( const int id, const WTime & time )
  */
 void ModelWorkTime::setTimeEnd( const int id, const WTime & time )
 {
-#ifdef QT_INFO_CALL_FUNC
+#ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call ModelWorkTime::setTimeEnd(" << id << ", " << time.toString() << ")";
 #endif
 
@@ -577,7 +577,7 @@ void ModelWorkTime::setTimeEnd( const int id, const WTime & time )
  */
 void ModelWorkTime::setTimeNeed( const WTime & time )
 {
-#ifdef QT_INFO_CALL_FUNC
+#ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call ModelWorkTime::setTimeNeed(" << time.toString() << ")";
 #endif
 
@@ -596,7 +596,7 @@ void ModelWorkTime::setTimeNeed( const WTime & time )
  */
 void ModelWorkTime::setTypeDay( int type )
 {
-#ifdef QT_INFO_CALL_FUNC
+#ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call ModelWorkTime::setTypeDay(" << type << ")";
 #endif
 
@@ -632,7 +632,7 @@ void ModelWorkTime::setTypeDay( int type )
  */
 void ModelWorkTime::setNote( QString note )
 {
-#ifdef QT_INFO_CALL_FUNC
+#ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call ModelWorkTime::setNote(" << note << ")";
 #endif
 

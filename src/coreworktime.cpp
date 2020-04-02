@@ -4,8 +4,9 @@
 #include <QMessageBox>
 #include <QApplication>
 #include <QSharedMemory>
-#include <QProgressDialog>
+#include <QDesktopWidget>
 // ---------------------------- //
+#include "helperwt.h"
 // ---------------------------- //
 #include "coreworktime.h"
 // ---------------------------- //
@@ -16,9 +17,16 @@ CoreWorkTime::CoreWorkTime( QObject * parent ) : QObject( parent )
     qDebug() << "#Call CoreWorkTime::CoreWorkTime(...)";
 #endif
 
+    workingRate = HelperWT::UnknownWR;
+
     ModelWT     = new ModelWorkTime    ( this );
     WorkTime    = new WorkTimeWindow   (      );
     PresenterWT = new PresenterWorkTime( this );
+
+    Settings    = new SettingsWindow();
+    Settings->setWindowModality( Qt::ApplicationModal );
+
+    WorkTime->setSettingsExists( true );
 
     PresenterWT->setModel( ModelWT  );
     PresenterWT->setView ( WorkTime );
@@ -28,8 +36,11 @@ CoreWorkTime::CoreWorkTime( QObject * parent ) : QObject( parent )
 
     WaitLabel->setMovie( WaitMovie );
 
+    connect( WorkTime, SIGNAL(showSettings()), SLOT(showSettings()) );
 
     connect( ModelWT, SIGNAL(enabledWait(bool)), SLOT(wait(bool)) );
+
+    connect( Settings, SIGNAL(changedWorkingRate(int)), SLOT(changedWorkingRate(int)) );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -39,6 +50,7 @@ CoreWorkTime::~CoreWorkTime()
     qDebug() << "#Call CoreWorkTime::~CoreWorkTime()";
 #endif
 
+    delete Settings;
     delete WorkTime;
 }
 // ------------------------------------------------------------------------------------ //
@@ -91,6 +103,16 @@ void CoreWorkTime::start()
         qApp->quit();
     }
 
+    readConfig();
+
+    Settings->setWorkingRates( HelperWT::namesWorkingRates() );
+    Settings->setWorkingRate( workingRate );
+
+    if( workingRate == HelperWT::UnknownWR )
+    {
+        showSettings();
+    }
+
     WorkTime->show();
 }
 // ------------------------------------------------------------------------------------ //
@@ -140,6 +162,101 @@ void CoreWorkTime::removeOld()
  */
 void CoreWorkTime::changedWorkingRate( int rate )
 {
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call CoreWorkTime::changedWorkingRate( " << rate << " )";
+#endif
+
     ModelWT->setWorkingRate( rate );
+
+    QMessageBox MsgBox( QMessageBox::Information, "", QObject::tr("Рабочая ставка успешно сохранена") );
+    MsgBox.exec();
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief CoreWorkTime::readConfig
+ *
+ * Чтений файла конфигурации.
+ *
+ * Из файла конфигурации считываются следующие поля:
+ */
+void CoreWorkTime::readConfig()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call CoreWorkTime::readConfig()";
+#endif
+
+    workingRate = HelperWT::UnknownWR;
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief CoreWorkTime::writeConfig
+ *
+ * Запись файла конфигурации.
+ *
+ * В файл конфигурации записываются следующие поля:
+ *
+ *
+ */
+void CoreWorkTime::writeConfig()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call CoreWorkTime::writeConfig()";
+#endif
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief CoreWorkTime::showSettings
+ *
+ * Отображение окна "Настройки".
+ * Если окно уже открыто, оно будет поднято на передний план.
+ */
+void CoreWorkTime::showSettings()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call CoreWorkTime::showSettings()";
+#endif
+
+    showWindow( Settings, false );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief CoreWorkTime::showWindow
+ * \param Window Указатель на окно, которое нужно отобразить
+ * \param isCenterDisplay Признак отображения в центре экрана
+ *
+ * Если == TRUE, окно \a Window будет отображено в центре экрана.
+ * Иначе окно будет отображено в центре главного окна.
+ */
+void CoreWorkTime::showWindow( QWidget * Window, bool isCenterDisplay )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call CoreWorkTime::showWindow( " << Window->objectName() << ", " << isCenterDisplay << " )";
+#endif
+
+     QPoint Center;
+
+     if( isCenterDisplay )
+     {
+         QWidget * Display = qApp->desktop()->screen(0);
+
+         Center = QPoint( Display->width () / 2 - Window->width () / 2,
+                          Display->height() / 2 - Window->height() / 2 );
+     }
+     else
+     {
+         Center = WorkTime->mapToGlobal( QPoint(WorkTime->width () / 2 - Window->width () / 2,
+                                                WorkTime->height() / 2 - Window->height() / 2) );
+     }
+
+     Window->move( Center );
+
+     if( Window->isVisible() == false )
+         Window->show();
+
+     Window->raise();
 }
 // ------------------------------------------------------------------------------------ //

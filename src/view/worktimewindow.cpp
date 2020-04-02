@@ -907,6 +907,7 @@ void WorkTimeWindow::SalaryClick()
     qDebug() << "#call WorkTimeWindow::SalaryClick()";
 #endif
 
+    emit showSettings();
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -920,6 +921,7 @@ void WorkTimeWindow::TableTimeClick()
     qDebug() << "#call WorkTimeWindow::TableTimeClick()";
 #endif
 
+    emit showTableTime();
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -933,6 +935,7 @@ void WorkTimeWindow::ScheduleClick()
     qDebug() << "#call WorkTimeWindow::ScheduleClick()";
 #endif
 
+    emit showSchedule();
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -946,6 +949,7 @@ void WorkTimeWindow::SeveralDaysClick()
     qDebug() << "#call WorkTimeWindow::SeveralDaysClick()";
 #endif
 
+    emit showSeveralDays();
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -959,6 +963,7 @@ void WorkTimeWindow::ChangesClick()
     qDebug() << "#call WorkTimeWindow::ChangesClick()";
 #endif
 
+    emit showChanges();
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -972,6 +977,7 @@ void WorkTimeWindow::SettingsClick()
     qDebug() << "#call WorkTimeWindow::SettingsClick()";
 #endif
 
+    emit showSettings();
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -991,6 +997,108 @@ void WorkTimeWindow::UpdateClick()
     qDebug() << "#call WorkTimeWindow::UpdateClick()";
 #endif
 
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::setSalaryExists
+ * \param isExists Признак наличия окна "Зарплата".
+ *
+ * Если \a isExists == TRUE, кнопка для открытия окна "Зарплата" будет отображена.
+ * Иначе она будет скрыта с формы.
+ */
+void WorkTimeWindow::setSalaryExists( bool isExists )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call WorkTimeWindow::setSalaryExists( " << isExists << " )";
+#endif
+
+    gui->SalaryButton->setVisible( isExists );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::setTableTimeExists
+ * \param isExists Признак наличия окна "Таблица времени".
+ *
+ * Если \a isExists == TRUE, кнопка для открытия окна "Таблица времени" будет отображена.
+ * Иначе она будет скрыта с формы.
+ */
+void WorkTimeWindow::setTableTimeExists( bool isExists )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call WorkTimeWindow::setTableTimeExists( " << isExists << " )";
+#endif
+
+    gui->TableTimeButton->setVisible( isExists );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::setScheduleExists
+ * \param isExists Признак наличия окна "Расписание".
+ *
+ * Если \a isExists == TRUE, кнопка для открытия окна "Расписание" будет отображена.
+ * Иначе она будет скрыта с формы.
+ */
+void WorkTimeWindow::setScheduleExists( bool isExists )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call WorkTimeWindow::setScheduleExists( " << isExists << " )";
+#endif
+
+    gui->ScheduleButton->setVisible( isExists );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::setSeveralDaysExists
+ * \param isExists Признак наличия окна "Несколько дней".
+ *
+ * Если \a isExists == TRUE, кнопка для открытия окна "Несколько дней" будет отображена.
+ * Иначе она будет скрыта с формы.
+ */
+void WorkTimeWindow::setSeveralDaysExists( bool isExists )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call WorkTimeWindow::setSeveralDaysExists( " << isExists << " )";
+#endif
+
+    gui->SeveralDaysButton->setVisible( isExists );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::setChangesExists
+ * \param isExists Признак наличия окна "Изменения".
+ *
+ * Если \a isExists == TRUE, кнопка для открытия окна "Изменения" будет отображена.
+ * Иначе она будет скрыта с формы.
+ */
+void WorkTimeWindow::setChangesExists( bool isExists )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call WorkTimeWindow::setChangesExists( " << isExists << " )";
+#endif
+
+    gui->ChangesButton->setVisible( isExists );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::setSettingsWidget
+ * \param isExists Признак наличия окна "Настройки".
+ *
+ * Если \a isExists == TRUE, кнопка для открытия окна "Настройки" будет отображена.
+ * Иначе она будет скрыта с формы.
+ */
+void WorkTimeWindow::setSettingsExists( bool isExists )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call WorkTimeWindow::setSettingsWidget( " << isExists << " )";
+#endif
+
+    gui->SettingsButton->setVisible( isExists );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -1097,6 +1205,18 @@ void WorkTimeWindow::configuringGUI()
 
      gui->WorkCalendar->setWeekdayTextFormat( Qt::Saturday, WeekendFomat );
      gui->WorkCalendar->setWeekdayTextFormat( Qt::Sunday  , WeekendFomat );
+
+     gui->IntervalsList->setSelectionMode    ( QAbstractItemView::SingleSelection );
+     gui->IntervalsList->setContextMenuPolicy( Qt::CustomContextMenu              );
+
+     setSalaryExists     ( false );
+     setTableTimeExists  ( false );
+     setScheduleExists   ( false );
+     setSeveralDaysExists( false );
+     setChangesExists    ( false );
+     setSettingsExists   ( false );
+
+     gui->UpdateButton->hide();
 }
 // ------------------------------------------------------------------------------------ //
 

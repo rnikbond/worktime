@@ -32,6 +32,13 @@ public:
     explicit WorkTimeWindow( QWidget * parent = 0 );
     ~WorkTimeWindow();
 
+    void setSalaryExists     ( bool isExists );
+    void setTableTimeExists  ( bool isExists );
+    void setScheduleExists   ( bool isExists );
+    void setSeveralDaysExists( bool isExists );
+    void setChangesExists    ( bool isExists );
+    void setSettingsExists   ( bool isExists );
+
 public: // Interface functions
 
     // Инициализация общих элементов
@@ -131,6 +138,13 @@ signals:
     void userChangeNote     ( QString note                        );
 
     void userAddInterval( const QString & title );
+
+    void showSalary     ();
+    void showTableTime  ();
+    void showSchedule   ();
+    void showSeveralDays();
+    void showChanges    ();
+    void showSettings   ();
 
 protected:
 

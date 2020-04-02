@@ -6,7 +6,7 @@
 
 MonthWorkTime::MonthWorkTime( QObject *parent) : QObject( parent )
 {
-#ifdef QT_INFO_CALL_FUNC
+#ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call MonthWorkTime::MonthWorkTime()";
 #endif
     updatedWeekNeed   = 0;
@@ -16,7 +16,7 @@ MonthWorkTime::MonthWorkTime( QObject *parent) : QObject( parent )
 
 void MonthWorkTime::clear( bool isFull )
 {    
-#ifdef QT_INFO_CALL_FUNC
+#ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call MonthWorkTime::clear()";
 #endif
 
@@ -36,7 +36,7 @@ void MonthWorkTime::clear( bool isFull )
 
 void MonthWorkTime::fullUpdate( const QDate & Date )
 {
-#ifdef QT_INFO_CALL_FUNC
+#ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call MonthWorkTime::fullUpdate(" << Date << ")";
 #endif
 
@@ -49,7 +49,7 @@ void MonthWorkTime::fullUpdate( const QDate & Date )
 
 int MonthWorkTime::countDays()
 {
-#ifdef QT_INFO_CALL_FUNC
+#ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call MonthWorkTime::countDays()";
 #endif
 
@@ -59,7 +59,7 @@ int MonthWorkTime::countDays()
 
 void MonthWorkTime::setTimeStart( const QDate& date, const int interval, const QTime& time,  bool isUpdate )
 {
-#ifdef QT_INFO_CALL_FUNC
+#ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call MonthWorkTime::setTimeStart(" << date << ", " << time << ", " << interval << ", " << isUpdate << ")";
 #endif
 
@@ -87,7 +87,7 @@ void MonthWorkTime::setTimeStart( const QDate& date, const int interval, const Q
 
 void MonthWorkTime::setTimeEnd( const QDate& date, const int interval, const QTime& time, bool isUpdate )
 {
-#ifdef QT_INFO_CALL_FUNC
+#ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call MonthWorkTime::setTimeEnd(" << date << ", " << interval << ", " << time  << ", " << isUpdate << ")";
 #endif
 
@@ -115,7 +115,7 @@ void MonthWorkTime::setTimeEnd( const QDate& date, const int interval, const QTi
 
 void MonthWorkTime::setTimeNeed( const QDate& date, const QTime& time, bool isUpdate )
 {
-#ifdef QT_INFO_CALL_FUNC
+#ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call MonthWorkTime::setTimeNeed(" << date << ", " << time << ", " << isUpdate << ")";
 #endif
 
@@ -142,7 +142,7 @@ void MonthWorkTime::setTimeNeed( const QDate& date, const QTime& time, bool isUp
 
 int MonthWorkTime::countIntervals( const QDate& date )
 {
-#ifdef QT_INFO_CALL_FUNC
+#ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call MonthWorkTime::countIntervals(" << date << ")";
 #endif
 
@@ -165,7 +165,7 @@ int MonthWorkTime::countIntervals( const QDate& date )
 
 int MonthWorkTime::lastInterval( const QDate& date )
 {
-#ifdef QT_INFO_CALL_FUNC
+#ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call MonthWorkTime::lastInterval(" << date << ")";
 #endif
 
@@ -175,7 +175,7 @@ int MonthWorkTime::lastInterval( const QDate& date )
 
 WTime MonthWorkTime::timeStart( const QDate& date, const int interval)
 {
-#ifdef QT_INFO_CALL_FUNC
+#ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call MonthWorkTime::timeStart(" << date << ", " << interval << ")";
 #endif
 
@@ -201,7 +201,7 @@ WTime MonthWorkTime::timeStart( const QDate& date, const int interval)
 
 WTime MonthWorkTime::timeEnd( const QDate& date, const int interval )
 {
-#ifdef QT_INFO_CALL_FUNC
+#ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call MonthWorkTime::timeEnd(" << date << ", " << interval << ")";
 #endif
 
@@ -227,7 +227,7 @@ WTime MonthWorkTime::timeEnd( const QDate& date, const int interval )
 
 WTime MonthWorkTime::timeNeedInDay( const QDate& date )
 {
-#ifdef QT_INFO_CALL_FUNC
+#ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call MonthWorkTime::timeNeedInDay(" << date << ")";
 #endif
 
@@ -253,7 +253,7 @@ WTime MonthWorkTime::timeNeedInDay( const QDate& date )
 
 WTime MonthWorkTime::timeWorkedInDay( const QDate& date )
 {
-#ifdef QT_INFO_CALL_FUNC
+#ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call MonthWorkTime::timeWorkedInDay(" << date << ")";
 #endif
 
@@ -279,7 +279,7 @@ WTime MonthWorkTime::timeWorkedInDay( const QDate& date )
 
 WTime MonthWorkTime::timeNeedInWeek( const QDate& date )
 {
-#ifdef QT_INFO_CALL_FUNC
+#ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call MonthWorkTime::timeNeedInWeek(" << date << ")";
 #endif
 
@@ -292,7 +292,7 @@ WTime MonthWorkTime::timeNeedInWeek( const QDate& date )
 
 WTime MonthWorkTime::timeWorkedInWeek( const QDate& date )
 {
-#ifdef QT_INFO_CALL_FUNC
+#ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call MonthWorkTime::timeWorkedInWeek(" << date << ")";
 #endif
 
@@ -305,7 +305,7 @@ WTime MonthWorkTime::timeWorkedInWeek( const QDate& date )
 
 WTime MonthWorkTime::timeNeedInMonth()
 {
-#ifdef QT_INFO_CALL_FUNC
+#ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call MonthWorkTime::timeNeedInMonth()";
 #endif
 
@@ -315,7 +315,7 @@ WTime MonthWorkTime::timeNeedInMonth()
 
 WTime MonthWorkTime::timeWorkedInMonth()
 {
-#ifdef QT_INFO_CALL_FUNC
+#ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call MonthWorkTime::timeWorkedInMonth()";
 #endif
 
@@ -325,7 +325,7 @@ WTime MonthWorkTime::timeWorkedInMonth()
 
 WTime MonthWorkTime::timeNeedToDay( const QDate& date )
 {
-#ifdef QT_INFO_CALL_FUNC
+#ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call MonthWorkTime::timeNeedToDay(" << date << ")";
 #endif
 
@@ -355,7 +355,7 @@ WTime MonthWorkTime::timeNeedToDay( const QDate& date )
 
 WTime MonthWorkTime::timeWorkedToDay( const QDate& date )
 {
-#ifdef QT_INFO_CALL_FUNC
+#ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call MonthWorkTime::timeWorkedToDay(" << date << ")";
 #endif
 
@@ -386,7 +386,7 @@ WTime MonthWorkTime::timeWorkedToDay( const QDate& date )
 
 void MonthWorkTime::updateTimeNeedInWeek( const QDate& date )
 {
-#ifdef QT_INFO_CALL_FUNC
+#ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call MonthWorkTime::updateTimeNeedInWeek(" << date << ")";
 #endif
 
@@ -417,7 +417,7 @@ void MonthWorkTime::updateTimeNeedInWeek( const QDate& date )
 
 void MonthWorkTime::updateTimeWorkedInWeek( const QDate& date )
 {
-#ifdef QT_INFO_CALL_FUNC
+#ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call MonthWorkTime::updateTimeWorkedInWeek(" << date << ")";
 #endif
 
@@ -448,7 +448,7 @@ void MonthWorkTime::updateTimeWorkedInWeek( const QDate& date )
 
 void MonthWorkTime::updateTimeNeedInMonth( const QDate& date )
 {
-#ifdef QT_INFO_CALL_FUNC
+#ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call MonthWorkTime::updateTimeNeedInMonth(" << date << ")";
 #endif
 
@@ -476,7 +476,7 @@ void MonthWorkTime::updateTimeNeedInMonth( const QDate& date )
 
 void MonthWorkTime::updateTimeWorkedInMonth( const QDate& date )
 {
-#ifdef QT_INFO_CALL_FUNC
+#ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call MonthWorkTime::updateTimeWorkedInMonth(" << date << ")";
 #endif
 
@@ -504,7 +504,7 @@ void MonthWorkTime::updateTimeWorkedInMonth( const QDate& date )
 
 void MonthWorkTime::addDay( const QDate date )
 {
-#ifdef QT_INFO_CALL_FUNC
+#ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call MonthWorkTime::addDay(" << date << ")";
 #endif
 
@@ -520,7 +520,7 @@ void MonthWorkTime::addDay( DayWorkTime* Day )
 
 void MonthWorkTime::setTypeDay( const QDate date, const DayWorkTime::TypesDay newType )
 {
-#ifdef QT_INFO_CALL_FUNC
+#ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call MonthWorkTime::setTypeDay(" << date << ", " << newType << ")";
 #endif
 
@@ -549,7 +549,7 @@ void MonthWorkTime::setTypeDay( const QDate date, const DayWorkTime::TypesDay ne
 
 void MonthWorkTime::addInterval( const QDate& date, const QString & title )
 {
-#ifdef QT_INFO_CALL_FUNC
+#ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call MonthWorkTime::addInterval(" << date << ", " << title << ")";
 #endif
 
@@ -570,7 +570,7 @@ void MonthWorkTime::addInterval( const QDate& date, const QString & title )
 
 void MonthWorkTime::removeInterval( const QDate& date, const int interval )
 {
-#ifdef QT_INFO_CALL_FUNC
+#ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call MonthWorkTime::removeInterval(" << date << ", " << interval << ")";
 #endif
 
@@ -594,7 +594,7 @@ void MonthWorkTime::removeInterval( const QDate& date, const int interval )
 
 void MonthWorkTime::renameInterval(const QDate& date, const int interval, const QString& newTitle )
 {
-#ifdef QT_INFO_CALL_FUNC
+#ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call MonthWorkTime::renameInterval(" << date << ", " << interval << ", " << newTitle << ")";
 #endif
 
@@ -615,7 +615,7 @@ void MonthWorkTime::renameInterval(const QDate& date, const int interval, const 
 
 void MonthWorkTime::setNote( const QDate& date, const QString& note )
 {
-#ifdef QT_INFO_CALL_FUNC
+#ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call MonthWorkTime::setNote(" << date << ", " << note << ")";
 #endif
 
@@ -636,7 +636,7 @@ void MonthWorkTime::setNote( const QDate& date, const QString& note )
 
 QString MonthWorkTime::note( const QDate& date )
 {
-#ifdef QT_INFO_CALL_FUNC
+#ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call MonthWorkTime::note(" << date << ")";
 #endif
 
@@ -659,7 +659,7 @@ QString MonthWorkTime::note( const QDate& date )
 
 void MonthWorkTime::changeTypeDay( const QDate& date, DayWorkTime::TypesDay type )
 {
-#ifdef QT_INFO_CALL_FUNC
+#ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call MonthWorkTime::changeTypeDay(" << date << ", " << type << ")";
 #endif
 
@@ -685,7 +685,7 @@ void MonthWorkTime::changeTypeDay( const QDate& date, DayWorkTime::TypesDay type
 
 DayWorkTime::TypesDay MonthWorkTime::typeDay( const QDate& date )
 {
-#ifdef QT_INFO_CALL_FUNC
+#ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call MonthWorkTime::typeDay(" << date << ")";
 #endif
 
@@ -710,7 +710,7 @@ DayWorkTime::TypesDay MonthWorkTime::typeDay( const QDate& date )
 
 QColor MonthWorkTime::colorDay( const QDate & date )
 {
-#ifdef QT_INFO_CALL_FUNC
+#ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call MonthWorkTime::colorDay(" << date << ")";
 #endif
 
@@ -735,7 +735,7 @@ QColor MonthWorkTime::colorDay( const QDate & date )
 
 QStringList MonthWorkTime::titlesIntervals( const QDate& date )
 {
-#ifdef QT_INFO_CALL_FUNC
+#ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call MonthWorkTime::titlesIntervals(" << date << ")";
 #endif
 

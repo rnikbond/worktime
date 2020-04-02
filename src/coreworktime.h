@@ -8,6 +8,7 @@
 // ---------------------------- //
 #include "modelworktime.h"
 #include "worktimewindow.h"
+#include "settingswindow.h"
 #include "presenterworktime.h"
 // ---------------------------- //
 
@@ -15,14 +16,16 @@ class CoreWorkTime : public QObject
 {
     Q_OBJECT
 
+    int workingRate;
+
     QLabel * WaitLabel;
     QMovie * WaitMovie;
-
-private:
 
     ModelWorkTime     * ModelWT;
     WorkTimeWindow    * WorkTime;
     PresenterWorkTime * PresenterWT;
+
+    SettingsWindow    * Settings;
 
 public:
 
@@ -36,12 +39,19 @@ private:
     void removeOld();
     bool isAlreadyRunning();
 
+    void readConfig();
+    void writeConfig();
+
+    void showWindow( QWidget * Window, bool isCenterDisplay );
+
 private slots:
 
     void wait(bool isWait );
 
     // Slots from settings
     void changedWorkingRate( int );
+
+    void showSettings();
 };
 
 #endif // COREWORKTIME_H

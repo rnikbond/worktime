@@ -51,6 +51,13 @@ public: // Members
 
     virtual void updateTimeEnd( int id, WTime time ) = 0;
 
+    virtual void setSalaryExists     ( bool isExists ) = 0;
+    virtual void setTableTimeExists  ( bool isExists ) = 0;
+    virtual void setScheduleExists   ( bool isExists ) = 0;
+    virtual void setSeveralDaysExists( bool isExists ) = 0;
+    virtual void setChangesExists    ( bool isExists ) = 0;
+    virtual void setSettingsExists   ( bool isExists ) = 0;
+
 public: // Signals
 
     virtual void userSelectDate    ( const QDate   & date                ) = 0;
@@ -64,6 +71,13 @@ public: // Signals
     virtual void userChangeTimeEnd  ( int id, WTime time    ) = 0;
     virtual void userChangeTimeNeed ( WTime   time          ) = 0;
     virtual void userChangeNote     ( QString note          ) = 0;
+
+    virtual void showSalary     () = 0;
+    virtual void showTableTime  () = 0;
+    virtual void showSchedule   () = 0;
+    virtual void showSeveralDays() = 0;
+    virtual void showChanges    () = 0;
+    virtual void showSettings   () = 0;
 };
 
 #endif // IVIEWWORKTIME

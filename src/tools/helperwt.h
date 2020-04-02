@@ -35,6 +35,7 @@ public:
     static const QString pathToOldWorkTime();
     static const QString pathToNewWorkTime();
 
+    static const QStringList namesWorkingRates();
 };
 
 #endif // HELPERWT_H

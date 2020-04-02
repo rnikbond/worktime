@@ -64,6 +64,21 @@ const QString HelperWT::pathToNewWorkTime()
 // ------------------------------------------------------------------------------------ //
 
 /*!
+ * \brief HelperWT::namesWorkingRates
+ * \return Список названий рабочих ставок
+ */
+const QStringList HelperWT::namesWorkingRates()
+{
+    return QStringList() << tr("40 часов (1)")  // Hours_40_NoLanch = 0,
+                         << tr("40 часов (2)")  // Hours_40_Lanch   = 1,
+                         << tr("40 часов (3)")  // Hours_40_4_Days  = 2,
+                         << tr("35 часов"    )  // Hours_35_NoLanch = 3,
+                         << tr("30 часов"    )  // Hours_30_NoLanch = 4,
+                         << tr("20 часов"    ); // Hours_20_NoLanch = 5
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
  * \brief HelperWT::nameMonthInGenitiveCase
  * \param Date - Дата, из которой используется номер месяца
  * \param isLowerChars - если == TRUE, первая буква месяца будет в нижнем регистре

@@ -22,8 +22,6 @@ WorkTimeWindow::WorkTimeWindow( QWidget * parent ) : QWidget( parent ), gui( new
     qDebug() << "#call WorkTimeWindow::WorkTimeWindow(...)";
 #endif
 
-    isMoveWindow = false;
-
     configuringGUI();
     connectSingnalSlot();
 }
@@ -194,17 +192,18 @@ void WorkTimeWindow::changeTypeDay( int type )
 // ------------------------------------------------------------------------------------ //
 
 /*!
- * \brief WorkTimeWindow::closeWorkTime
+ * \brief WorkTimeWindow::selectPage
+ * \param page Индекс выбранной страницы
  *
- * Закрытие программы
+ * Испускается сигнал WorkTimeWindow::userSelectPage.
  */
-void WorkTimeWindow::closeWorkTime()
+void WorkTimeWindow::selectPage( int page )
 {
 #ifdef WT_INFO_CALL_FUNC
-    qDebug() << "#call WorkTimeWindow::closeWorkTime()";
+    qDebug() << "#call WorkTimeWindow::selectPage( " << page << " )";
 #endif
 
-    qApp->quit();
+    emit userSelectPage( page );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -700,6 +699,44 @@ void WorkTimeWindow::updateTimeEnd( int id, WTime time )
 // ------------------------------------------------------------------------------------ //
 
 /*!
+ * \brief WorkTimeWindow::setShownMenu
+ * \param isShown Признак отображения меню
+ */
+void WorkTimeWindow::setShownMenu( bool isShown )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call WorkTimeWindow::setShownMenu(" << isShown << ")";
+#endif
+
+    gui->MenuGBox     ->setVisible( isShown );
+    gui->StatisticGBox->setVisible( isShown );
+
+    if( isShown )
+    {
+        gui->WorkCalendar->setHorizontalHeaderFormat( QCalendarWidget::ShortDayNames );
+    }
+    else
+    {
+        gui->WorkCalendar->setHorizontalHeaderFormat( QCalendarWidget::LongDayNames );
+    }
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::setSelectedPage
+ * \param page Индекс выбранной страницы
+ */
+void WorkTimeWindow::setSelectedPage( int page )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call WorkTimeWindow::setSelectedPage(" << page << ")";
+#endif
+
+    gui->StatisticToolBox->setCurrentIndex( page );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
  * \brief WorkTimeWindow::selectInterval
  * \param id Идентификатор интервала дня
  *
@@ -874,6 +911,8 @@ void WorkTimeWindow::removeInterval()
  *
  * При отображении меню для каленаря устанавливается короткий формат дней недели.
  * При скрытом меню для каленаря устанавливается длинный формат дней недели.
+ *
+ * Испускается сигнал WorkTimeWindow::userChangeVisibleMenu.
  */
 void WorkTimeWindow::MenuClick()
 {
@@ -894,6 +933,8 @@ void WorkTimeWindow::MenuClick()
     {
         gui->WorkCalendar->setHorizontalHeaderFormat( QCalendarWidget::LongDayNames );
     }
+
+    emit userChangeVisibleMenu( visibleState );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -1137,9 +1178,6 @@ void WorkTimeWindow::connectSingnalSlot()
      qDebug() << "#call WorkTimeWindow::connectSingnalSlot()";
 #endif
 
-    // -------------------------------- WINDOW -------------------------------- //
-    connect( gui->CloseButton, SIGNAL(clicked(bool)), SLOT(closeWorkTime()) );
-
     // -------------------------------- CALENDAR -------------------------------- //
     connect( gui->WorkCalendar, SIGNAL(selectionChanged(    )), SLOT(selectDate()) );
     connect( gui->TodayButton , SIGNAL(clicked         (bool)), SLOT(todayClick()) );
@@ -1221,58 +1259,17 @@ void WorkTimeWindow::configuringGUI()
 // ------------------------------------------------------------------------------------ //
 
 /*!
- * \brief WorkTimeWindow::mousePressEvent
- * \param MouseEvent
+ * \brief WorkTimeWindow::closeEvent
+ * \param HideEvent Указатель на событие скрытия окна
  *
- * Событие нажатия кнопки мыши
+ * Испускается сигнал WorkTimeWindow::changedGeometry.
+ * Испускается сигнал WorkTimeWindow::closeWindow.
  */
-void WorkTimeWindow::mousePressEvent( QMouseEvent * MouseEvent )
+void WorkTimeWindow::closeEvent( QCloseEvent * CloseEvent )
 {
-    if( MouseEvent->buttons() & Qt::LeftButton )
-    {
-        if( gui->HeaderWidget->geometry().contains(MouseEvent->pos()) )
-        {
-            isMoveWindow  = true;
-            WindowPosition = MouseEvent->globalPos();
-        }
-    }
+    emit changedGeometry( geometry() );
+    emit closeWindow();
 
-    QWidget::mousePressEvent( MouseEvent );
-}
-// ------------------------------------------------------------------------------------ //
-
-/*!
- * \brief WorkTimeWindow::mouseReleaseEvent
- * \param MouseEvent
- *
- * Событие отпускания кнопки мыши
- */
-void WorkTimeWindow::mouseReleaseEvent( QMouseEvent * MouseEvent )
-{
-    isMoveWindow = false;
-
-    QWidget::mouseReleaseEvent( MouseEvent );
-}
-// ------------------------------------------------------------------------------------ //
-
-/*!
- * \brief WorkTimeWindow::mouseMoveEven
- * \param MouseEvent
- *
- * Событие перемещения курсора
- */
-void WorkTimeWindow::mouseMoveEvent( QMouseEvent * MouseEvent )
-{
-    if( isMoveWindow && (MouseEvent->buttons() & Qt::LeftButton) )
-    {
-        QPoint Delta = MouseEvent->globalPos() - WindowPosition;
-
-        move( x() + Delta.x(), y() + Delta.y() );
-
-        WindowPosition = MouseEvent->globalPos();
-    }
-
-
-    QWidget::mouseMoveEvent( MouseEvent );
+    CloseEvent->ignore();
 }
 // ------------------------------------------------------------------------------------ //

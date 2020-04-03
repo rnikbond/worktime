@@ -24,9 +24,6 @@ class WorkTimeWindow : public QWidget, public IViewWorkTime
         MonthPage  ///< Страница "Месяц"
     };
 
-    bool   isMoveWindow;
-    QPoint WindowPosition;
-
 public:
 
     explicit WorkTimeWindow( QWidget * parent = 0 );
@@ -77,6 +74,9 @@ public: // Interface functions
 
     void updateTimeEnd( int id, WTime time );
 
+    void setShownMenu   ( bool isShown );
+    void setSelectedPage( int  page    );
+
 private:
 
     void configuringGUI();
@@ -88,8 +88,7 @@ private:
 private slots:
 
     // Window
-
-    void closeWorkTime();
+    void selectPage( int page );
 
     // Calendar slots
     void selectDate();
@@ -139,6 +138,12 @@ signals:
 
     void userAddInterval( const QString & title );
 
+    void userChangeVisibleMenu( bool );
+    void userSelectPage       ( int  );
+
+    void closeWindow();
+    void changedGeometry( QRect geometry );
+
     void showSalary     ();
     void showTableTime  ();
     void showSchedule   ();
@@ -148,9 +153,7 @@ signals:
 
 protected:
 
-    void mousePressEvent  ( QMouseEvent * MouseEvent );
-    void mouseReleaseEvent( QMouseEvent * MouseEvent );
-    void mouseMoveEvent   ( QMouseEvent * MouseEvent );
+    void closeEvent( QCloseEvent * CloseEvent );
 };
 // ------------------------------------------------------------------------------------ //
 

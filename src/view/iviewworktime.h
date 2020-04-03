@@ -2,6 +2,7 @@
 #ifndef IVIEWWORKTIME
 #define IVIEWWORKTIME
 // ---------------------------- //
+#include <QRect>
 #include <QDate>
 #include <QColor>
 #include <QString>
@@ -51,6 +52,9 @@ public: // Members
 
     virtual void updateTimeEnd( int id, WTime time ) = 0;
 
+    virtual void setShownMenu   ( bool isShown ) = 0;
+    virtual void setSelectedPage( int  page    ) = 0;
+
     virtual void setSalaryExists     ( bool isExists ) = 0;
     virtual void setTableTimeExists  ( bool isExists ) = 0;
     virtual void setScheduleExists   ( bool isExists ) = 0;
@@ -71,6 +75,12 @@ public: // Signals
     virtual void userChangeTimeEnd  ( int id, WTime time    ) = 0;
     virtual void userChangeTimeNeed ( WTime   time          ) = 0;
     virtual void userChangeNote     ( QString note          ) = 0;
+
+    virtual void userChangeVisibleMenu( bool ) = 0;
+    virtual void userSelectPage       ( int  ) = 0;
+
+    virtual void closeWindow() = 0;
+    virtual void changedGeometry( QRect geometry ) = 0;
 
     virtual void showSalary     () = 0;
     virtual void showTableTime  () = 0;

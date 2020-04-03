@@ -30,7 +30,9 @@ HEADERS += src/model/imodelworktime.h          \
            src/tools/interval.h                \
            src/tools/monthworktime.h           \
            src/tools/network.h                 \
-           src/coreworktime.h
+           src/coreworktime.h \
+    src/view/settingswindow.h \
+    src/view/iviewsettings.h
 
 
 SOURCES += src/main.cpp                          \
@@ -46,10 +48,12 @@ SOURCES += src/main.cpp                          \
            src/tools/interval.cpp                \
            src/tools/monthworktime.cpp           \
            src/tools/network.cpp                 \
-           src/coreworktime.cpp
+           src/coreworktime.cpp \
+    src/view/settingswindow.cpp
 
 FORMS   += src/gui/worktimewindow.ui \
-           src/model/database/tablesdatabase.ui
+           src/model/database/tablesdatabase.ui \
+    src/view/settingswindow.ui
 
 #RESOURCES += resources/resource.qrc
 #RC_FILE   += resources/application.rc

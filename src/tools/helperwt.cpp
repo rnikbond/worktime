@@ -24,12 +24,38 @@ const QDate HelperWT::currentDate()
 // ------------------------------------------------------------------------------------ //
 
 /*!
+ * \brief HelperWT::pathToUpdates
+ * \return Аюсолютный путь к обновлениям
+ */
+const QString HelperWT::pathToUpdates()
+{
+    return QDir::toNativeSeparators( "E:/WorkTime" );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
  * \brief HelperWT::pathToDataBase
  * \return Абсолютный путь к базе данных
  */
 const QString HelperWT::pathToDataBase()
 {
     return QDir::homePath() + "/AppData/worktime/WorkTime.db";
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief HelperWT::pathToThemes
+ * \return Путь к директории со схемами
+ */
+const QString HelperWT::pathToThemes()
+{
+    return "resources/themes";
+}
+// ------------------------------------------------------------------------------------ //
+
+const QString HelperWT::pathToConfig()
+{
+    return QDir::homePath() + "/AppData/worktime/WorkTime.conf";
 }
 // ------------------------------------------------------------------------------------ //
 

@@ -29,7 +29,13 @@ public:
     static const QString nameMonthInGenitiveCase( const QDate & Date, bool isLowerChars );
     static const QString nameMonthInDativeCase  ( const QDate & Date, bool isLowerChars );
 
+    static const QString pathToUpdates();
+
     static const QString pathToDataBase();
+
+    static const QString pathToThemes();
+
+    static const QString pathToConfig();
 
     static const QString pathToWorkTime();
     static const QString pathToOldWorkTime();

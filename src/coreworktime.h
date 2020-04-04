@@ -71,10 +71,14 @@ private:
     void readConfig();
     void writeConfig();
 
+    void normalizeGeometryWorkTime();
+
     void showWindow( QWidget * Window, bool isCenterDisplay );
 
     QStringList themePathes();
     QStringList themeNames();
+
+    void applyTheme( int theme );
 
     float toOpacity( int value );
 

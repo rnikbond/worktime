@@ -36,10 +36,15 @@ CoreWorkTime::CoreWorkTime( QObject * parent ) : QObject( parent )
     isViewWidget          = true;
     isTopWidget           = true;
     opacityWidget         = 1000;
-    WorkTimeGeometry      = QRect( 100, 100, 800, 610 );
-    WidgetDesktopGeometry = QRect( 100, 100, 200, 100 );
+    WorkTimeGeometry      = QRect( 100, 100, 800, 600 );
+    WidgetDesktopGeometry = QRect( 100, 100, 200, 80  );
     isShownMenu           = true;
     selectedPage          = 0;
+
+    QRect DesktopRect = qApp->desktop()->rect();
+
+    WorkTimeGeometry.moveTopLeft( QPoint((DesktopRect.width () - WorkTimeGeometry.width ()) / 2,
+                                         (DesktopRect.height() - WorkTimeGeometry.height()) / 2) );
 
     createLoaded ();
     createObjects();
@@ -112,13 +117,12 @@ void CoreWorkTime::start()
     {
         readConfig();
 
-        changeTheme( themeIndex );
+        applyTheme( themeIndex );
 
         WorkTime->setWindowOpacity( toOpacity(opacityValue) );
         WorkTime->setGeometry     ( WorkTimeGeometry        );
         WorkTime->setShownMenu    ( isShownMenu             );
         WorkTime->setSelectedPage ( selectedPage            );
-
 
         WorkTime->show();
 
@@ -202,31 +206,9 @@ void CoreWorkTime::changeTheme( int theme )
 
     themeIndex = theme;
 
-    QStringList ThemesNames = themeNames();
-    QStringList ThemesList  = themePathes();
-
-    for( int themeIndex = 0; themeIndex < ThemesList.count(); themeIndex++ )
-    {
-        if( themeIndex == theme )
-        {
-            QString ThemePath = HelperWT::pathToThemes() + "/" + ThemesNames.at(theme) + "/" + ThemesNames.at(theme) + ".css";
-
-            QFile ThemeFile( ThemePath );
-
-            if( ThemeFile.exists() )
-            {
-                if( ThemeFile.open(QIODevice::ReadOnly) )
-                {
-                    qApp->setStyleSheet( ThemeFile.readAll() );
-                    ThemeFile.close();
-                }
-            }
-
-            break;
-        }
-    }
-
     writeConfig();
+
+    applyTheme( themeIndex );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -555,7 +537,7 @@ void CoreWorkTime::changeGeometryWidget( QRect geometry )
     qDebug() << "#Call CoreWorkTime::changeGeometryWidget( " << geometry << " )";
 #endif
 
-    WorkTimeGeometry = geometry;
+    WidgetDesktopGeometry = geometry;
 
     writeConfig();
 }
@@ -572,7 +554,7 @@ void CoreWorkTime::changeGeometryWorkTime( QRect geometry )
     qDebug() << "#Call CoreWorkTime::changeGeometryWorkTime( " << geometry << " )";
 #endif
 
-    WidgetDesktopGeometry = geometry;
+    WorkTimeGeometry = geometry;
 
     writeConfig();
 }
@@ -590,6 +572,7 @@ void CoreWorkTime::resetUpdatePath()
 #endif
 
     Settings->setUpdatesPath( HelperWT::pathToUpdates() );
+    changeUpdatePath( HelperWT::pathToUpdates() );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -670,7 +653,7 @@ void CoreWorkTime::readConfig()
 
     Config.beginGroup( "GEOMETRY" );
         WorkTimeGeometry.setX     ( Config.value( "X"      ).toInt() );
-        WorkTimeGeometry.setY     ( Config.value( "X"      ).toInt() );
+        WorkTimeGeometry.setY     ( Config.value( "Y"      ).toInt() );
         WorkTimeGeometry.setWidth ( Config.value( "WIDTH"  ).toInt() );
         WorkTimeGeometry.setHeight( Config.value( "HEIGHT" ).toInt() );
     Config.endGroup(); // GEOMETRY
@@ -681,6 +664,8 @@ void CoreWorkTime::readConfig()
     MaxTime          = QTime( HoursMax         , MinutesMax          );
     BeforeTime       = QTime( HourseBefore     , MinutesBefore       );
     AfterTime        = QTime( HourseAfter      , MinutesAfter        );
+
+    normalizeGeometryWorkTime();
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -727,7 +712,7 @@ void CoreWorkTime::writeConfig()
         Config.setValue("TRAY"         , isTray         );
         Config.setValue("AUTORUN"      , isAutorun      );
         Config.setValue("UPDATES"      , isCheckUpdates );
-        Config.setValue("UPDATES_PATH" , isCheckUpdates    );
+        Config.setValue("UPDATES_PATH" , updatePath     );
     Config.endGroup(); // AUTO
 
     Config.beginGroup( "TIMES" );
@@ -792,6 +777,28 @@ void CoreWorkTime::showSettings()
 // ------------------------------------------------------------------------------------ //
 
 /*!
+ * \brief CoreWorkTime::normalizeGeometryWorkTime
+ *
+ * Нормализация геометрии главного окна.
+ * Если находится за экраном, оно будет перемещено в центр экрана
+ */
+void CoreWorkTime::normalizeGeometryWorkTime()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call CoreWorkTime::normalizeGeometry( " << Rect << " )";
+#endif
+
+    QRect DesktopRect = qApp->desktop()->rect();
+
+    if( DesktopRect.contains(WorkTimeGeometry) == false )
+    {
+        WorkTimeGeometry.moveTopLeft( QPoint((DesktopRect.width () - WorkTimeGeometry.width ()) / 2,
+                                             (DesktopRect.height() - WorkTimeGeometry.height()) / 2) );
+    }
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
  * \brief CoreWorkTime::showWindow
  * \param Window Указатель на окно, которое нужно отобразить
  * \param isCenterDisplay Признак отображения в центре экрана
@@ -816,8 +823,17 @@ void CoreWorkTime::showWindow( QWidget * Window, bool isCenterDisplay )
      }
      else
      {
-         Center = WorkTime->mapToGlobal( QPoint(WorkTime->width () / 2 - Window->width () / 2,
-                                                WorkTime->height() / 2 - Window->height() / 2) );
+         int deltaWidth  = 0;
+         int deltaHeight = 0;
+
+         if( Window->width() > WorkTime->width() )
+             deltaWidth = (Window->width() - WorkTime->width()) / 2;
+
+         if( Window->height() > WorkTime->height() )
+             deltaHeight = (Window->height() - WorkTime->height()) / 2;
+
+         Center = WorkTime->mapToGlobal( QPoint((WorkTime->width () - Window->width ()) / 2 - deltaWidth,
+                                                (WorkTime->height() - Window->height()) / 2 - deltaHeight) );
      }
 
      Window->move( Center );
@@ -855,11 +871,54 @@ QStringList CoreWorkTime::themePathes()
 // ------------------------------------------------------------------------------------ //
 
 /*!
+ * \brief CoreWorkTime::applyTheme
+ * \param theme Индекс темы
+ *
+ * Применяется тема для всего приложения
+ */
+void CoreWorkTime::applyTheme( int theme )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call CoreWorkTime::applyTheme( " << theme << " )";
+#endif
+
+    QStringList ThemesNames = themeNames();
+    QStringList ThemesList  = themePathes();
+
+    for( int themeIndex = 0; themeIndex < ThemesList.count(); themeIndex++ )
+    {
+        if( themeIndex == theme )
+        {
+            QString ThemePath = HelperWT::pathToThemes() + "/" + ThemesNames.at(theme) + "/" + ThemesNames.at(theme) + ".css";
+
+            QFile ThemeFile( ThemePath );
+
+            if( ThemeFile.exists() )
+            {
+                if( ThemeFile.open(QIODevice::ReadOnly) )
+                {
+                    qApp->setStyleSheet( ThemeFile.readAll() );
+                    ThemeFile.close();
+                }
+            }
+
+            break;
+        }
+    }
+
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
  * \brief CoreWorkTime::themeNames
  * \return Список названий тем
  */
 QStringList CoreWorkTime::themeNames()
 {
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call CoreWorkTime::themeNames()";
+#endif
+
     QStringList ThemesNames;
     QStringList ThemesList = themePathes();
 
@@ -879,6 +938,10 @@ QStringList CoreWorkTime::themeNames()
  */
 float CoreWorkTime::toOpacity( int value )
 {
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call CoreWorkTime::toOpacity( " << value << " )";
+#endif
+
     return float( value / 1000. );
 }
 // ------------------------------------------------------------------------------------ //

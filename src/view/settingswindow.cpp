@@ -136,9 +136,8 @@ void SettingsWindow::saveWorkingRate()
 
     if( rate > 0 )
     {
-        workingRate = rate - 1;
-        qDebug() << "selected rate: " << workingRate;
-        emit changedWorkingRate( workingRate );
+        workingRate = rate;
+        emit changedWorkingRate( workingRate - 1 );
 
         updateMenuEnabled();
     }
@@ -828,7 +827,7 @@ void SettingsWindow::showEvent( QShowEvent * ShowEvent )
  */
 void SettingsWindow::closeEvent( QCloseEvent * CloseEvent )
 {
-    if( workingRate == HelperWT::UnknownWR )
+    if( workingRate < 1 )
     {
         QMessageBox MessageBox;
 

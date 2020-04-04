@@ -1,6 +1,8 @@
 // ---------------------------- //
 #include <QMenu>
+#include <QDebug>
 #include <QMouseEvent>
+#include <QDesktopWidget>
 // ---------------------------- //
 #include "helperwt.h"
 #include "dayworktime.h"
@@ -1229,9 +1231,6 @@ void WorkTimeWindow::configuringGUI()
      gui->setupUi( this );
 
      setWindowFlags( Qt::CustomizeWindowHint | Qt::WindowCloseButtonHint );
-
-     gui->HeaderWidget->setWindowOpacity( 1.0 );
-     gui->HeaderWidget->setStyleSheet( "border: 1px solid black;" );
 
      gui->WorkCalendar->setSelectionMode         ( QCalendarWidget::SingleSelection  );
      gui->WorkCalendar->setHorizontalHeaderFormat( QCalendarWidget::LongDayNames     );

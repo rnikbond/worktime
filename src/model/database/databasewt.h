@@ -7,21 +7,27 @@
 // ------------------------------------ //
 #include "wtime.h"
 #include "interval.h"
-#include "tablesdatabase.h"
+#include "ilog.h"
+
 // ------------------------------------ //
 
-class DataBaseWT : public QObject
+class DataBaseWT : public QObject, public ILog
 {
     Q_OBJECT
 
-    QSqlDatabase DataBase;
-    TablesDataBase * TablesWindow;
-
-	static DataBaseWT * Instance;
-
 public:
 
-    static DataBaseWT * instance();
+    enum TypeTimeNeed
+    {
+        User    ,
+        Schedule
+    };
+
+private:
+
+    QSqlDatabase DataBase;
+
+public:
 
     DataBaseWT( QObject* parent = NULL );
     ~DataBaseWT();
@@ -34,10 +40,60 @@ public:
 
     QSqlDatabase & sqlDatabase();
 
+public:
+
+    bool isExists( const QDate &Date, const int RateID  );
+    int dateID( const QDate &Date, const int RateID );
+    int lastWorkDaysID();
+
+    WTime timeNeed( const QDate & date, const int rateID );
+    WTime timeNeedSchedule( const QDate& date, const int rateID );
+
+    QString note( const QDate & date, const int rateID );
+
+    void intervals( const QDate & date, const int rateID, QList<Interval*> & intervals );
+
+    int typeDay( const QDate & date, const int rateID );
+
+    int lastIntervalID();
+    int intervalFromDayID( const int DateID, const int id );
+    void addInterval( const QDate & date, const int rateID, const QString & title );
+    void removeInterval( const QDate& Date, const int RateID, const int id );
+    void renameInterval( const QDate & date, const int rateID, const int id, const QString & title );
+
+    void setTimeStart(const QDate & date, const int rateID, const int id , const WTime & time );
+    void setTimeEnd ( const QDate & date, const int rateID, const int id , const WTime & time );
+    void setTimeNeed( const QDate & date, const int rateID , WTime time, TypeTimeNeed type );
+
+    void setTypeDay( const QDate & date, const int rateID, const int type );
+
+    int noteId( const int DateID );
+    int lastNoteID();
+    void setNote( const QDate & date, const int rateID, const QString & note );
+
+    int scheduleId( const int DateID );
+    int lastScheduleID();
+
+
+    void insertYear( const QDate & date, int rateID );
+    void insertScheduleYear(  const QDate & date, int rateID  );
+
+    void insertWorkingRates( const QStringList & ratesList );
+
 private:
 
-    bool connectDataBase  ();
     bool configureDataBase();
+
+    QString getStringFromDate( const QDate& Date );
+    QString getStringFromTime( const QTime& Time );
+
+    QTime getTimeFromString( const QString& TimeString );
+    QDate getDateFromString( const QString& DateString );
+
+signals: // From ILog
+
+    void infoLog ( const QString & );
+    void errorLog( const QString & );
 };
 
 #endif // DATABASEWT_H

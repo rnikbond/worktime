@@ -24,6 +24,57 @@ const QDate HelperWT::currentDate()
 // ------------------------------------------------------------------------------------ //
 
 /*!
+ * \brief HelperWT::timeNeedSchedule
+ * \param date Дата, для которой нужно рассчитать время работы
+ * \param rate Рабочая ставка, по котрой будет рассчитано рабочее время
+ * \return Время работы за день
+ */
+const WTime HelperWT::timeNeedSchedule( const QDate & date, const int rate )
+{
+    WTime TimeNeed( 00, 00 );
+
+    if( date.dayOfWeek() != Qt::Saturday && date.dayOfWeek() != Qt::Sunday )
+    {
+        switch( rate )
+        {
+            case HelperWT::Hours_40_Lanch:
+                if( date.dayOfWeek() == Qt::Friday ) TimeNeed = WTime( 7, 00 );
+                else                                 TimeNeed = WTime( 8, 15 );
+            break;
+
+            case HelperWT::Hours_40_NoLanch:
+                if( date.dayOfWeek() == Qt::Friday ) TimeNeed = WTime( 8, 00 );
+                else                                 TimeNeed = WTime( 9, 00 );
+            break;
+
+            case HelperWT::Hours_40_4_Days :
+                if( date.dayOfWeek() == Qt::Wednesday ) TimeNeed = WTime( 00, 00 );
+                else                                    TimeNeed = WTime( 11, 00 );
+            break;
+
+            case HelperWT::Hours_35_NoLanch :
+                TimeNeed = WTime( 7, 00 );
+            break;
+
+            case HelperWT::Hours_30_NoLanch:
+                if( date.dayOfWeek() == Qt::Friday ) TimeNeed = WTime( 5, 00 );
+                else                                 TimeNeed = WTime( 6, 15 );
+            break;
+
+            case HelperWT::Hours_20_NoLanch:
+                TimeNeed = WTime( 4, 00 );
+            break;
+
+            default:
+            break;
+        }
+    }
+
+    return TimeNeed;
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
  * \brief HelperWT::pathToUpdates
  * \return Аюсолютный путь к обновлениям
  */
@@ -39,7 +90,7 @@ const QString HelperWT::pathToUpdates()
  */
 const QString HelperWT::pathToDataBase()
 {
-    return QDir::homePath() + "/AppData/worktime/WorkTime.db";
+    return pathToWorkDir() + "/WorkTime.db";
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -53,9 +104,23 @@ const QString HelperWT::pathToThemes()
 }
 // ------------------------------------------------------------------------------------ //
 
+/*!
+ * \brief HelperWT::pathToWorkDir
+ * \return Путь к рабочей директории программы
+ */
+const QString HelperWT::pathToWorkDir()
+{
+    return QDir::homePath() + "/AppData/worktime";
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief HelperWT::pathToConfig
+ * \return Абсолютный путь к файлу конфигурации
+ */
 const QString HelperWT::pathToConfig()
 {
-    return QDir::homePath() + "/AppData/worktime/WorkTime.conf";
+    return pathToWorkDir() + "/WorkTime.conf";
 }
 // ------------------------------------------------------------------------------------ //
 

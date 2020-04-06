@@ -4,6 +4,8 @@
 // ---------------------------- //
 #include <QObject>
 // ---------------------------- //
+#include "wtime.h"
+// ---------------------------- //
 
 class HelperWT : public QObject
 {
@@ -26,6 +28,8 @@ public:
 
     static const QDate currentDate();
 
+    static const WTime timeNeedSchedule( const QDate & date, const int rate );
+
     static const QString nameMonthInGenitiveCase( const QDate & Date, bool isLowerChars );
     static const QString nameMonthInDativeCase  ( const QDate & Date, bool isLowerChars );
 
@@ -35,6 +39,7 @@ public:
 
     static const QString pathToThemes();
 
+    static const QString pathToWorkDir();
     static const QString pathToConfig();
 
     static const QString pathToWorkTime();

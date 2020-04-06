@@ -5,6 +5,7 @@
 #include <QObject>
 // ---------------------------- //
 #include "databasewt.h"
+#include "monthworktime.h"
 #include "imodelworktime.h"
 // ---------------------------- //
 
@@ -14,7 +15,8 @@ class ModelWorkTime : public QObject, public IModelWorkTime
 
     QDate selectedDate;
 
-    DataBaseWT * DataBase;
+    DataBaseWT    * DataBase ;
+    MonthWorkTime * WorkMonth;
 
     int workingRate;
 
@@ -25,8 +27,11 @@ public:
 private:
 
     void reload();
+    bool isLoadedMonth( const QDate & date );
 
 public: // From Interfaces
+
+    void setDataBase( DataBaseWT * DB );
 
     void setWorkingRate( int rate );
     void setDate( const QDate & date );

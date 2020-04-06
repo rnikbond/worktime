@@ -15,6 +15,8 @@ class TablesDataBase : public QWidget
 {
     Q_OBJECT
 
+    DataBaseWT * DataBase;
+
     QTimer* UpdateTablesTimer;
 
     QSqlTableModel* WorkDaysModel;
@@ -25,13 +27,13 @@ class TablesDataBase : public QWidget
     QSqlTableModel* SalariesModel;
 
 public:
-    explicit TablesDataBase( DataBaseWT * DataBase, QWidget * parent = 0 );
+    explicit TablesDataBase( DataBaseWT * DB, QWidget * parent = 0 );
     ~TablesDataBase();
 
 private:
     Ui::TablesDataBase *gui;
 
-    void setupTableView( DataBaseWT * DataBase );
+    void setupTableView();
 
 public slots:
 

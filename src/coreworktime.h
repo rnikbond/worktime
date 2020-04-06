@@ -6,9 +6,11 @@
 #include <QMovie>
 #include <QObject>
 // ---------------------------- //
+#include "databasewt.h"
 #include "modelworktime.h"
 #include "worktimewindow.h"
 #include "settingswindow.h"
+#include "tablesdatabase.h"
 #include "presenterworktime.h"
 // ---------------------------- //
 
@@ -42,11 +44,16 @@ class CoreWorkTime : public QObject
     QLabel * WaitLabel;
     QMovie * WaitMovie;
 
+    QThread           * DataBaseThread;
+    DataBaseWT        * DataBase;
+
     ModelWorkTime     * ModelWT;
     WorkTimeWindow    * WorkTime;
     PresenterWorkTime * PresenterWT;
 
     SettingsWindow    * Settings;
+
+    TablesDataBase * TablesWindow;
 
 public:
 
@@ -117,6 +124,9 @@ private slots:
     void showSettings();
 
     void closeApp();
+
+    void infoLog ( const QString & logText );
+    void errorLog( const QString & logText );
 };
 
 #endif // COREWORKTIME_H

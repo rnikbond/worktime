@@ -25,7 +25,7 @@ public:
         Vacation   =  4
     };
 
-    static QStringList typesDay();
+    static QStringList namesDay();
     static QString nameDay( TypesDay Type );
     static QColor colorDay( TypesDay Type );
 

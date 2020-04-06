@@ -46,6 +46,9 @@ CoreWorkTime::CoreWorkTime( QObject * parent ) : QObject( parent )
     WorkTimeGeometry.moveTopLeft( QPoint((DesktopRect.width () - WorkTimeGeometry.width ()) / 2,
                                          (DesktopRect.height() - WorkTimeGeometry.height()) / 2) );
 
+    if( QDir(HelperWT::pathToWorkDir()).exists() == false )
+        QDir().mkdir( HelperWT::pathToWorkDir() );
+
     createLoaded ();
     createObjects();
 
@@ -60,6 +63,8 @@ CoreWorkTime::~CoreWorkTime()
 #ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call CoreWorkTime::~CoreWorkTime()";
 #endif
+
+    DataBaseThread->terminate();
 
     delete Settings;
     delete WorkTime;
@@ -78,14 +83,15 @@ void CoreWorkTime::wait( bool isWait )
     if( isWait )
     {
         WaitLabel->setGeometry( WorkTime->geometry() );
-        WaitMovie->setScaledSize( WaitLabel->size() );
-        WaitMovie->start();
+       // WaitMovie->setScaledSize( WaitLabel->size() );
+       // WaitMovie->start();
         WaitLabel->show();
+        WaitLabel->raise();
         qDebug() << "\t WAIT ON";
     }
     else
     {
-        WaitMovie->stop();
+        //WaitMovie->stop();
         WaitLabel->hide();
         qDebug() << "\t WAIT OFF";
     }
@@ -117,7 +123,13 @@ void CoreWorkTime::start()
     {
         readConfig();
 
-        applyTheme( themeIndex );
+        DataBaseThread->start();
+
+        DataBase->insertWorkingRates( HelperWT::namesWorkingRates() );
+
+        //applyTheme( themeIndex );
+
+        ModelWT->setWorkingRate( workingRate );
 
         WorkTime->setWindowOpacity( toOpacity(opacityValue) );
         WorkTime->setGeometry     ( WorkTimeGeometry        );
@@ -581,7 +593,29 @@ void CoreWorkTime::resetUpdatePath()
  *
  * Чтений файла конфигурации.
  *
- * Из файла конфигурации считываются следующие поля:
+ * Из файла конфигурации считываются следующие данные:
+ *
+ * 1.  Версия программы.
+ * 2.  Идентификатор рабочей ставки.
+ * 3.  Прозрачность главного окна (от 100 до 1000).
+ * 4.  Идентификатор темы.
+ * 5.  Признак отображения меню в главном окне.
+ * 6.  Номер выбранной страницы в поле статистики (День/Неделя/Месяц).
+ * 7.  Признак отображения виджета рабочего стола.
+ * 8.  Признак отображения виджета рабочего стола поверх других окон.
+ * 9.  Позиция виджета рабочего стола на экране.
+ * 10. Прозрачность виджета рабочего стола.
+ * 11. Признак использования трея.
+ * 12. Признак автозапуска.
+ * 13. Признак добавления программы в контекстное меню проводника.
+ * 14. Признак проверки обновлений.
+ * 15. Путь к обновлениям.
+ * 16. Время начала и конца обеда.
+ * 17. Длительность обеда.
+ * 18. Максимальное время конца рабочего дня.
+ * 19. Время, сколько отнимать от времени начала.
+ * 20. Время, сколько добавлять ко времени конца.
+ * 21. Позиция главного окна на экране.
  */
 void CoreWorkTime::readConfig()
 {
@@ -675,8 +709,27 @@ void CoreWorkTime::readConfig()
  * Запись файла конфигурации.
  *
  * В файл конфигурации записываются следующие поля:
- *
- *
+ * 1.  Версия программы.
+ * 2.  Идентификатор рабочей ставки.
+ * 3.  Прозрачность главного окна (от 100 до 1000).
+ * 4.  Идентификатор темы.
+ * 5.  Признак отображения меню в главном окне.
+ * 6.  Номер выбранной страницы в поле статистики (День/Неделя/Месяц).
+ * 7.  Признак отображения виджета рабочего стола.
+ * 8.  Признак отображения виджета рабочего стола поверх других окон.
+ * 9.  Позиция виджета рабочего стола на экране.
+ * 10. Прозрачность виджета рабочего стола.
+ * 11. Признак использования трея.
+ * 12. Признак автозапуска.
+ * 13. Признак добавления программы в контекстное меню проводника.
+ * 14. Признак проверки обновлений.
+ * 15. Путь к обновлениям.
+ * 16. Время начала и конца обеда.
+ * 17. Длительность обеда.
+ * 18. Максимальное время конца рабочего дня.
+ * 19. Время, сколько отнимать от времени начала.
+ * 20. Время, сколько добавлять ко времени конца.
+ * 21. Позиция главного окна на экране.
  */
 void CoreWorkTime::writeConfig()
 {
@@ -697,7 +750,6 @@ void CoreWorkTime::writeConfig()
         Config.setValue("THEME"         , themeIndex    );
         Config.setValue("SHOWN_MENU"    , isShownMenu   );
         Config.setValue("STATISTIC_PAGE", selectedPage  );
-        Config.setValue("WINDOWS_MENU"  , isContextMenu );
     Config.endGroup(); // COMMON
 
     Config.beginGroup("DESKTOP_WIDGET");
@@ -711,6 +763,7 @@ void CoreWorkTime::writeConfig()
     Config.beginGroup( "AUTO" );
         Config.setValue("TRAY"         , isTray         );
         Config.setValue("AUTORUN"      , isAutorun      );
+        Config.setValue("WINDOWS_MENU" , isContextMenu  );
         Config.setValue("UPDATES"      , isCheckUpdates );
         Config.setValue("UPDATES_PATH" , updatePath     );
     Config.endGroup(); // AUTO
@@ -970,9 +1023,14 @@ void CoreWorkTime::closeApp()
 void CoreWorkTime::createLoaded()
 {
     WaitLabel = new QLabel();
-    WaitMovie = new QMovie( "loaded.gif" );
+    WaitLabel->setWindowOpacity( 0.6 );
+    WaitLabel->setStyleSheet( "color: black; font-size: 14px;" );
+    //WaitMovie = new QMovie( "loaded.gif" );
 
-    WaitLabel->setMovie( WaitMovie );
+    //WaitLabel->setMovie( WaitMovie );
+
+    WaitLabel->setAlignment( Qt::AlignCenter );
+    WaitLabel->setText( tr("Загрузка данных...\nПожалуйста, подождите") );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -987,17 +1045,26 @@ void CoreWorkTime::createObjects()
     qDebug() << "#Call CoreWorkTime::createObjects()";
 #endif
 
-    ModelWT     = new ModelWorkTime    ( this );
-    WorkTime    = new WorkTimeWindow   (      );
-    PresenterWT = new PresenterWorkTime( this );
-    Settings    = new SettingsWindow();
+    DataBase       = new DataBaseWT       (          );
+    ModelWT        = new ModelWorkTime    ( this     );
+    WorkTime       = new WorkTimeWindow   (          );
+    PresenterWT    = new PresenterWorkTime( this     );
+    Settings       = new SettingsWindow   (          );
+    TablesWindow   = new TablesDataBase   ( DataBase );
+
+    DataBaseThread = new QThread          ( this     );
+    DataBase->moveToThread( DataBaseThread );
 
     WorkTime->setSettingsExists( true );
 
     Settings->setWindowModality( Qt::ApplicationModal );
 
+    ModelWT->setDataBase( DataBase );
+
     PresenterWT->setModel( ModelWT  );
     PresenterWT->setView ( WorkTime );
+
+    TablesWindow->show();
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -1067,3 +1134,22 @@ void CoreWorkTime::connectModel()
 }
 // ------------------------------------------------------------------------------------ //
 
+/*!
+ * \brief CoreWorkTime::infoLog
+ * \param logText Тест для логгирования информации
+ */
+void CoreWorkTime::infoLog( const QString & logText )
+{
+    qDebug() << "intoLog == " << logText;
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief CoreWorkTime::errorLog
+ * \param logText Тест для логгирования ошибки
+ */
+void CoreWorkTime::errorLog( const QString & logText )
+{
+    qDebug() << "errorLog == " << logText;
+}
+// ------------------------------------------------------------------------------------ //

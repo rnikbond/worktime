@@ -7,11 +7,15 @@
 // ---------------------------- //
 #include "wtime.h"
 // ---------------------------- //
+class DataBaseWT;
+// ---------------------------- //
 
 class IModelWorkTime
 {
 
 public:
+
+    virtual void setDataBase( DataBaseWT * DB ) = 0;
 
     virtual void setWorkingRate( int rate ) = 0;
     virtual void setDate( const QDate & date ) = 0;

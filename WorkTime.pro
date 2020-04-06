@@ -12,6 +12,7 @@ INCLUDEPATH += src
 INCLUDEPATH += src/model
 INCLUDEPATH += src/view
 INCLUDEPATH += src/presenter
+INCLUDEPATH += src/interface
 INCLUDEPATH += src/tools
 INCLUDEPATH += src/tools/time
 INCLUDEPATH += src/model/database
@@ -31,8 +32,9 @@ HEADERS += src/model/imodelworktime.h          \
            src/tools/monthworktime.h           \
            src/tools/network.h                 \
            src/coreworktime.h \
-    src/view/settingswindow.h \
-    src/view/iviewsettings.h
+           src/view/settingswindow.h \
+           src/view/iviewsettings.h \
+           src/interface/ilog.h
 
 
 SOURCES += src/main.cpp                          \

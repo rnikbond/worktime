@@ -1,6 +1,5 @@
 // ---------------------------- //
-#include <qDebug>
-#include <QThread>
+#include <QDebug>
 // ---------------------------- //
 #include "helperwt.h"
 // ---------------------------- //
@@ -13,28 +12,71 @@ ModelWorkTime::ModelWorkTime( QObject * parent ) : QObject( parent )
     qDebug() << "#Call ModelWorkTime::ModelWorkTime( ... )";
 #endif
 
-    workingRate = HelperWT::UnknownWR;
-
-    DataBase = DataBaseWT::instance();
-    DataBase->openDataBase();
-
-    QThread * BDThread = new QThread();
-
-    DataBase->moveToThread( BDThread );
-
-    BDThread->start();
+    DataBase     = NULL;
+    selectedDate = HelperWT::currentDate();
+    workingRate  = HelperWT::UnknownWR;
+    WorkMonth    = new MonthWorkTime( this );
 }
 // ------------------------------------------------------------------------------------ //
 
 void ModelWorkTime::reload()
 {
 #ifdef WT_INFO_CALL_FUNC
-    qDebug() << "#Call ModelWorkTime::loadMonth()";
+    qDebug() << "#Call ModelWorkTime::reload()";
 #endif
 
-    emit enabledWait( true );
+    if( workingRate != HelperWT::UnknownWR )
+    {
+        emit enabledWait( true );
 
-    emit enabledWait( false );
+        if( DataBase->isExists(selectedDate, workingRate) == false )
+        {
+            DataBase->insertYear( selectedDate, workingRate );
+            DataBase->insertScheduleYear( selectedDate, workingRate );
+        }
+
+        WorkMonth->clear();
+
+        for( int day = 1; day <= selectedDate.daysInMonth(); day++ )
+        {
+            QDate Date( selectedDate.year(), selectedDate.month(), day );
+
+            DayWorkTime * NewDay = new DayWorkTime( Date, WorkMonth );
+
+            WTime TimeNeed = DataBase->timeNeed(Date, workingRate);
+            WTime TimeNeedSchedule = DataBase->timeNeedSchedule(Date, workingRate);
+
+            NewDay->setTypeDay ( DayWorkTime::TypesDay(DataBase->typeDay(Date, workingRate)) );
+            NewDay->setTimeNeed( TimeNeed );
+            NewDay->setTimeNeedSchedule( TimeNeedSchedule );
+            NewDay->changeNote ( DataBase->note(Date, workingRate) );
+
+            QList<Interval*> IntervalsList;
+
+            DataBase->intervals( Date, workingRate, IntervalsList );
+
+            for( int interval = 0; interval < IntervalsList.count(); interval++ )
+                NewDay->addInterval( IntervalsList[interval] );
+
+            WorkMonth->addDay( NewDay );
+        }
+
+        emit enabledWait( false );
+    }
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief ModelWorkTime::setDataBase
+ * \param DB Указатель на базу данных
+ */
+void ModelWorkTime::setDataBase( DataBaseWT * DB )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call ModelWorkTime::setDataBase( ... )";
+#endif
+
+    DataBase = DB;
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -44,10 +86,13 @@ void ModelWorkTime::setWorkingRate( int rate )
     qDebug() << "#Call ModelWorkTime::setWorkingRate( " << rate << " )";
 #endif
 
-    if( workingRate != rate )
+    if( rate != HelperWT::UnknownWR )
     {
-        workingRate = rate;
-        reload();
+        if( workingRate != rate )
+        {
+            workingRate = rate;
+            reload();
+        }
     }
 }
 // ------------------------------------------------------------------------------------ //
@@ -61,16 +106,17 @@ void ModelWorkTime::setDate( const QDate & date )
     if( workingRate == HelperWT::UnknownWR )
         return;
 
-//    bool isChangeMonth = (selectedDate.year() != date.year()) || (selectedDate.month() != date.month());
-//    bool isChangeWeek  = (selectedDate.year() != date.year()) || (selectedDate.weekNumber() != date.weekNumber());
+    bool isChangeMonth = (selectedDate.year() != date.year()) || (selectedDate.month()      != date.month());
+    bool isChangeWeek  = (selectedDate.year() != date.year()) || (selectedDate.weekNumber() != date.weekNumber());
 
     selectedDate = date;
 
-    reload();
+    if( isChangeMonth )
+        reload();
 
 //    checkTimeStart();
 
-//    if( isChangeMonth ) emit changedMonth();
+//    if( isChangeMonth ) emit changedMonth()к;
 //    if( isChangeWeek  ) emit changedWeek ();
 }
 // ------------------------------------------------------------------------------------ //
@@ -85,8 +131,7 @@ int ModelWorkTime::typeDay()
     qDebug() << "#Call ModelWorkTime::colorMonthDays()";
 #endif
 
-    //return WorkMonth->typeDay( SelectedDate );
-    return 0;
+    return WorkMonth->typeDay( selectedDate );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -100,8 +145,7 @@ QStringList ModelWorkTime::intervals()
     qDebug() << "#Call ModelWorkTime::intervals()";
 #endif
 
-    //return WorkMonth->titlesIntervals( SelectedDate );
-    return QStringList();
+    return WorkMonth->titlesIntervals( selectedDate );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -115,8 +159,7 @@ QString ModelWorkTime::note()
     qDebug() << "#Call ModelWorkTime::note()";
 #endif
 
-    //return WorkMonth->note( SelectedDate );
-    return QString();
+    return WorkMonth->note( selectedDate );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -133,8 +176,8 @@ QStringList ModelWorkTime::colorMonthDays()
 
     QStringList Colors;
 
-    //for( int day = 1; day <= selectedDate.daysInMonth(); day++ )
-    //    Colors << WorkMonth->colorDay(QDate(selectedDate.year(), selectedDate.month(), day)).name();
+    for( int day = 1; day <= selectedDate.daysInMonth(); day++ )
+        Colors << WorkMonth->colorDay(QDate(selectedDate.year(), selectedDate.month(), day)).name();
 
     return Colors;
 }
@@ -150,14 +193,12 @@ QString ModelWorkTime::infoStatisticInDay()
     qDebug() << "#Call ModelWorkTime::infoStatisticInDay()";
 #endif
 
-//    WTime TimeNeed   = WorkMonth->timeNeedInDay  ( selectedDate );
-//    WTime TimeWorked = WorkMonth->timeWorkedInDay( selectedDate );
+    WTime TimeNeed   = WorkMonth->timeNeedInDay  ( selectedDate );
+    WTime TimeWorked = WorkMonth->timeWorkedInDay( selectedDate );
 
-//         if( TimeNeed > TimeWorked ) return tr("Недоработано");
-//    else if( TimeNeed < TimeWorked ) return tr("Переработано");
-//    else                             return tr("Статистика"  );
-
-    return QString();
+         if( TimeNeed > TimeWorked ) return tr("Недоработано");
+    else if( TimeNeed < TimeWorked ) return tr("Переработано");
+    else                             return tr("Статистика"  );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -171,12 +212,10 @@ WTime ModelWorkTime::timeStatisticInDay()
     qDebug() << "#Call ModelWorkTime::timeStatisticInDay()";
 #endif
 
-    //WTime TimeNeed   = WorkMonth->timeNeedInDay  ( selectedDate );
-    //WTime TimeWorked = WorkMonth->timeWorkedInDay( selectedDate );
+    WTime TimeNeed   = WorkMonth->timeNeedInDay  ( selectedDate );
+    WTime TimeWorked = WorkMonth->timeWorkedInDay( selectedDate );
 
-    //return TimeNeed > TimeWorked ? (TimeNeed - TimeWorked) : (TimeWorked - TimeNeed);
-
-    return WTime();
+    return TimeNeed > TimeWorked ? (TimeNeed - TimeWorked) : (TimeWorked - TimeNeed);
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -190,9 +229,7 @@ WTime ModelWorkTime::timeWorkedInDay()
     qDebug() << "#Call ModelWorkTime::timeWorkedInDay()";
 #endif
 
-    //return WorkMonth->timeWorkedInDay( selectedDate );
-
-    return WTime();
+    return WorkMonth->timeWorkedInDay( selectedDate );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -206,9 +243,7 @@ WTime ModelWorkTime::timeNeedInDay()
     qDebug() << "#Call ModelWorkTime::timeNeedInDay()";
 #endif
 
-    //return WorkMonth->timeNeedInDay( selectedDate );
-
-    return WTime();
+    return WorkMonth->timeNeedInDay( selectedDate );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -218,12 +253,17 @@ WTime ModelWorkTime::timeNeedInDay()
  */
 QString ModelWorkTime::infoStatisticToDay()
 {
-    //WTime TimeNeed   = WorkMonth->timeNeedToDay  ( selectedDate );
-    //WTime TimeWorked = WorkMonth->timeWorkedToDay( selectedDate );
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call ModelWorkTime::infoStatisticToDay()";
+#endif
 
-    //return TimeNeed > TimeWorked ? (TimeNeed - TimeWorked) : (TimeWorked - TimeNeed);
+    WTime TimeNeed   = WorkMonth->timeNeedToDay  ( selectedDate );
+    WTime TimeWorked = WorkMonth->timeWorkedToDay( selectedDate );
 
-    return QString();
+
+         if( TimeNeed > TimeWorked ) return tr("Недоработано");
+    else if( TimeNeed < TimeWorked ) return tr("Переработано");
+    else                             return tr("Статистика"  );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -237,12 +277,10 @@ WTime ModelWorkTime::timeStatisticToDay()
     qDebug() << "#Call ModelWorkTime::timeStatisticToDay()";
 #endif
 
-    //WTime TimeNeed   = WorkMonth->timeNeedToDay  ( selectedDate );
-    //WTime TimeWorked = WorkMonth->timeWorkedToDay( selectedDate );
+    WTime TimeNeed   = WorkMonth->timeNeedToDay  ( selectedDate );
+    WTime TimeWorked = WorkMonth->timeWorkedToDay( selectedDate );
 
-    //return TimeNeed > TimeWorked ? (TimeNeed - TimeWorked) : (TimeWorked - TimeNeed);
-
-    return WTime();
+    return TimeNeed > TimeWorked ? (TimeNeed - TimeWorked) : (TimeWorked - TimeNeed);
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -256,9 +294,7 @@ WTime ModelWorkTime::timeWorkedToDay()
     qDebug() << "#Call ModelWorkTime::timeWorkedToDay()";
 #endif
 
-    //return WorkMonth->timeWorkedToDay( selectedDate );
-
-    return WTime();
+    return WorkMonth->timeWorkedToDay( selectedDate );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -272,9 +308,7 @@ WTime ModelWorkTime::timeNeedToDay()
     qDebug() << "#Call ModelWorkTime::timeNeedToDay()";
 #endif
 
-    //return WorkMonth->timeNeedToDay( selectedDate );
-
-    return WTime();
+    return WorkMonth->timeNeedToDay( selectedDate );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -288,14 +322,12 @@ QString ModelWorkTime::infoStatisticInWeek()
     qDebug() << "#Call ModelWorkTime::infoStatisticInWeek()";
 #endif
 
-    //    WTime TimeNeed   = WorkMonth->timeNeedInWeek  ( selectedDate );
-    //    WTime TimeWorked = WorkMonth->timeWorkedInWeek( selectedDate );
+    WTime TimeNeed   = WorkMonth->timeNeedInWeek  ( selectedDate );
+    WTime TimeWorked = WorkMonth->timeWorkedInWeek( selectedDate );
 
-    //         if( TimeNeed > TimeWorked ) return tr("Недоработано");
-    //    else if( TimeNeed < TimeWorked ) return tr("Переработано");
-    //    else                             return tr("Статистика"  );
-
-    return QString();
+         if( TimeNeed > TimeWorked ) return tr("Недоработано");
+    else if( TimeNeed < TimeWorked ) return tr("Переработано");
+    else                             return tr("Статистика"  );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -309,12 +341,10 @@ WTime ModelWorkTime::timeStatisticInWeek()
     qDebug() << "#Call ModelWorkTime::timeStatisticInWeek()";
 #endif
 
-    //WTime TimeNeed   = WorkMonth->timeNeedInWeek  ( selectedDate );
-    //WTime TimeWorked = WorkMonth->timeWorkedInWeek( selectedDate );
+    WTime TimeNeed   = WorkMonth->timeNeedInWeek  ( selectedDate );
+    WTime TimeWorked = WorkMonth->timeWorkedInWeek( selectedDate );
 
-    //return TimeNeed > TimeWorked ? (TimeNeed - TimeWorked) : (TimeWorked - TimeNeed);
-
-    return WTime();
+    return TimeNeed > TimeWorked ? (TimeNeed - TimeWorked) : (TimeWorked - TimeNeed);
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -328,9 +358,7 @@ WTime ModelWorkTime::timeWorkedInWeek()
     qDebug() << "#Call ModelWorkTime::timeWorkedInWeek()";
 #endif
 
-    //return WorkMonth->timeWorkedInWeek( selectedDate );
-
-    return WTime();
+    return WorkMonth->timeWorkedInWeek( selectedDate );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -344,9 +372,7 @@ WTime ModelWorkTime::timeNeedInWeek()
     qDebug() << "#Call ModelWorkTime::timeNeedInWeek()";
 #endif
 
-    // return WorkMonth->timeNeedInWeek( selectedDate );
-
-    return WTime();
+    return WorkMonth->timeNeedInWeek( selectedDate );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -360,14 +386,12 @@ QString ModelWorkTime::infoStatisticInMonth()
     qDebug() << "#Call ModelWorkTime::infoStatisticInMonth()";
 #endif
 
-    //    WTime TimeNeed   = WorkMonth->timeNeedInMonth  ( selectedDate );
-    //    WTime TimeWorked = WorkMonth->timeWorkedInMonth( selectedDate );
+    WTime TimeNeed   = WorkMonth->timeNeedInMonth  ();
+    WTime TimeWorked = WorkMonth->timeWorkedInMonth();
 
-    //         if( TimeNeed > TimeWorked ) return tr("Недоработано");
-    //    else if( TimeNeed < TimeWorked ) return tr("Переработано");
-    //    else                             return tr("Статистика"  );
-
-    return QString();
+         if( TimeNeed > TimeWorked ) return tr("Недоработано");
+    else if( TimeNeed < TimeWorked ) return tr("Переработано");
+    else                             return tr("Статистика"  );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -381,11 +405,10 @@ WTime ModelWorkTime::timeStatisticInMonth()
     qDebug() << "#Call ModelWorkTime::timeStatisticInMonth()";
 #endif
 
-//    WTime TimeNeed   = WorkMonth->timeNeedInMonth  ();
-//    WTime TimeWorked = WorkMonth->timeWorkedInMonth();
+    WTime TimeNeed   = WorkMonth->timeNeedInMonth  ();
+    WTime TimeWorked = WorkMonth->timeWorkedInMonth();
 
-//    return TimeNeed > TimeWorked ? (TimeNeed - TimeWorked) : (TimeWorked - TimeNeed);
-    return WTime();
+    return TimeNeed > TimeWorked ? (TimeNeed - TimeWorked) : (TimeWorked - TimeNeed);
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -399,8 +422,7 @@ WTime ModelWorkTime::timeWorkedInMonth()
     qDebug() << "#Call ModelWorkTime::timeWorkedInMonth()";
 #endif
 
-    //return WorkMonth->timeWorkedInMonth();
-    return WTime();
+    return WorkMonth->timeWorkedInMonth();
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -414,8 +436,7 @@ WTime ModelWorkTime::timeNeedInMonth()
     qDebug() << "#Call ModelWorkTime::timeNeedInMonth()";
 #endif
 
-    //return WorkMonth->timeNeedInMonth();
-    return WTime();
+    return WorkMonth->timeNeedInMonth();
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -430,8 +451,7 @@ WTime ModelWorkTime::timeStart( const int id )
     qDebug() << "#Call ModelWorkTime::timeStart( " << id << " )";
 #endif
 
-    //return WorkMonth->timeStart( selectedDate, id );
-    return WTime();
+    return WorkMonth->timeStart( selectedDate, id );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -446,8 +466,7 @@ WTime ModelWorkTime::timeEnd( const int id )
     qDebug() << "#Call ModelWorkTime::timeEnd( " << id << " )";
 #endif
 
-    //return WorkMonth->timeEnd( selectedDate, id );
-    return WTime();
+    return WorkMonth->timeEnd( selectedDate, id );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -461,8 +480,8 @@ void ModelWorkTime::addInterval( const QString & title )
     qDebug() << "#Call ModelWorkTime::addInterval( " << title << " )";
 #endif
 
-//    WorkMonth->addInterval( SelectedDate, title );
-//    DataBase ->addInterval( SelectedDate, WorkingRate, title );
+    WorkMonth->addInterval( selectedDate, title );
+    DataBase ->addInterval( selectedDate, workingRate, title );
 
 //    if( SelectedDate == QDate::currentDate() )
 //    {
@@ -497,8 +516,8 @@ void ModelWorkTime::removeInterval( const int id )
     qDebug() << "#Call ModelWorkTime::removeInterval( " << id << " )";
 #endif
 
-   // WorkMonth->removeInterval( selectedDate, id );
-   // DataBase ->removeInterval( selectedDate, workingRate, id );
+    WorkMonth->removeInterval( selectedDate, id );
+    DataBase ->removeInterval( selectedDate, workingRate, id );
 
     //updateLaunchTime();
 
@@ -519,8 +538,8 @@ void ModelWorkTime::renameInterval( const int id, const QString & title )
     qDebug() << "#Call ModelWorkTime::renameInterval( " << id << ", " << title << " )";
 #endif
 
-    //WorkMonth->renameInterval( SelectedDate, id, title );
-    //DataBase ->renameInterval( SelectedDate, WorkingRate, id, title );
+    WorkMonth->renameInterval( selectedDate, id, title );
+    DataBase ->renameInterval( selectedDate, workingRate, id, title );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -535,8 +554,8 @@ void ModelWorkTime::setTimeStart( const int id, const WTime & time )
     qDebug() << "#Call ModelWorkTime::setTimeStart( " << id << ", " << time.toString() << " )";
 #endif
 
-    //WorkMonth->setTimeStart   ( SelectedDate, id, time.toQTime(), true );
-    //DataBase ->changeTimeStart( SelectedDate, WorkingRate, id, time );
+    WorkMonth->setTimeStart( selectedDate, id, time.toQTime(), true );
+    DataBase ->setTimeStart( selectedDate, workingRate, id, time );
 
     //checkTimeStart();
     //updateLaunchTime();
@@ -557,8 +576,8 @@ void ModelWorkTime::setTimeEnd( const int id, const WTime & time )
     qDebug() << "#Call ModelWorkTime::setTimeEnd(" << id << ", " << time.toString() << ")";
 #endif
 
-//    WorkMonth->setTimeEnd   ( SelectedDate, id, time.toQTime(), true );
-//    DataBase ->changeTimeEnd( SelectedDate, WorkingRate, id, time );
+    WorkMonth->setTimeEnd( selectedDate, id, time.toQTime(), true );
+    DataBase ->setTimeEnd( selectedDate, workingRate, id, time );
 
 //    updateTodayWorker();
 
@@ -581,8 +600,8 @@ void ModelWorkTime::setTimeNeed( const WTime & time )
     qDebug() << "#Call ModelWorkTime::setTimeNeed(" << time.toString() << ")";
 #endif
 
-//    WorkMonth->setTimeNeed( SelectedDate, time.toQTime(), true );
-//    DataBase ->changeTimeNeed( SelectedDate, WorkingRate, time );
+    WorkMonth->setTimeNeed( selectedDate, time.toQTime(), true );
+    DataBase ->setTimeNeed( selectedDate, workingRate, time, DataBaseWT::User );
 
 //    updateTodayWorker();
 
@@ -600,27 +619,27 @@ void ModelWorkTime::setTypeDay( int type )
     qDebug() << "#Call ModelWorkTime::setTypeDay(" << type << ")";
 #endif
 
-//    DayWorkTime::TypesDay oldType = DayWorkTime::TypesDay( WorkMonth->typeDay(SelectedDate) );
-//    DayWorkTime::TypesDay newType = DayWorkTime::TypesDay( type );
+    DayWorkTime::TypesDay oldType = DayWorkTime::TypesDay( WorkMonth->typeDay(selectedDate) );
+    DayWorkTime::TypesDay newType = DayWorkTime::TypesDay( type );
 
-//    WorkMonth->setTypeDay   ( SelectedDate, newType );
-//    DataBase ->changeTypeDay( SelectedDate, WorkingRate, newType );
+    WorkMonth->setTypeDay( selectedDate, newType );
+    DataBase ->setTypeDay( selectedDate, workingRate, newType );
 
-//    if( (oldType == DayWorkTime::WorkDay && newType != DayWorkTime::WorkDay) ||
-//        (oldType != DayWorkTime::WorkDay && newType == DayWorkTime::WorkDay) )
-//    {
-//        if( newType == DayWorkTime::WorkDay )
-//        {
-//            if( WorkMonth->countIntervals(SelectedDate) == 0 )
-//            {
-//                addInterval( DayWorkTime::nameDay(DayWorkTime::WorkDay) );
-//            }
-//        }
+    if( (oldType == DayWorkTime::WorkDay && newType != DayWorkTime::WorkDay) ||
+        (oldType != DayWorkTime::WorkDay && newType == DayWorkTime::WorkDay) )
+    {
+        if( newType == DayWorkTime::WorkDay )
+        {
+            if( WorkMonth->countIntervals(selectedDate) == 0 )
+            {
+                addInterval( DayWorkTime::nameDay(DayWorkTime::WorkDay) );
+            }
+        }
 
-//        updateTodayWorker();
+        //updateTodayWorker();
 
-//        emit updateTime();
-//    }
+        //emit updateTime();
+    }
 
 //    emit recolorDay( SelectedDate, WorkMonth->colorDay(SelectedDate) );
 }
@@ -636,10 +655,27 @@ void ModelWorkTime::setNote( QString note )
     qDebug() << "#Call ModelWorkTime::setNote(" << note << ")";
 #endif
 
-//    WorkMonth->setNote   ( SelectedDate, note );
-//    DataBase ->changeNote( SelectedDate, WorkingRate, note );
+    WorkMonth->setNote( selectedDate, note );
+    DataBase ->setNote( selectedDate, workingRate, note );
 
 //    updateTodayWorker();
 }
 // ------------------------------------------------------------------------------------ //
 
+/*!
+ * \brief ModelWorkTime::isLoadedMonth
+ * \param date Проверка того, что данные за месяц выгружены из базы данных
+ * \return TRUE, если данные за месяц \a date выгружены из базы данных
+ */
+bool ModelWorkTime::isLoadedMonth( const QDate & date )
+{
+#ifdef QT_INFO_CALL_FUNC
+    qDebug() << "#Call ModelWorkTime::isLoadedMonth(" << date << ")";
+#endif
+
+    if( WorkMonth != NULL )
+        return WorkMonth->isThisMonth( date );
+
+    return false;
+}
+// ------------------------------------------------------------------------------------------ //

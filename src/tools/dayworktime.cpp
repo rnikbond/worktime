@@ -295,7 +295,7 @@ DayWorkTime::TypesDay DayWorkTime::typeDay()
 }
 // --------------------------------------------------------------------------------- //
 
-QStringList DayWorkTime::typesDay()
+QStringList DayWorkTime::namesDay()
 {
     static QStringList TypesDayList( QStringList() << nameDay( WorkDay    )
                                                    << nameDay( Weekend    )

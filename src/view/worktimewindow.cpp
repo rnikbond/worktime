@@ -1228,32 +1228,34 @@ void WorkTimeWindow::configuringGUI()
      qDebug() << "#call WorkTimeWindow::initialize()";
 #endif
 
-     gui->setupUi( this );
+    gui->setupUi( this );
 
-     setWindowFlags( Qt::CustomizeWindowHint | Qt::WindowCloseButtonHint );
+    setWindowFlags( Qt::CustomizeWindowHint | Qt::WindowCloseButtonHint );
 
-     gui->WorkCalendar->setSelectionMode         ( QCalendarWidget::SingleSelection  );
-     gui->WorkCalendar->setHorizontalHeaderFormat( QCalendarWidget::LongDayNames     );
-     gui->WorkCalendar->setVerticalHeaderFormat  ( QCalendarWidget::NoVerticalHeader );
+    gui->WorkCalendar->setSelectionMode         ( QCalendarWidget::SingleSelection  );
+    gui->WorkCalendar->setHorizontalHeaderFormat( QCalendarWidget::LongDayNames     );
+    gui->WorkCalendar->setVerticalHeaderFormat  ( QCalendarWidget::NoVerticalHeader );
 
-     QTextCharFormat WeekendFomat = gui->WorkCalendar->weekdayTextFormat( Qt::Saturday );
+    QTextCharFormat WeekendFomat = gui->WorkCalendar->weekdayTextFormat( Qt::Saturday );
 
-     WeekendFomat.setForeground( QBrush( DayWorkTime::colorDay(DayWorkTime::Weekend)) );
+    WeekendFomat.setForeground( QBrush( DayWorkTime::colorDay(DayWorkTime::Weekend)) );
 
-     gui->WorkCalendar->setWeekdayTextFormat( Qt::Saturday, WeekendFomat );
-     gui->WorkCalendar->setWeekdayTextFormat( Qt::Sunday  , WeekendFomat );
+    gui->WorkCalendar->setWeekdayTextFormat( Qt::Saturday, WeekendFomat );
+    gui->WorkCalendar->setWeekdayTextFormat( Qt::Sunday  , WeekendFomat );
 
-     gui->IntervalsList->setSelectionMode    ( QAbstractItemView::SingleSelection );
-     gui->IntervalsList->setContextMenuPolicy( Qt::CustomContextMenu              );
+    gui->IntervalsList->setSelectionMode    ( QAbstractItemView::SingleSelection );
+    gui->IntervalsList->setContextMenuPolicy( Qt::CustomContextMenu              );
 
-     setSalaryExists     ( false );
-     setTableTimeExists  ( false );
-     setScheduleExists   ( false );
-     setSeveralDaysExists( false );
-     setChangesExists    ( false );
-     setSettingsExists   ( false );
+    gui->TypeDayCBox->addItems( DayWorkTime::namesDay() );
 
-     gui->UpdateButton->hide();
+    setSalaryExists     ( false );
+    setTableTimeExists  ( false );
+    setScheduleExists   ( false );
+    setSeveralDaysExists( false );
+    setChangesExists    ( false );
+    setSettingsExists   ( false );
+
+    gui->UpdateButton->hide();
 }
 // ------------------------------------------------------------------------------------ //
 

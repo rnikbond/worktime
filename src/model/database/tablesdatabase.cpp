@@ -5,11 +5,13 @@
 #include "ui_tablesdatabase.h"
 // ------------------------------ //
 
-TablesDataBase::TablesDataBase(DataBaseWT * DataBase, QWidget *parent ) : QWidget( parent ), gui( new Ui::TablesDataBase )
+TablesDataBase::TablesDataBase( DataBaseWT * DB, QWidget *parent ) : QWidget( parent ), gui( new Ui::TablesDataBase )
 {
     gui->setupUi(this);
 
-    setupTableView( DataBase );
+    DataBase = DB;
+
+    setupTableView();
 
     UpdateTablesTimer = new QTimer( this );
 
@@ -21,7 +23,7 @@ TablesDataBase::TablesDataBase(DataBaseWT * DataBase, QWidget *parent ) : QWidge
     connect( gui->RemoveButton, SIGNAL(clicked(bool)), SLOT(removeInterval()) );
     connect( gui->RemoveSalaryButton, SIGNAL(clicked(bool)), SLOT(removeSalary()) );
 
-    //UpdateTablesTimer->start( 500 );
+    UpdateTablesTimer->start( 500 );
 
     gui->DateEdit->setDate( QDate::currentDate() );
 }
@@ -35,10 +37,6 @@ TablesDataBase::~TablesDataBase()
 
 void TablesDataBase::changeTimeStart()
 {
-    DataBaseWT * DataBase = DataBaseWT::instance();
-
-    DataBase->openDataBase();
-
     QTime Time = gui->TimeNeed->time();
     int Interval = gui->IntervalEdit->text().toInt();
     QDate Date = gui->DateEdit->date();
@@ -52,10 +50,6 @@ void TablesDataBase::changeTimeStart()
 
 void TablesDataBase::changeTimeEnd()
 {
-//    DataBaseWT * DataBase = DataBaseWT::getInstance();
-
-//    DataBase->openDataBase();
-
 //    QTime Time = gui->TimeNeed->time();
 //    int Interval = gui->IntervalEdit->text().toInt();
 //    QDate Date = gui->DateEdit->date();
@@ -69,10 +63,6 @@ void TablesDataBase::changeTimeEnd()
 
 void TablesDataBase::removeInterval()
 {
-//    DataBaseWT * DataBase = DataBaseWT::getInstance();
-
-//    DataBase->openDataBase();
-
 //    int Interval = gui->IntervalEdit->text().toInt();
 //    QDate Date = gui->DateEdit->date();
 
@@ -85,10 +75,6 @@ void TablesDataBase::removeInterval()
 
 void TablesDataBase::removeSalary()
 {
-//    DataBaseWT * DataBase = DataBaseWT::getInstance();
-
-//    DataBase->openDataBase();
-
 //    int ID = gui->IntervalEdit->text().toInt();
 
 //    qDebug() << "removeSalary ::: " << ID;
@@ -100,20 +86,16 @@ void TablesDataBase::removeSalary()
 
 void TablesDataBase::udpateFromDataBase()
 {
-//    DataBaseWT * DataBase = DataBaseWT::getInstance();
-
-//    DataBase->openDataBase();
-
-//    WorkDaysModel     ->select();
-//    WorkingRatesModel ->select();
-//    ScheduleTimeModel ->select();
-//    TimeIntervalsModel->select();
-//    NotesModel        ->select();
-//    SalariesModel     ->select();
+    WorkDaysModel     ->select();
+    WorkingRatesModel ->select();
+    ScheduleTimeModel ->select();
+    TimeIntervalsModel->select();
+    NotesModel        ->select();
+    SalariesModel     ->select();
 }
 // ------------------------------------------------------------------------------------------ //
 
-void TablesDataBase::setupTableView( DataBaseWT * DataBase )
+void TablesDataBase::setupTableView()
 {
     // -----------------------------------------
     WorkDaysModel = new QSqlTableModel( this, DataBase->sqlDatabase() );
@@ -127,7 +109,7 @@ void TablesDataBase::setupTableView( DataBaseWT * DataBase )
 
     // -----------------------------------------
 
-    WorkingRatesModel = new QSqlTableModel( this );
+    WorkingRatesModel = new QSqlTableModel( this, DataBase->sqlDatabase() );
     WorkingRatesModel->setTable( "WorkingRates" );
     WorkingRatesModel->setSort( 0, Qt::AscendingOrder);
 
@@ -138,7 +120,7 @@ void TablesDataBase::setupTableView( DataBaseWT * DataBase )
 
     // -----------------------------------------
 
-    ScheduleTimeModel = new QSqlTableModel( this );
+    ScheduleTimeModel = new QSqlTableModel( this, DataBase->sqlDatabase() );
     ScheduleTimeModel->setTable( "ScheduleTime" );
     ScheduleTimeModel->setSort( 0, Qt::AscendingOrder);
 
@@ -149,7 +131,7 @@ void TablesDataBase::setupTableView( DataBaseWT * DataBase )
 
     // -----------------------------------------
 
-    TimeIntervalsModel = new QSqlTableModel( this );
+    TimeIntervalsModel = new QSqlTableModel( this, DataBase->sqlDatabase() );
     TimeIntervalsModel->setTable( "TimeIntervals" );
     TimeIntervalsModel->setSort( 0, Qt::AscendingOrder);
 
@@ -160,7 +142,7 @@ void TablesDataBase::setupTableView( DataBaseWT * DataBase )
 
     // -----------------------------------------
 
-    NotesModel = new QSqlTableModel( this );
+    NotesModel = new QSqlTableModel( this, DataBase->sqlDatabase() );
     NotesModel->setTable( "Notes" );
     NotesModel->setSort( 0, Qt::AscendingOrder);
 

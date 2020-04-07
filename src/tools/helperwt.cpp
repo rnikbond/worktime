@@ -7,9 +7,42 @@
 // ---------------------------- //
 #include "helperwt.h"
 // ---------------------------- //
+#ifdef WIN32
+    #include <windows.h>
+#endif
+// ---------------------------- //
 
 HelperWT::HelperWT( QObject * parent ) : QObject( parent )
 {
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief HelperWT::timePower
+ * \return Время включения компьютера. Если время включения больше 23:59:59, то текущее время.
+ */
+const WTime HelperWT::timePower()
+{
+    WTime Time = currentTime();
+
+    WTime TimePower( 0, GetTickCount() / 60000. );
+
+    if( Time > TimePower )
+    {
+        Time -= TimePower;
+    }
+
+    return Time;
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief HelperWT::currentTime
+ * \return Текущее вермя в виде объекта QTime
+ */
+const QTime HelperWT::currentTime()
+{
+    return QTime::currentTime();
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -20,6 +53,7 @@ HelperWT::HelperWT( QObject * parent ) : QObject( parent )
 const QDate HelperWT::currentDate()
 {
     return QDate::currentDate();
+    //return QDate( 2020, 04, 05 );
 }
 // ------------------------------------------------------------------------------------ //
 

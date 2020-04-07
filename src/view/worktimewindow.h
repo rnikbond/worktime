@@ -38,6 +38,8 @@ public:
 
 public: // Interface functions
 
+    void setSelectedDate( const QDate & date );
+
     // Инициализация общих элементов
     void setTypesDay( QStringList list );
 
@@ -63,9 +65,8 @@ public: // Interface functions
     void setTimeStatisticToDay( WTime time, QString title );
     void setTimeNeedToDay     ( WTime time                );
 
-    void setTimeEscape      ( WTime time    );
-    void setInfoEscape      ( QString info  );
-    void setTimeReverseTimer( WTimeExt time );
+    void setInfoEscape      ( QString info );
+    void setTimeReverseTimer( QString time );
 
     void setColorDay ( QDate date, QColor color );
     void setColorDays( QStringList Colors       );

@@ -1,6 +1,8 @@
 // --------------------------- //
 #include <QDebug>
 // --------------------------- //
+#include "helperwt.h"
+// --------------------------- //
 #include "monthworktime.h"
 // --------------------------- //
 
@@ -24,7 +26,7 @@ void MonthWorkTime::clear( bool isFull )
 
     for( int day = 0; day < countDays; day++ )
     {
-        if( DaysList.at(0)->date() == QDate::currentDate() && isFull == false )
+        if( DaysList.at(0)->date() == HelperWT::currentDate() && isFull == false )
             continue;
 
         delete DaysList.takeAt(0);

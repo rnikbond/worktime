@@ -5,7 +5,6 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = WorkTime
 TEMPLATE = app
 
-#DEFINES += WT_DEBUG
 #DEFINES += WT_INFO_CALL_FUNC
 
 INCLUDEPATH += src

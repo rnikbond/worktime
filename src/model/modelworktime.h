@@ -15,10 +15,14 @@ class ModelWorkTime : public QObject, public IModelWorkTime
 
     QDate selectedDate;
 
+    DayWorkTime   * Today;
+
     DataBaseWT    * DataBase ;
     MonthWorkTime * WorkMonth;
 
     int workingRate;
+
+    QTimer * WorkTimer;
 
 public:
 
@@ -28,6 +32,16 @@ private:
 
     void reload();
     bool isLoadedMonth( const QDate & date );
+
+    void checkTimeStart();
+    void checkLaunch();
+
+    bool isCorrectIntervals();
+
+    WTime timeEscape();
+
+    void updateTimeEscape();
+
 
 public: // From Interfaces
 
@@ -76,9 +90,24 @@ public: // From Interfaces
 
     void setNote( QString note );
 
+private slots:
+
+    void updateTimeEnd();
+    void workTimerTick();
+
 signals: // Interface signals
 
     void enabledWait( bool );
+
+    void reloadMonth();
+    void reloadWeek ();
+    void reloadDay  ();
+
+    void recolorDay( const QDate & date, const QColor & color );
+
+    void updateEscape( QString info );
+
+    void updateReverseTimer( QString time );
 };
 
 #endif // MODELWORKTIME_H

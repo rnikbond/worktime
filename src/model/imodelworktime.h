@@ -60,9 +60,26 @@ public:
 
     virtual void setNote( QString note ) = 0;
 
+    // virtual void setTimeBefore      ( WTime time );
+    // virtual void setTimeAfter       ( WTime time );
+    // virtual void setTimeLaunchStart ( WTime time );
+    // virtual void setTimeLaunchEnd   ( WTime time );
+    // virtual void setTimeLaunchLength( WTime time );
+    // virtual void setTimeMax         ( WTime time );
+
 public: // Signals
 
     virtual void enabledWait( bool ) = 0;
+
+    virtual void reloadMonth() = 0;
+    virtual void reloadWeek () = 0;
+    virtual void reloadDay  () = 0;
+
+    virtual void updateEscape( QString info ) = 0;
+    virtual void updateReverseTimer( QString time ) = 0;
+
+
+    virtual void recolorDay( const QDate & date, const QColor & color ) = 0;
 };
 
 #endif // IMODELWORKTIME

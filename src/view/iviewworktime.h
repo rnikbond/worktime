@@ -17,6 +17,8 @@ class IViewWorkTime
 
 public: // Members
 
+    virtual void setSelectedDate( const QDate & date ) = 0;
+
     virtual void setTypesDay( QStringList list ) = 0;
 
     virtual void setTypeDay   ( int         type         ) = 0;
@@ -41,9 +43,8 @@ public: // Members
     virtual void setTimeStatisticToDay( WTime time, QString Title ) = 0;
     virtual void setTimeNeedToDay     ( WTime time                ) = 0;
 
-    virtual void setTimeEscape      ( WTime time    ) = 0;
-    virtual void setInfoEscape      ( QString info  ) = 0;
-    virtual void setTimeReverseTimer( WTimeExt time ) = 0;
+    virtual void setInfoEscape      ( QString info ) = 0;
+    virtual void setTimeReverseTimer( QString time ) = 0;
 
     virtual void setColorDay ( QDate date, QColor color ) = 0;
     virtual void setColorDays( QStringList Colors       ) = 0;

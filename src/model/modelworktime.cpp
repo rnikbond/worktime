@@ -13,9 +13,14 @@ ModelWorkTime::ModelWorkTime( QObject * parent ) : QObject( parent )
 #endif
 
     DataBase     = NULL;
+    Today        = NULL;
     selectedDate = HelperWT::currentDate();
     workingRate  = HelperWT::UnknownWR;
     WorkMonth    = new MonthWorkTime( this );
+
+    WorkTimer = new QTimer( this );
+
+    connect( WorkTimer, SIGNAL(timeout()), SLOT(workTimerTick()) );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -59,9 +64,378 @@ void ModelWorkTime::reload()
                 NewDay->addInterval( IntervalsList[interval] );
 
             WorkMonth->addDay( NewDay );
+
+            if( Date == HelperWT::currentDate() && Today == NULL )
+            {
+                Today = NewDay;
+
+                WorkTimer->start( 1000 );
+
+                updateTimeEscape();
+            }
         }
 
+        WorkMonth->updateTimeNeedInMonth  ( selectedDate );
+        WorkMonth->updateTimeNeedInWeek   ( selectedDate );
+        WorkMonth->updateTimeWorkedInMonth( selectedDate );
+        WorkMonth->updateTimeWorkedInWeek ( selectedDate );
+
         emit enabledWait( false );
+    }
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief ModelWorkTime::checkTimeStart
+ *
+ * Проверка времени начала.
+ */
+void ModelWorkTime::checkTimeStart()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call ModelWorkTime::checkTimeStart()";
+#endif
+
+    if( selectedDate == HelperWT::currentDate() )
+    {
+        int intervalID = WorkMonth->countIntervals( selectedDate ) - 1;
+
+        if( intervalID == 0 )
+        {
+            WTime TimeStart = WorkMonth->timeStart( selectedDate, intervalID );
+
+            if( TimeStart.isEmpty() )
+            {
+                TimeStart = HelperWT::timePower();
+
+                //TimeStart += TimeSubstructStart;
+
+                WorkMonth->setTimeStart( selectedDate, intervalID, TimeStart.toQTime(), true );
+                DataBase ->setTimeStart( selectedDate, workingRate, intervalID, TimeStart );
+
+                checkLaunch();
+
+                emit reloadDay();
+            }
+        }
+    }
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief ModelWorkTime::checkLaunch
+ *
+ * Проверка времени обеда
+ */
+void ModelWorkTime::checkLaunch()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call ModelWorkTime::checkLaunch()";
+#endif
+
+    WTime TimeLaunch( 00, 45 );
+    WTime TimeLaunchStart( 12, 00 );
+    WTime TimeLaunchEnd( 16, 00 );
+
+    if( workingRate == HelperWT::Hours_40_Lanch   || workingRate == HelperWT::Hours_35_NoLanch ||
+        workingRate == HelperWT::Hours_30_NoLanch || workingRate == HelperWT::Hours_40_4_Days   )
+    {
+        DayWorkTime * Day = WorkMonth->dayAtDate( selectedDate );
+
+        const QList<Interval*> & IntervalsList = Day->intervals();
+
+        int LaunchMinutes = TimeLaunch.toMinutes();
+
+        WTime LastTimeEnd;
+
+        bool isSetTime = false;
+
+        for( int i = 0; i < IntervalsList.count(); i++ )
+        {
+            Interval * Item = IntervalsList[i];
+
+            WTime TimeStart = Item->timeStart();
+            WTime TimeEnd   = Item->timeEnd();
+
+            if( TimeStart.isEmpty() == false )
+                isSetTime = true;
+
+            if( TimeStart > TimeLaunchStart && TimeStart < TimeLaunchEnd )
+            {
+                if( LastTimeEnd.isEmpty() == false && TimeStart >= LastTimeEnd )
+                {
+                    LaunchMinutes -= (TimeStart - LastTimeEnd).toMinutes();
+                }
+                else
+                {
+                    LaunchMinutes -= (TimeStart - TimeLaunchStart).toMinutes();
+                }
+            }
+
+            LastTimeEnd = TimeEnd;
+        }
+
+        if( LaunchMinutes < 0 )
+            LaunchMinutes = 0;
+
+        WTime TimeNeed = Day->timeNeedSchedule();
+
+        if( isSetTime )
+            TimeNeed.addMinutes( LaunchMinutes );
+
+        setTimeNeed( TimeNeed );
+    }
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief ModelWorkTime::updateTimeEnd
+ *
+ * Обновление времени конца рабочего дня
+ */
+void ModelWorkTime::updateTimeEnd()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call ModelWorkTime::updateTimeEnd()";
+#endif
+
+    WTime TimeSubstructEnd;
+
+    if( selectedDate == HelperWT::currentDate() )
+    {
+        if( Today != NULL )
+        {
+            int interval = Today->countIntervals() - 1;
+
+            WTime TimeEnd = Today->timeEnd( interval );
+            WTime CurretnTime = QTime::currentTime() + TimeSubstructEnd;
+
+            if( CurretnTime > TimeEnd )
+            {
+                WorkMonth->setTimeEnd( selectedDate, interval, CurretnTime.toQTime(), true );
+                DataBase ->setTimeEnd( selectedDate, workingRate, interval, CurretnTime );
+
+                checkLaunch();
+            }
+
+            emit reloadDay();
+        }
+    }
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief ModelWorkTime::workTimerTick
+ */
+void ModelWorkTime::workTimerTick()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call ModelWorkTime::workTimerTick()";
+#endif
+
+    WTime TimeMaxEscape( 21, 00 );
+    WTime TimeSubstructEnd;
+
+    if( Today != NULL )
+    {
+        if( isCorrectIntervals() )
+        {
+            if( Today->isWorkedDay() )
+            {
+                WTimeExt CurrentTime = HelperWT::currentTime();
+
+                if( CurrentTime.seconds() == 0 )
+                    updateTimeEnd();
+
+                WTimeExt CurrentTimeExt = QTime::currentTime();
+                WTimeExt TimeEndExt     = timeEscape();
+                int interval = Today->countIntervals() - 1;
+
+                if( WTime(TimeEndExt) > TimeMaxEscape )
+                    TimeEndExt = TimeMaxEscape;
+
+                if( WTimeExt(Today->timeEnd(interval)) > CurrentTimeExt + WTimeExt(TimeSubstructEnd) )
+                    TimeEndExt = Today->timeEnd( interval );
+
+                if( CurrentTimeExt < TimeEndExt  )
+                {
+                    emit updateReverseTimer( (TimeEndExt - CurrentTimeExt).toString() );
+                }
+                else
+                {
+                    emit updateReverseTimer( (CurrentTimeExt - TimeEndExt).toString() );
+                }
+            }
+            else
+            {
+                emit updateReverseTimer( tr("НЕРАБОЧИЙ ДЕНЬ") );
+            }
+        }
+        else
+        {
+            emit updateReverseTimer( tr("ОШИБКА ИНТЕРВАЛОВ") );
+        }
+    }
+}
+// ------------------------------------------------------------------------------------ //
+
+bool ModelWorkTime::isCorrectIntervals()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call ModelWorkTime::isCorrectIntervals()";
+#endif
+
+    if( Today != NULL )
+    {
+        int countIntervals = Today->countIntervals();
+
+        if( countIntervals > 0 )
+        {
+            bool isCorrectIntervals = true;
+
+            for( int i = 0; i < countIntervals; i++ )
+            {
+                if( i == 0 )
+                {
+                    if( Today->timeStart(i) > Today->timeEnd(i) )
+                    {
+                        isCorrectIntervals = false;
+                        break;
+                    }
+                }
+                else
+                {
+                    if( Today->timeStart(i) < Today->timeEnd(i - 1) )
+                    {
+                        isCorrectIntervals = false;
+                        break;
+                    }
+                }
+            }
+
+            return isCorrectIntervals;
+        }
+    }
+
+    return false;
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief ModelWorkTime::timeEscape
+ * \return Время, во сколько сегодня нужно уйти
+ */
+WTime ModelWorkTime::timeEscape()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call ModelWorkTime::timeEscape()";
+#endif
+
+    WTime TimeEscape;
+
+    if( Today != NULL )
+    {
+        if( Today->isWorkedDay() )
+        {
+            if( isCorrectIntervals() )
+            {
+                WTime TimeStart;
+                WTime TodayWorked;
+
+                WTime RemainTime;
+
+                WTime UnwokredTime;
+                WTime RewokredTime;
+
+                if( Today->date().day() == 1 )
+                {
+                    RemainTime = Today->timeNeed();
+                }
+                else
+                {
+                    QDate Yesterday( Today->date().year(), Today->date().month(), Today->date().day() - 1 );
+
+                    UnwokredTime = WorkMonth->timeNeedToDay(Yesterday) - WorkMonth->timeWorkedToDay(Yesterday);
+                    RewokredTime = WorkMonth->timeWorkedToDay(Yesterday) - WorkMonth->timeNeedToDay(Yesterday);
+
+                    if( RewokredTime > UnwokredTime )
+                    {
+                        // Если есть переработки, но их не хватает, чтоб отработать сегодняшний день
+                        if( Today->timeNeed() > RewokredTime )
+                        {
+                            RemainTime = Today->timeNeed() - RewokredTime;
+                        }
+                    }
+                    else // Есть недоработки
+                    {
+                         RemainTime = UnwokredTime + Today->timeNeed();
+                    }
+                }
+
+                int lastInterval = Today->countIntervals() - 1;
+
+                for( int interval = 0; interval < lastInterval; interval++ )
+                    TodayWorked += Today->timeWorked( interval );
+
+                if( lastInterval >= 0 )
+                    TimeStart = Today->timeStart( lastInterval );
+
+                RemainTime -= TodayWorked;
+
+                TimeEscape = TimeStart + RemainTime;
+            }
+        }
+    }
+
+    return TimeEscape;
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief updateTimeEscape
+ *
+ * Обновление времени, во сколько нужно уйти
+ */
+void ModelWorkTime::updateTimeEscape()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call ModelWorkTime::updateTimeEscape()";
+#endif
+
+    WTime TimeMaxEscape( 21, 00 );
+
+    if( Today != NULL )
+    {
+        if( Today->isWorkedDay()  )
+        {
+            WTime TimeEscape = timeEscape();
+
+            if( TimeEscape.isEmpty() == false )
+            {
+                QString InfoEscape;
+
+                if( TimeEscape > TimeMaxEscape )
+                {
+                    InfoEscape = tr(" и останется %1").arg((TimeEscape - TimeMaxEscape).toString());
+                    TimeEscape = TimeMaxEscape;
+                }
+
+                updateEscape( tr("Конец в ") + TimeEscape.toString() + InfoEscape );
+
+            }
+            else
+            {
+                updateEscape( "" );
+            }
+        }
+        else
+        {
+            updateEscape( "" );
+        }
+    }
+    else
+    {
+        updateEscape( tr("Ошибка #1") );
     }
 }
 // ------------------------------------------------------------------------------------ //
@@ -92,6 +466,10 @@ void ModelWorkTime::setWorkingRate( int rate )
         {
             workingRate = rate;
             reload();
+
+            workTimerTick();
+
+            emit reloadMonth();
         }
     }
 }
@@ -111,13 +489,16 @@ void ModelWorkTime::setDate( const QDate & date )
 
     selectedDate = date;
 
+    if( selectedDate == HelperWT::currentDate() )
+        updateTimeEnd();
+
     if( isChangeMonth )
         reload();
 
-//    checkTimeStart();
+    checkTimeStart();
 
-//    if( isChangeMonth ) emit changedMonth()к;
-//    if( isChangeWeek  ) emit changedWeek ();
+    if( isChangeMonth ) emit reloadMonth();
+    if( isChangeWeek  ) emit reloadWeek ();
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -483,24 +864,29 @@ void ModelWorkTime::addInterval( const QString & title )
     WorkMonth->addInterval( selectedDate, title );
     DataBase ->addInterval( selectedDate, workingRate, title );
 
-//    if( SelectedDate == QDate::currentDate() )
-//    {
-//        int intervasCount = WorkMonth->countIntervals( SelectedDate );
+    if( selectedDate == HelperWT::currentDate() )
+    {
+        int intervasCount = WorkMonth->countIntervals( selectedDate );
 
-//        if( intervasCount > 1 )
-//        {
-//            if( WorkMonth->timeStart(SelectedDate, intervasCount - 1).isEmpty() )
-//            {
-//                changeTimeStart( intervasCount - 1, WorkMonth->timeEnd(SelectedDate, intervasCount - 2) );
-//            }
-//        }
+        if( intervasCount == 1 )
+        {
+            checkTimeStart();
+        }
+        else if( intervasCount > 1 )
+        {
+            if( WorkMonth->timeStart(selectedDate, intervasCount - 1).isEmpty() )
+            {
+                setTimeStart( intervasCount - 1, WorkMonth->timeEnd(selectedDate, intervasCount - 2) );
+            }
+        }
 
-//        checkTimeStart();
+        updateTimeEnd();
+        updateTimeEscape();
 
-//        updateLaunchTime();
+        emit reloadMonth();
+    }
 
-//        TodayWorked->updateTimeEnd();
-//    }
+    workTimerTick();
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -519,11 +905,15 @@ void ModelWorkTime::removeInterval( const int id )
     WorkMonth->removeInterval( selectedDate, id );
     DataBase ->removeInterval( selectedDate, workingRate, id );
 
-    //updateLaunchTime();
+    if( selectedDate == HelperWT::currentDate() )
+    {
+        updateTimeEnd();
+        updateTimeEscape();
+    }
 
-    //updateTodayWorker();
+    workTimerTick();
 
-    //emit updateTime();
+    emit reloadMonth();
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -557,11 +947,16 @@ void ModelWorkTime::setTimeStart( const int id, const WTime & time )
     WorkMonth->setTimeStart( selectedDate, id, time.toQTime(), true );
     DataBase ->setTimeStart( selectedDate, workingRate, id, time );
 
-    //checkTimeStart();
-    //updateLaunchTime();
-   // updateTodayWorker();
+    checkTimeStart();
+    checkLaunch();
 
-    //emit updateTime();
+    if( selectedDate == HelperWT::currentDate() )
+        updateTimeEnd();
+
+    updateTimeEscape();
+    workTimerTick();
+
+    emit reloadMonth();
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -579,14 +974,15 @@ void ModelWorkTime::setTimeEnd( const int id, const WTime & time )
     WorkMonth->setTimeEnd( selectedDate, id, time.toQTime(), true );
     DataBase ->setTimeEnd( selectedDate, workingRate, id, time );
 
-//    updateTodayWorker();
+    checkLaunch();
 
-//    if( SelectedDate == QDate::currentDate() && id == WorkMonth->countIntervals(SelectedDate) - 1 )
-//        TodayWorked->updateTimeEnd();
+    if( selectedDate == HelperWT::currentDate() )
+        updateTimeEnd();
 
-//    updateLaunchTime();
+    updateTimeEscape();
+    workTimerTick();
 
-//    emit updateTime();
+    emit reloadMonth();
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -603,9 +999,10 @@ void ModelWorkTime::setTimeNeed( const WTime & time )
     WorkMonth->setTimeNeed( selectedDate, time.toQTime(), true );
     DataBase ->setTimeNeed( selectedDate, workingRate, time, DataBaseWT::User );
 
-//    updateTodayWorker();
+    updateTimeEscape();
+    workTimerTick();
 
-//    emit updateTime();
+    emit reloadMonth();
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -636,12 +1033,18 @@ void ModelWorkTime::setTypeDay( int type )
             }
         }
 
-        //updateTodayWorker();
+        if( selectedDate == HelperWT::currentDate() )
+        {
+            updateTimeEnd();
+        }
 
-        //emit updateTime();
+        emit reloadMonth();
     }
 
-//    emit recolorDay( SelectedDate, WorkMonth->colorDay(SelectedDate) );
+    updateTimeEscape();
+    workTimerTick();
+
+    emit recolorDay( selectedDate, WorkMonth->colorDay(selectedDate) );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -657,8 +1060,6 @@ void ModelWorkTime::setNote( QString note )
 
     WorkMonth->setNote( selectedDate, note );
     DataBase ->setNote( selectedDate, workingRate, note );
-
-//    updateTodayWorker();
 }
 // ------------------------------------------------------------------------------------ //
 

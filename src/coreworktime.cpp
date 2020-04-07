@@ -87,13 +87,11 @@ void CoreWorkTime::wait( bool isWait )
        // WaitMovie->start();
         WaitLabel->show();
         WaitLabel->raise();
-        qDebug() << "\t WAIT ON";
     }
     else
     {
         //WaitMovie->stop();
         WaitLabel->hide();
-        qDebug() << "\t WAIT OFF";
     }
 }
 // ------------------------------------------------------------------------------------ //
@@ -135,7 +133,7 @@ void CoreWorkTime::start()
         WorkTime->setGeometry     ( WorkTimeGeometry        );
         WorkTime->setShownMenu    ( isShownMenu             );
         WorkTime->setSelectedPage ( selectedPage            );
-
+        WorkTime->setSelectedDate ( HelperWT::currentDate() );
         WorkTime->show();
 
         if( workingRate == HelperWT::UnknownWR )
@@ -838,7 +836,7 @@ void CoreWorkTime::showSettings()
 void CoreWorkTime::normalizeGeometryWorkTime()
 {
 #ifdef WT_INFO_CALL_FUNC
-    qDebug() << "#Call CoreWorkTime::normalizeGeometry( " << Rect << " )";
+    qDebug() << "#Call CoreWorkTime::normalizeGeometryWorkTime()";
 #endif
 
     QRect DesktopRect = qApp->desktop()->rect();

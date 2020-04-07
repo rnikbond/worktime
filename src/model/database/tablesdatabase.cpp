@@ -1,4 +1,5 @@
 // ------------------------------ //
+#include "helperwt.h"
 #include "databasewt.h"
 // ------------------------------ //
 #include "tablesdatabase.h"
@@ -25,7 +26,7 @@ TablesDataBase::TablesDataBase( DataBaseWT * DB, QWidget *parent ) : QWidget( pa
 
     UpdateTablesTimer->start( 500 );
 
-    gui->DateEdit->setDate( QDate::currentDate() );
+    gui->DateEdit->setDate( HelperWT::currentDate() );
 }
 // --------------------------------------------------------------------------------- //
 

@@ -26,6 +26,9 @@ public:
 
     HelperWT( QObject * parent = 0 );
 
+    static const WTime timePower();
+
+    static const QTime currentTime();
     static const QDate currentDate();
 
     static const WTime timeNeedSchedule( const QDate & date, const int rate );

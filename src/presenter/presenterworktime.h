@@ -2,6 +2,7 @@
 #ifndef PRESENTERWORKTIME_H
 #define PRESENTERWORKTIME_H
 // ---------------------------- //
+#include <QColor>
 #include <QObject>
 // ---------------------------- //
 #include "wtime.h"
@@ -30,17 +31,19 @@ private:
     void connectModel( IModelWorkTime * Model );
     void connectView ( IViewWorkTime  * View  );
 
-    void refreshFull     ();
-    void refreshDataDay  ();
-    void refreshTimeDay  ();
-    void refreshTimeWeek ();
-    void refreshTimeMonth();
-    void refreshTimeStart     ( int id, WTime time       );
-    void refreshTimeEnd       ( int id, WTime time       );
-    void refreshTimeReverse   ( WTimeExt time            );
-    void refreshTimeEscape    ( WTime time, QString info );
-    void refreshColorDay      ( QDate date, QColor color );
-    void refreshColorLight    ( QColor color             );
+private slots:
+
+    void refreshFull       ();
+    void refreshDataDay    ();
+    void refreshTimeDay    ();
+    void refreshTimeWeek   ();
+    void refreshTimeMonth  ();
+    void refreshTimeStart  ( int id, WTime time       );
+    void refreshTimeEnd    ( int id, WTime time       );
+    void refreshTimeReverse( QString time             );
+    void refreshTimeEscape (QString info );
+    void refreshColorDay   ( QDate date, QColor color );
+    void refreshColorLight ( QColor color             );
 
 private slots:
 

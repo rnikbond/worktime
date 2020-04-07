@@ -31,7 +31,7 @@ DataBaseWT::~DataBaseWT()
 bool DataBaseWT::isExists( const QDate & date, const int rateID  )
 {
 #ifdef WT_INFO_CALL_FUNC
-    qDebug() << "#Call DataBaseWT::isExists(" << date << ", " << rateID << ");
+    qDebug() << "#Call DataBaseWT::isExists(" << date << ", " << rateID << ")";
 #endif
 
     return dateID( date, rateID ) >= 0;
@@ -47,7 +47,7 @@ bool DataBaseWT::isExists( const QDate & date, const int rateID  )
 int DataBaseWT::dateID( const QDate & date, const int rateID )
 {
 #ifdef WT_INFO_CALL_FUNC
-    qDebug() << "#Call DataBaseWT::dateID(" << date << ", " << rateID << ");
+    qDebug() << "#Call DataBaseWT::dateID(" << date << ", " << rateID << ")";
 #endif
 
     int DateID = -1;
@@ -457,7 +457,7 @@ void DataBaseWT::addInterval( const QDate & date, const int rateID, const QStrin
 void DataBaseWT::removeInterval( const QDate& Date, const int RateID, const int id )
 {
 #ifdef WT_INFO_CALL_FUNC
-    qDebug() << "#Call DataBaseWT::removeInterval( " << date << ", " << rateID << " )";
+    qDebug() << "#Call DataBaseWT::removeInterval( " << Date << ", " << RateID << " )";
 #endif
 
     int DateID = dateID( Date, RateID );

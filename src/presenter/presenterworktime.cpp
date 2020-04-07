@@ -1,5 +1,6 @@
 // ---------------------------- //
 #include <QColor>
+#include <QDebug>
 // ---------------------------- //
 #include "iviewworktime.h"
 #include "imodelworktime.h"
@@ -165,7 +166,7 @@ void PresenterWorkTime::refreshTimeMonth()
 void PresenterWorkTime::refreshTimeStart( int id, WTime time )
 {
 #ifdef WT_INFO_CALL_FUNC
-    qDebug() << "#Call PresenterWorkTime::refreshTimeStart( " << id, ", " << time.toString() << " )";
+    qDebug() << "#Call PresenterWorkTime::refreshTimeStart( " << id << ", " << time.toString() << " )";
 #endif
 
     ViewWT->setTimeStart( time, id );
@@ -180,7 +181,7 @@ void PresenterWorkTime::refreshTimeStart( int id, WTime time )
 void PresenterWorkTime::refreshTimeEnd( int id, WTime time )
 {
 #ifdef WT_INFO_CALL_FUNC
-    qDebug() << "#Call PresenterWorkTime::refreshTimeEnd( " << id, ", " << time.toString() << " )";
+    qDebug() << "#Call PresenterWorkTime::refreshTimeEnd( " << id << ", " << time.toString() << " )";
 #endif
 
     ViewWT->updateTimeEnd( id, time );
@@ -191,10 +192,10 @@ void PresenterWorkTime::refreshTimeEnd( int id, WTime time )
  * \brief PresenterWorkTime::refreshTimeReverse
  * \param time Время таймера обратного отсчета
  */
-void PresenterWorkTime::refreshTimeReverse( WTimeExt time )
+void PresenterWorkTime::refreshTimeReverse( QString time )
 {
 #ifdef WT_INFO_CALL_FUNC
-    qDebug() << "#Call PresenterWorkTime::refreshTimeReverse( " << time.toString() << " )";
+    qDebug() << "#Call PresenterWorkTime::refreshTimeReverse( " << time << " )";
 #endif
 
     ViewWT->setTimeReverseTimer( time );
@@ -206,13 +207,12 @@ void PresenterWorkTime::refreshTimeReverse( WTimeExt time )
  * \param time Время ухода
  * \param info Информация об оставшемся времени
  */
-void PresenterWorkTime::refreshTimeEscape( WTime time, QString info )
+void PresenterWorkTime::refreshTimeEscape( QString info )
 {
 #ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call PresenterWorkTime::refreshTimeEscape( " << time.toString() << ", " << info << " )";
 #endif
 
-    ViewWT->setTimeEscape( time );
     ViewWT->setInfoEscape( info );
 }
 // ------------------------------------------------------------------------------------ //
@@ -405,7 +405,13 @@ void PresenterWorkTime::connectModel( IModelWorkTime * Model )
     qDebug() << "#Call PresenterWorkTime::connectModel()";
 #endif
 
-    //QObject * ModelObj = dynamic_cast<QObject*>( Model );
+    QObject * ModelObj = dynamic_cast<QObject*>( Model );
+
+    connect( ModelObj, SIGNAL(reloadMonth       (       )), SLOT(refreshFull       (       )) );
+    connect( ModelObj, SIGNAL(reloadWeek        (       )), SLOT(refreshTimeWeek   (       )) );
+    connect( ModelObj, SIGNAL(reloadDay         (       )), SLOT(refreshDataDay    (       )) );
+    connect( ModelObj, SIGNAL(updateEscape      (QString)), SLOT(refreshTimeEscape (QString)) );
+    connect( ModelObj, SIGNAL(updateReverseTimer(QString)), SLOT(refreshTimeReverse(QString)) );
 }
 // ------------------------------------------------------------------------------------ //
 

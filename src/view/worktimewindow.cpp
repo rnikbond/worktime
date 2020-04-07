@@ -230,6 +230,21 @@ void WorkTimeWindow::selectDate()
 // ------------------------------------------------------------------------------------ //
 
 /*!
+ * \brief WorkTimeWindow::setSelectedDate
+ * \param date Дата, которая должна быть выбрана
+ */
+void WorkTimeWindow::setSelectedDate( const QDate & date )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#call WorkTimeWindow::setSelectedDate( " << date << ")";
+#endif
+
+    gui->WorkCalendar->setSelectedDate( date );
+    selectDate();
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
  * \brief WorkTimeWindow::setTypesDay
  * \param list Список названий типов дней
  *
@@ -401,7 +416,7 @@ void WorkTimeWindow::setTimeWorkedInDay( WTime time )
 void WorkTimeWindow::setTimeStatisticInDay( WTime time, QString title )
 {
 #ifdef WT_INFO_CALL_FUNC
-    qDebug() << "#call WorkTimeWindow::setTimeStatisticInDay( " << time.toString() << ", " << Title << ")";
+    qDebug() << "#call WorkTimeWindow::setTimeStatisticInDay( " << time.toString() << ", " << title << ")";
 #endif
 
     gui->StatisticDayLabel->setText( title );
@@ -447,7 +462,7 @@ void WorkTimeWindow::setTimeWorkedInWeek( WTime time )
 void WorkTimeWindow::setTimeStatisticInWeek( WTime time, QString title )
 {
 #ifdef WT_INFO_CALL_FUNC
-    qDebug() << "#call WorkTimeWindow::setTimeStatisticInWeek( " << time.toString() << ", " << Title << ")";
+    qDebug() << "#call WorkTimeWindow::setTimeStatisticInWeek( " << time.toString() << ", " << title << ")";
 #endif
 
     gui->StatisticWeekLabel->setText( title );
@@ -491,7 +506,7 @@ void WorkTimeWindow::setTimeWorkedInMonth( WTime time )
 void WorkTimeWindow::setTimeStatisticInMonth( WTime time, QString title )
 {
 #ifdef WT_INFO_CALL_FUNC
-    qDebug() << "#call WorkTimeWindow::setTimeStatisticInMonth( " << time.toString() << ", " << Title << ")";
+    qDebug() << "#call WorkTimeWindow::setTimeStatisticInMonth( " << time.toString() << ", " << title << ")";
 #endif
 
     gui->StatisticMonthLabel->setText( title );
@@ -535,7 +550,7 @@ void WorkTimeWindow::setTimeWorkedToDay( WTime time )
 void WorkTimeWindow::setTimeStatisticToDay( WTime time, QString title )
 {
 #ifdef WT_INFO_CALL_FUNC
-    qDebug() << "#call WorkTimeWindow::setTimeStatisticToDay( " << time.toString() << ", " << Title << ")";
+    qDebug() << "#call WorkTimeWindow::setTimeStatisticToDay( " << time.toString() << ", " << title << ")";
 #endif
 
     gui->StatisticToDayLabel->setText( title );
@@ -558,20 +573,6 @@ void WorkTimeWindow::setTimeNeedToDay( WTime time )
 // ------------------------------------------------------------------------------------ //
 
 /*!
- * \brief WorkTimeWindow::setTimeEscape
- * \param time Время, во сколько сегодня нужно закончить работать
- */
-void WorkTimeWindow::setTimeEscape( WTime time )
-{
-#ifdef WT_INFO_CALL_FUNC
-    qDebug() << "#call WorkTimeWindow::setTimeEscape( " << time.toString() << ")";
-#endif
-
-    gui->EscapeValue->setText( time.toString() );
-}
-// ------------------------------------------------------------------------------------ //
-
-/*!
  * \brief WorkTimeWindow::setInfoEscape
  * \param info Подсказка со временем, сколько останется недоработано
  *
@@ -584,16 +585,7 @@ void WorkTimeWindow::setInfoEscape( QString info )
     qDebug() << "#call WorkTimeWindow::setInfoEscape( " << info << ")";
 #endif
 
-    if( info.isEmpty() )
-    {
-        gui->EsapeInfo->clear();
-        gui->EsapeInfo->hide();
-    }
-    else
-    {
-        gui->EsapeInfo->setText( info );
-        gui->EsapeInfo->show();
-    }
+    gui->EscapeValue->setText( info );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -601,13 +593,13 @@ void WorkTimeWindow::setInfoEscape( QString info )
  * \brief WorkTimeWindow::setTimeReverseTimer
  * \param time Таймер обратного отсчета рабочего времени
  */
-void WorkTimeWindow::setTimeReverseTimer( WTimeExt time )
+void WorkTimeWindow::setTimeReverseTimer( QString time )
 {
 #ifdef WT_INFO_CALL_FUNC
-    qDebug() << "#call WorkTimeWindow::setTimeReverseTimer( " << time.toString() << ")";
+    qDebug() << "#call WorkTimeWindow::setTimeReverseTimer( " << time << ")";
 #endif
 
-    gui->ReverseTimer->setText( time.toString() );
+    gui->ReverseTimer->setText( time );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -687,7 +679,7 @@ void WorkTimeWindow::updateTimeEnd( int id, WTime time )
     qDebug() << "#call WorkTimeWindow::updateTimeEnd( " << id << ", " << time.toString() << ")";
 #endif
 
-    if( gui->WorkCalendar->selectedDate() == QDate::currentDate() )
+    if( gui->WorkCalendar->selectedDate() == HelperWT::currentDate() )
     {
         if( gui->TimeEndValue->hasFocus() == false )
         {

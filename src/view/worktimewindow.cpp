@@ -685,7 +685,9 @@ void WorkTimeWindow::updateTimeEnd( int id, WTime time )
         {
             if( gui->IntervalsList->currentRow() == id )
             {
+                gui->TimeEndValue->blockSignals( true );
                 gui->TimeEndValue->setTime( time.toQTime() );
+                gui->TimeEndValue->blockSignals( false );
             }
         }
     }
@@ -891,9 +893,9 @@ void WorkTimeWindow::removeInterval()
 
     int IntervalRow = gui->IntervalsList->currentRow();
 
-    emit userRemoveInterval( IntervalRow );
+    //gui->IntervalsList->takeItem( IntervalRow );
 
-    gui->IntervalsList->takeItem( IntervalRow );
+    emit userRemoveInterval( IntervalRow );
 
     gui->IntervalsList->setCurrentRow( gui->IntervalsList->count() - 1 );
 }

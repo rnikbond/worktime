@@ -407,11 +407,13 @@ void PresenterWorkTime::connectModel( IModelWorkTime * Model )
 
     QObject * ModelObj = dynamic_cast<QObject*>( Model );
 
-    connect( ModelObj, SIGNAL(reloadMonth       (       )), SLOT(refreshFull       (       )) );
-    connect( ModelObj, SIGNAL(reloadWeek        (       )), SLOT(refreshTimeWeek   (       )) );
-    connect( ModelObj, SIGNAL(reloadDay         (       )), SLOT(refreshDataDay    (       )) );
-    connect( ModelObj, SIGNAL(updateEscape      (QString)), SLOT(refreshTimeEscape (QString)) );
-    connect( ModelObj, SIGNAL(updateReverseTimer(QString)), SLOT(refreshTimeReverse(QString)) );
+    connect( ModelObj, SIGNAL(refreshTimeStart  (int, WTime)), SLOT(refreshTimeStart  (int, WTime)) );
+    connect( ModelObj, SIGNAL(refreshTimeEnd    (int, WTime)), SLOT(refreshTimeEnd    (int, WTime)) );
+    connect( ModelObj, SIGNAL(reloadMonth       (          )), SLOT(refreshFull       (          )) );
+    connect( ModelObj, SIGNAL(reloadWeek        (          )), SLOT(refreshTimeWeek   (          )) );
+    connect( ModelObj, SIGNAL(reloadDay         (          )), SLOT(refreshDataDay    (          )) );
+    connect( ModelObj, SIGNAL(updateEscape      (QString   )), SLOT(refreshTimeEscape (QString   )) );
+    connect( ModelObj, SIGNAL(updateReverseTimer(QString   )), SLOT(refreshTimeReverse(QString   )) );
 }
 // ------------------------------------------------------------------------------------ //
 

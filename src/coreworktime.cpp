@@ -71,6 +71,53 @@ CoreWorkTime::~CoreWorkTime()
 }
 // ------------------------------------------------------------------------------------ //
 
+void CoreWorkTime::initialize()
+{
+    ModelWT->setWorkingRate     ( workingRate      );
+    ModelWT->setTimeLaunchLength( LaunchLengthTime );
+    ModelWT->setTimeLaunchStart ( LaunchStartTime  );
+    ModelWT->setTimeLaunchEnd   ( LaunchEndTime    );
+    ModelWT->setTimeMax         ( MaxTime          );
+    ModelWT->setTimeBefore      ( BeforeTime       );
+    ModelWT->setTimeAfter       ( AfterTime        );
+
+    WorkTime->setWindowOpacity( toOpacity(opacityValue) );
+    WorkTime->setGeometry     ( WorkTimeGeometry        );
+    WorkTime->setShownMenu    ( isShownMenu             );
+    WorkTime->setSelectedPage ( selectedPage            );
+    WorkTime->setSelectedDate ( HelperWT::currentDate() );
+}
+// ------------------------------------------------------------------------------------ //
+
+void CoreWorkTime::updateSettings()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call CoreWorkTime::updateSettings()" ;
+#endif
+
+    Settings->setWorkingRates( HelperWT::namesWorkingRates() );
+    Settings->setThemes      ( themeNames()                  );
+
+    Settings->setWorkingRate  ( workingRate      );
+    Settings->setTheme        ( themeIndex       );
+    Settings->setOpacityValue ( opacityValue     );
+    Settings->setAutorun      ( isAutorun        );
+    Settings->setTray         ( isTray           );
+    Settings->setContextMenu  ( isContextMenu    );
+    Settings->setUpdates      ( isCheckUpdates   );
+    Settings->setUpdatesPath  ( updatePath       );
+    Settings->setLaunchStart  ( LaunchStartTime  );
+    Settings->setLaunchEnd    ( LaunchEndTime    );
+    Settings->setLaunchTime   ( LaunchLengthTime );
+    Settings->setMaxTime      ( MaxTime          );
+    Settings->setBeforeTime   ( BeforeTime       );
+    Settings->setAfterTime    ( AfterTime        );
+    Settings->setViewWidget   ( isViewWidget     );
+    Settings->setTopWidget    ( isTopWidget      );
+    Settings->setOpacityWidget( opacityWidget    );
+}
+// ------------------------------------------------------------------------------------ //
+
 /*!
  * \brief CoreWorkTime::wait
  * \param isWait Признак отображения индикации ожидания
@@ -80,17 +127,18 @@ CoreWorkTime::~CoreWorkTime()
  */
 void CoreWorkTime::wait( bool isWait )
 {
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call CoreWorkTime::wait( " << isWait << " )" ;
+#endif
+
     if( isWait )
     {
         WaitLabel->setGeometry( WorkTime->geometry() );
-       // WaitMovie->setScaledSize( WaitLabel->size() );
-       // WaitMovie->start();
         WaitLabel->show();
         WaitLabel->raise();
     }
     else
     {
-        //WaitMovie->stop();
         WaitLabel->hide();
     }
 }
@@ -121,24 +169,24 @@ void CoreWorkTime::start()
     {
         readConfig();
 
+        WorkTime->setGeometry( WorkTimeGeometry );
+
         DataBaseThread->start();
 
         DataBase->insertWorkingRates( HelperWT::namesWorkingRates() );
 
         //applyTheme( themeIndex );
 
-        ModelWT->setWorkingRate( workingRate );
-
-        WorkTime->setWindowOpacity( toOpacity(opacityValue) );
-        WorkTime->setGeometry     ( WorkTimeGeometry        );
-        WorkTime->setShownMenu    ( isShownMenu             );
-        WorkTime->setSelectedPage ( selectedPage            );
-        WorkTime->setSelectedDate ( HelperWT::currentDate() );
-        WorkTime->show();
-
         if( workingRate == HelperWT::UnknownWR )
         {
-            showSettings();
+            updateSettings();
+            showWindow( Settings, true );
+
+        }
+        else
+        {
+            initialize();
+            WorkTime->show();
         }
     }
 }
@@ -193,7 +241,15 @@ void CoreWorkTime::changedWorkingRate( int rate )
     qDebug() << "#Call CoreWorkTime::changedWorkingRate( " << rate << " )";
 #endif
 
+    int saveWorkingRate = workingRate;
+
     workingRate = rate;
+
+    if( saveWorkingRate == HelperWT::UnknownWR )
+    {
+        initialize();
+        WorkTime->show();
+    }
 
     ModelWT->setWorkingRate( rate );
 
@@ -802,27 +858,7 @@ void CoreWorkTime::showSettings()
     qDebug() << "#Call CoreWorkTime::showSettings()";
 #endif
 
-    Settings->setWorkingRates( HelperWT::namesWorkingRates() );
-    Settings->setThemes      ( themeNames()                  );
-
-    Settings->setWorkingRate  ( workingRate      );
-    Settings->setTheme        ( themeIndex       );
-    Settings->setOpacityValue ( opacityValue     );
-    Settings->setAutorun      ( isAutorun        );
-    Settings->setTray         ( isTray           );
-    Settings->setContextMenu  ( isContextMenu    );
-    Settings->setUpdates      ( isCheckUpdates   );
-    Settings->setUpdatesPath  ( updatePath       );
-    Settings->setLaunchStart  ( LaunchStartTime  );
-    Settings->setLaunchEnd    ( LaunchEndTime    );
-    Settings->setLaunchTime   ( LaunchLengthTime );
-    Settings->setMaxTime      ( MaxTime          );
-    Settings->setBeforeTime   ( BeforeTime       );
-    Settings->setAfterTime    ( AfterTime        );
-    Settings->setViewWidget   ( isViewWidget     );
-    Settings->setTopWidget    ( isTopWidget      );
-    Settings->setOpacityWidget( opacityWidget    );
-
+    updateSettings();
     showWindow( Settings, false );
 }
 // ------------------------------------------------------------------------------------ //
@@ -1020,15 +1056,11 @@ void CoreWorkTime::closeApp()
  */
 void CoreWorkTime::createLoaded()
 {
-    WaitLabel = new QLabel();
-    WaitLabel->setWindowOpacity( 0.6 );
-    WaitLabel->setStyleSheet( "color: black; font-size: 14px;" );
-    //WaitMovie = new QMovie( "loaded.gif" );
-
-    //WaitLabel->setMovie( WaitMovie );
-
+    WaitLabel = new QLabel( tr("Загрузка данных...\nПожалуйста, подождите") );
+    WaitLabel->setWindowFlags( Qt::FramelessWindowHint | Qt::CustomizeWindowHint );
     WaitLabel->setAlignment( Qt::AlignCenter );
-    WaitLabel->setText( tr("Загрузка данных...\nПожалуйста, подождите") );
+    WaitLabel->setStyleSheet( "color: black; font-size: 14px;" );
+    WaitLabel->setWindowOpacity( 0.6 );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -1062,7 +1094,7 @@ void CoreWorkTime::createObjects()
     PresenterWT->setModel( ModelWT  );
     PresenterWT->setView ( WorkTime );
 
-    TablesWindow->show();
+    //TablesWindow->show();
 }
 // ------------------------------------------------------------------------------------ //
 

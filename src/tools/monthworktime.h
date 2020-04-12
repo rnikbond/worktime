@@ -30,11 +30,14 @@ public:
 
     explicit MonthWorkTime( QObject *parent = NULL );
 
-    void clear( bool isFull = false );
+    void clear();
     void fullUpdate( const QDate & Date );
 
     int countDays();
+    int year();
+    int month();
 
+    bool isLoaded();
     bool isThisMonth( const QDate& date );
 
     void setTimeStart( const QDate& date, const int interval, const QTime& time, bool isUpdate );
@@ -61,10 +64,13 @@ public:
 
     QStringList titlesIntervals( const QDate& date );
 
+    QString titleInterval( const QDate& date, const int interval );
+
     WTime timeStart( const QDate& date, const int interval);
     WTime timeEnd  ( const QDate& date, const int interval);
 
     WTime timeNeedInDay    ( const QDate& date );
+    WTime timeNeedScheduleInDay( const QDate& date );
     WTime timeWorkedInDay  ( const QDate& date );
 
     WTime timeNeedInWeek    ( const QDate& date );

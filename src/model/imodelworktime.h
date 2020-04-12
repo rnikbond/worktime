@@ -20,6 +20,13 @@ public:
     virtual void setWorkingRate( int rate ) = 0;
     virtual void setDate( const QDate & date ) = 0;
 
+    virtual void setTimeLaunchStart ( WTime time ) = 0;
+    virtual void setTimeLaunchEnd   ( WTime time ) = 0;
+    virtual void setTimeLaunchLength( WTime time ) = 0;
+    virtual void setTimeMax         ( WTime time ) = 0;
+    virtual void setTimeBefore      ( WTime time ) = 0;
+    virtual void setTimeAfter       ( WTime time ) = 0;
+
     virtual int         typeDay()        = 0;
     virtual QStringList intervals()      = 0;
     virtual QString     note()           = 0;
@@ -70,6 +77,9 @@ public:
 public: // Signals
 
     virtual void enabledWait( bool ) = 0;
+
+    virtual void refreshTimeStart( int id, WTime time ) = 0;
+    virtual void refreshTimeEnd  ( int id, WTime time ) = 0;
 
     virtual void reloadMonth() = 0;
     virtual void reloadWeek () = 0;

@@ -24,7 +24,7 @@ TablesDataBase::TablesDataBase( DataBaseWT * DB, QWidget *parent ) : QWidget( pa
     connect( gui->RemoveButton, SIGNAL(clicked(bool)), SLOT(removeInterval()) );
     connect( gui->RemoveSalaryButton, SIGNAL(clicked(bool)), SLOT(removeSalary()) );
 
-    UpdateTablesTimer->start( 500 );
+    //UpdateTablesTimer->start( 500 );
 
     gui->DateEdit->setDate( HelperWT::currentDate() );
 }

@@ -16,7 +16,7 @@ MonthWorkTime::MonthWorkTime( QObject *parent) : QObject( parent )
 }
 // --------------------------------------------------------------------------------- //
 
-void MonthWorkTime::clear( bool isFull )
+void MonthWorkTime::clear()
 {    
 #ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call MonthWorkTime::clear()";
@@ -25,12 +25,7 @@ void MonthWorkTime::clear( bool isFull )
     int countDays = DaysList.count();
 
     for( int day = 0; day < countDays; day++ )
-    {
-        if( DaysList.at(0)->date() == HelperWT::currentDate() && isFull == false )
-            continue;
-
         delete DaysList.takeAt(0);
-    }
 
     DaysList.clear();
 }
@@ -56,6 +51,32 @@ int MonthWorkTime::countDays()
 #endif
 
     return DaysList.count();
+}
+// --------------------------------------------------------------------------------- //
+
+int MonthWorkTime::year()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call MonthWorkTime::year()";
+#endif
+
+    if( DaysList.at(0) != NULL )
+        return DaysList.at(0)->date().year();
+
+    return 0;
+}
+// --------------------------------------------------------------------------------- //
+
+int MonthWorkTime::month()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call MonthWorkTime::month()";
+#endif
+
+    if( DaysList.at(0) != NULL )
+        return DaysList.at(0)->date().month();
+
+    return 0;
 }
 // --------------------------------------------------------------------------------- //
 
@@ -175,6 +196,29 @@ int MonthWorkTime::lastInterval( const QDate& date )
 }
 // --------------------------------------------------------------------------------- //
 
+QString MonthWorkTime::titleInterval( const QDate& date, const int interval )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call MonthWorkTime::titleInterval(" << date << ", " << interval << ")";
+#endif
+
+    DayWorkTime* Day = dayAtDate( date );
+
+    if( Day != NULL )
+    {
+        return Day->titleInterval( interval );
+    }
+    else
+    {
+#ifdef WT_DEBUG
+        qCritical() << " #Error :: MonthWorkTime::titleInterval(" << date << ", " << interval << ") - day not found";
+#endif
+    }
+
+    return "";
+}
+// --------------------------------------------------------------------------------- //
+
 WTime MonthWorkTime::timeStart( const QDate& date, const int interval)
 {
 #ifdef WT_INFO_CALL_FUNC
@@ -246,6 +290,29 @@ WTime MonthWorkTime::timeNeedInDay( const QDate& date )
     {
 #ifdef WT_DEBUG
         qCritical() << " #Error :: MonthWorkTime::timeNeedInDay(" << date << ") - day not found";
+#endif
+    }
+
+    return WTime();
+}
+// --------------------------------------------------------------------------------- //
+
+WTime MonthWorkTime::timeNeedScheduleInDay( const QDate& date )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call MonthWorkTime::timeNeedScheduleInDay(" << date << ")";
+#endif
+
+    DayWorkTime* Day = dayAtDate( date );
+
+    if( Day != NULL )
+    {
+        return Day->timeNeedSchedule();
+    }
+    else
+    {
+#ifdef WT_DEBUG
+        qCritical() << " #Error :: MonthWorkTime::timeNeedScheduleInDay(" << date << ") - day not found";
 #endif
     }
 
@@ -372,7 +439,9 @@ WTime MonthWorkTime::timeWorkedToDay( const QDate& date )
         if( Day != NULL )
         {
             if( Day->date().day() <= date.day() )
+            {
                 Time += Day->timeWorked();
+            }
         }
         else
         {
@@ -755,6 +824,12 @@ QStringList MonthWorkTime::titlesIntervals( const QDate& date )
     }
 
     return QStringList();
+}
+// --------------------------------------------------------------------------------- //
+
+bool MonthWorkTime::isLoaded()
+{
+    return DaysList.count() > 0;
 }
 // --------------------------------------------------------------------------------- //
 

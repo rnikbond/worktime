@@ -72,6 +72,8 @@ public:
 
     QDate date();
 
+    QString titleInterval( const int interval );
+
     WTime timeNeed();
     WTime timeNeedSchedule();
     WTime timeWorked();

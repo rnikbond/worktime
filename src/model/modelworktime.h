@@ -15,33 +15,42 @@ class ModelWorkTime : public QObject, public IModelWorkTime
 
     QDate selectedDate;
 
-    DayWorkTime   * Today;
-
     DataBaseWT    * DataBase ;
     MonthWorkTime * WorkMonth;
+    MonthWorkTime * CurrentMonth;
+    MonthWorkTime * SelectedMonth;
 
     int workingRate;
 
     QTimer * WorkTimer;
 
+    WTime LaunchLengthTime;
+    WTime LaunchStartTime ;
+    WTime LaunchEndTime   ;
+    WTime MaxTime         ;
+    WTime BeforeTime      ;
+    WTime AfterTime       ;
+
 public:
 
     explicit ModelWorkTime( QObject * parent = 0 );
+    ~ModelWorkTime();
 
 private:
 
+    void load( MonthWorkTime * Month );
     void reload();
-    bool isLoadedMonth( const QDate & date );
 
     void checkTimeStart();
     void checkLaunch();
 
-    bool isCorrectIntervals();
-
     WTime timeEscape();
 
+    void updateTimeEnd();
     void updateTimeEscape();
 
+    bool isEqualMonth( const QDate & date1, const QDate & date2 );
+    bool isCorrectIntervals();
 
 public: // From Interfaces
 
@@ -49,6 +58,13 @@ public: // From Interfaces
 
     void setWorkingRate( int rate );
     void setDate( const QDate & date );
+
+    void setTimeLaunchStart ( WTime time );
+    void setTimeLaunchEnd   ( WTime time );
+    void setTimeLaunchLength( WTime time );
+    void setTimeMax         ( WTime time );
+    void setTimeBefore      ( WTime time );
+    void setTimeAfter       ( WTime time );
 
     int         typeDay();
     QStringList intervals();
@@ -90,11 +106,6 @@ public: // From Interfaces
 
     void setNote( QString note );
 
-private slots:
-
-    void updateTimeEnd();
-    void workTimerTick();
-
 signals: // Interface signals
 
     void enabledWait( bool );
@@ -102,6 +113,9 @@ signals: // Interface signals
     void reloadMonth();
     void reloadWeek ();
     void reloadDay  ();
+
+    void refreshTimeStart( int id, WTime time );
+    void refreshTimeEnd  ( int id, WTime time );
 
     void recolorDay( const QDate & date, const QColor & color );
 

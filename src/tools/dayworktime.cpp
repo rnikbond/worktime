@@ -265,6 +265,34 @@ WTime DayWorkTime::timeEnd( const int interval )
 }
 // --------------------------------------------------------------------------------- //
 
+QString DayWorkTime::titleInterval( const int interval )
+{
+    if( interval >= 0 && interval < IntervalsList.count() )
+    {
+        Interval* Item = IntervalsList[ interval ];
+
+        if( Item != NULL )
+        {
+            return Item->title();
+        }
+        else
+        {
+#ifdef WT_DEBUG
+            qCritical() << " #Error :: DayWorkTime::titleInterval(" << interval << ") - interval is NULL";
+#endif
+        }
+    }
+    else
+    {
+#ifdef WT_DEBUG
+        qCritical() << " #Error :: DayWorkTime::titleInterval(" << interval << ") - interval not in range intervals list";
+#endif
+    }
+
+    return "";
+}
+// --------------------------------------------------------------------------------- //
+
 int DayWorkTime::countIntervals() const
 {
     return IntervalsList.count();

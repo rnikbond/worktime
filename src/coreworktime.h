@@ -42,7 +42,6 @@ class CoreWorkTime : public QObject
     int selectedPage;
 
     QLabel * WaitLabel;
-    QMovie * WaitMovie;
 
     QThread           * DataBaseThread;
     DataBaseWT        * DataBase;
@@ -67,6 +66,10 @@ private:
     void connectWorkTime();
     void connectSettings();
     void connectModel();
+
+    void initialize();
+
+    void updateSettings();
 
     void createLoaded();
 

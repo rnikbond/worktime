@@ -786,7 +786,7 @@ void SettingsWindow::updateMenuEnabled()
     {
         QListWidgetItem * MenuItem = gui->MenuLWidget->item( item );
 
-        if( workingRate == HelperWT::UnknownWR )
+        if( workingRate < 1)
         {
             MenuItem->setFlags( Qt::NoItemFlags );
         }
@@ -795,9 +795,6 @@ void SettingsWindow::updateMenuEnabled()
             MenuItem->setFlags( Qt::ItemIsEnabled | Qt::ItemIsSelectable  );
         }
     }
-
-    gui->MenuLWidget->setCurrentRow( 0 );
-
 }
 // ------------------------------------------------------------------------------------ //
 

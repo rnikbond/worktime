@@ -12,6 +12,8 @@ ModelWorkTime::ModelWorkTime( QObject * parent ) : QObject( parent )
     qDebug() << "#Call ModelWorkTime::ModelWorkTime( ... )";
 #endif
 
+    isTickTimer   = true;
+
     DataBase      = NULL;
 
     selectedDate  = HelperWT::currentDate();
@@ -311,6 +313,9 @@ void ModelWorkTime::updateTimeEnd()
 #ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call ModelWorkTime::updateTimeEnd()";
 #endif
+
+    if( isTickTimer == false )
+        return;
 
     if( CurrentMonth->isLoaded() )
     {
@@ -1396,6 +1401,28 @@ void ModelWorkTime::setNote( QString note )
 
     WorkMonth->setNote( selectedDate, note );
     DataBase ->setNote( selectedDate, workingRate, note );
+}
+// ------------------------------------------------------------------------------------ //
+
+void ModelWorkTime::setTimerState( bool state )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call ModelWorkTime::setTimerState( " << state <<  " )";
+#endif
+
+    isTickTimer = state;
+
+    if( isTickTimer )
+    {
+        workTimerTick();
+        updateTimeEnd();
+
+        WorkTimer->start( 1000 );
+    }
+    else
+    {
+        WorkTimer->stop();
+    }
 }
 // ------------------------------------------------------------------------------------ //
 

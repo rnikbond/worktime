@@ -67,6 +67,8 @@ public:
 
     virtual void setNote( QString note ) = 0;
 
+    virtual void setTimerState( bool state ) = 0;
+
     // virtual void setTimeBefore      ( WTime time );
     // virtual void setTimeAfter       ( WTime time );
     // virtual void setTimeLaunchStart ( WTime time );

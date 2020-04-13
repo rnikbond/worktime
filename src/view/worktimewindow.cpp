@@ -26,6 +26,8 @@ WorkTimeWindow::WorkTimeWindow( QWidget * parent ) : QWidget( parent ), gui( new
 
     configuringGUI();
     connectSingnalSlot();
+
+    isRunTimer = true;
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -1037,6 +1039,27 @@ void WorkTimeWindow::UpdateClick()
 }
 // ------------------------------------------------------------------------------------ //
 
+void WorkTimeWindow::stopRunClick()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call WorkTimeWindow::stopRunClick()";
+#endif
+
+    isRunTimer = !isRunTimer;
+
+    if( isRunTimer )
+    {
+
+    }
+    else
+    {
+
+    }
+
+    emit runTimer( isRunTimer );
+}
+// ------------------------------------------------------------------------------------ //
+
 /*!
  * \brief WorkTimeWindow::setSalaryExists
  * \param isExists Признак наличия окна "Зарплата".
@@ -1174,6 +1197,8 @@ void WorkTimeWindow::connectSingnalSlot()
      qDebug() << "#call WorkTimeWindow::connectSingnalSlot()";
 #endif
 
+    connect( gui->StopRunTimeButton, SIGNAL(clicked(bool)), SLOT(stopRunClick()) );
+
     // -------------------------------- CALENDAR -------------------------------- //
     connect( gui->WorkCalendar, SIGNAL(selectionChanged(    )), SLOT(selectDate()) );
     connect( gui->TodayButton , SIGNAL(clicked         (bool)), SLOT(todayClick()) );
@@ -1225,6 +1250,8 @@ void WorkTimeWindow::configuringGUI()
     gui->setupUi( this );
 
     setWindowFlags( Qt::Window | Qt::WindowCloseButtonHint );
+
+    setMouseTracking( true );
 
     gui->WorkCalendar->setSelectionMode         ( QCalendarWidget::SingleSelection  );
     gui->WorkCalendar->setHorizontalHeaderFormat( QCalendarWidget::LongDayNames     );

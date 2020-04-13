@@ -31,6 +31,8 @@ class ModelWorkTime : public QObject, public IModelWorkTime
     WTime BeforeTime      ;
     WTime AfterTime       ;
 
+    bool isTickTimer;
+
 public:
 
     explicit ModelWorkTime( QObject * parent = 0 );
@@ -109,6 +111,8 @@ public: // From Interfaces
     void setTypeDay( int type );
 
     void setNote( QString note );
+
+    void setTimerState( bool state );
 
 signals: // Interface signals
 

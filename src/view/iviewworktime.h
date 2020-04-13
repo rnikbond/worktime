@@ -89,6 +89,8 @@ public: // Signals
     virtual void showSeveralDays() = 0;
     virtual void showChanges    () = 0;
     virtual void showSettings   () = 0;
+
+    virtual void runTimer( bool isRun ) = 0;
 };
 
 #endif // IVIEWWORKTIME

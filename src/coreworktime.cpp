@@ -1,5 +1,6 @@
 // ---------------------------- //
 #include <QFile>
+#include <QMenu>
 #include <QDebug>
 #include <QMessageBox>
 #include <QApplication>
@@ -49,9 +50,9 @@ CoreWorkTime::CoreWorkTime( QObject * parent ) : QObject( parent )
     if( QDir(HelperWT::pathToWorkDir()).exists() == false )
         QDir().mkdir( HelperWT::pathToWorkDir() );
 
-    createLoaded ();
-    createObjects();
-
+    createLoaded   ();
+    createObjects  ();
+    createTray     ();
     connectModel   ();
     connectWorkTime();
     connectSettings();
@@ -552,12 +553,19 @@ void CoreWorkTime::closeWorkTimeWindow()
 
     if( isTray )
     {
-
+        WorkTime->hide();
     }
     else
     {
         closeApp();
     }
+}
+// ------------------------------------------------------------------------------------ //
+
+void CoreWorkTime::showWorkTime()
+{
+    WorkTime->show();
+    WorkTime->raise();
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -1044,10 +1052,30 @@ void CoreWorkTime::closeApp()
     qDebug() << "#Call CoreWorkTime::closeApp()";
 #endif
 
-    qDebug() << "#Call CoreWorkTime::closeApp()";
+    TrayWorkTime->hide();
 
     qApp->closeAllWindows();
     qApp->quit();
+}
+// ------------------------------------------------------------------------------------ //
+
+void CoreWorkTime::iconActivated( QSystemTrayIcon::ActivationReason reason )
+{
+    switch( reason )
+    {
+        case QSystemTrayIcon::Trigger:
+        {
+            if( isTray )
+            {
+                if( WorkTime->isHidden() ) WorkTime->show();
+                else                       WorkTime->hide();
+            }
+
+            break;
+        }
+
+        default: break;
+    }
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -1097,6 +1125,35 @@ void CoreWorkTime::createObjects()
     PresenterWT->setView ( WorkTime );
 
     //TablesWindow->show();
+}
+// ------------------------------------------------------------------------------------ //
+
+void CoreWorkTime::createTray()
+{
+    // Инициализируем иконку трея, устанавливаем иконку из набора системных иконок, а также задаем всплывающую подсказку
+    TrayWorkTime = new QSystemTrayIcon( this );
+    TrayWorkTime->setIcon(QIcon(":/icons/icons/logo/worktime.png"));
+    TrayWorkTime->setToolTip( tr("WorkTime") );
+
+    // После чего создаем контекстное меню из двух пунктов
+    QMenu  * Menu       = new QMenu(                         WorkTime );
+    QAction* ViewWindow = new QAction( tr("Открыть"       ), this );
+    QAction* QuitAction = new QAction( tr("Выход"         ), this );
+
+    // Подключаем сигналы нажатий на пункты меню к соответсвующим слотам
+    // Первый пункт меню разворачивает приложение из трея, а второй пункт меню завершает приложение
+    connect( ViewWindow, SIGNAL(triggered()), this, SLOT(showWorkTime()) );
+    connect( QuitAction, SIGNAL(triggered()), qApp, SLOT(quit()) );
+
+    Menu->addAction( ViewWindow );
+    Menu->addAction( QuitAction );
+
+    // Устанавливаем контекстное меню на иконку и показываем иконку приложения в трее
+    TrayWorkTime->setContextMenu( Menu );
+    TrayWorkTime->show();
+
+    // Также подключаем сигнал нажатия на иконку к обработчику данного нажатия
+    connect( TrayWorkTime, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)) );
 }
 // ------------------------------------------------------------------------------------ //
 

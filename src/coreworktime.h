@@ -5,6 +5,7 @@
 #include <QLabel>
 #include <QMovie>
 #include <QObject>
+#include <QSystemTrayIcon>
 // ---------------------------- //
 #include "databasewt.h"
 #include "modelworktime.h"
@@ -54,6 +55,8 @@ class CoreWorkTime : public QObject
 
     TablesDataBase * TablesWindow;
 
+    QSystemTrayIcon * TrayWorkTime;
+
 public:
 
     explicit CoreWorkTime( QObject * parent = 0 );
@@ -74,6 +77,8 @@ private:
     void createLoaded();
 
     void createObjects();
+
+    void createTray();
 
     void removeOld();
     bool isAlreadyRunning();
@@ -98,6 +103,7 @@ private slots:
 
     // Slots from WorkTime window
     void closeWorkTimeWindow();
+    void showWorkTime();
     void changeVisibleMenu( bool isShown );
     void changePage( int page );
     void changeGeometryWidget( QRect geometry );
@@ -127,6 +133,8 @@ private slots:
     void showSettings();
 
     void closeApp();
+
+    void iconActivated(QSystemTrayIcon::ActivationReason reason);
 
     void infoLog ( const QString & logText );
     void errorLog( const QString & logText );

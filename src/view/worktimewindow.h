@@ -24,6 +24,11 @@ class WorkTimeWindow : public QWidget, public IViewWorkTime
         MonthPage  ///< Страница "Месяц"
     };
 
+    QPoint OldPos;
+    bool isMoveWindow;
+
+    bool isRunTimer;
+
 public:
 
     explicit WorkTimeWindow( QWidget * parent = 0 );
@@ -125,6 +130,8 @@ private slots:
     void SettingsClick   ();
     void UpdateClick     ();
 
+    void stopRunClick();
+
 signals:
 
     void userSelectDate     ( const QDate & date                  );
@@ -151,6 +158,8 @@ signals:
     void showSeveralDays();
     void showChanges    ();
     void showSettings   ();
+
+    void runTimer( bool isRun );
 
 protected:
 

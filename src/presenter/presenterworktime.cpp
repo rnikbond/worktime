@@ -410,6 +410,20 @@ void PresenterWorkTime::userChangeNote( QString note )
 // ------------------------------------------------------------------------------------ //
 
 /*!
+ * \brief PresenterWorkTime::userChnageTimerState
+ * \param state
+ */
+void PresenterWorkTime::userChangeTimerState( bool state )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call PresenterWorkTime::userChnageTimerState( " << state << " )";
+#endif
+
+    ModelWT->setTimerState( state );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
  * \brief PresenterWorkTime::connectModel
  *
  * Соединение сигналов от Model
@@ -447,15 +461,16 @@ void PresenterWorkTime::connectView( IViewWorkTime * View )
 
     QObject * ViewObj = dynamic_cast<QObject*>( View );
 
-    QObject::connect( ViewObj, SIGNAL(userSelectDate     (QDate       )), SLOT(userSelectDate     (QDate       )) );
-    QObject::connect( ViewObj, SIGNAL(userSelectInterval (int         )), SLOT(userSelectInterval (int         )) );
-    QObject::connect( ViewObj, SIGNAL(userRemoveInterval (int         )), SLOT(userRemoveInterval (int         )) );
-    QObject::connect( ViewObj, SIGNAL(userRenameInterval (int, QString)), SLOT(userRenameInterval (int, QString)) );
-    QObject::connect( ViewObj, SIGNAL(userChangeTimeStart(int, WTime  )), SLOT(userChangeTimeStart(int, WTime  )) );
-    QObject::connect( ViewObj, SIGNAL(userChangeTimeEnd  (int, WTime  )), SLOT(userChangeTimeEnd  (int, WTime  )) );
-    QObject::connect( ViewObj, SIGNAL(userChangeTimeNeed ( WTime      )), SLOT(userChangeTimeNeed (WTime       )) );
-    QObject::connect( ViewObj, SIGNAL(userAddInterval    (QString     )), SLOT(userAddInterval    (QString     )) );
-    QObject::connect( ViewObj, SIGNAL(userChangeTypeDay  (int         )), SLOT(userChangeTypeDay  (int         )) );
-    QObject::connect( ViewObj, SIGNAL(userChangeNote     (QString     )), SLOT(userChangeNote     (QString     )) );
+    QObject::connect( ViewObj, SIGNAL(userSelectDate     (QDate       )), SLOT(userSelectDate      (QDate       )) );
+    QObject::connect( ViewObj, SIGNAL(userSelectInterval (int         )), SLOT(userSelectInterval  (int         )) );
+    QObject::connect( ViewObj, SIGNAL(userRemoveInterval (int         )), SLOT(userRemoveInterval  (int         )) );
+    QObject::connect( ViewObj, SIGNAL(userRenameInterval (int, QString)), SLOT(userRenameInterval  (int, QString)) );
+    QObject::connect( ViewObj, SIGNAL(userChangeTimeStart(int, WTime  )), SLOT(userChangeTimeStart (int, WTime  )) );
+    QObject::connect( ViewObj, SIGNAL(userChangeTimeEnd  (int, WTime  )), SLOT(userChangeTimeEnd   (int, WTime  )) );
+    QObject::connect( ViewObj, SIGNAL(userChangeTimeNeed ( WTime      )), SLOT(userChangeTimeNeed  (WTime       )) );
+    QObject::connect( ViewObj, SIGNAL(userAddInterval    (QString     )), SLOT(userAddInterval     (QString     )) );
+    QObject::connect( ViewObj, SIGNAL(userChangeTypeDay  (int         )), SLOT(userChangeTypeDay   (int         )) );
+    QObject::connect( ViewObj, SIGNAL(userChangeNote     (QString     )), SLOT(userChangeNote      (QString     )) );
+    QObject::connect( ViewObj, SIGNAL(runTimer           (bool        )), SLOT(userChangeTimerState(bool        )) );
 }
 // ------------------------------------------------------------------------------------ //

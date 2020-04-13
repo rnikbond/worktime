@@ -455,7 +455,7 @@ void SettingsWindow::setWorkingRate( int rate )
 
     workingRate = rate + 1;
 
-    gui->SelectWorkingRateLabel->setVisible( workingRate == HelperWT::UnknownWR );
+    gui->SelectWorkingRateLabel->setVisible( workingRate < 1 );
 
     gui->WorkingRatesLWidget->setCurrentRow( workingRate );
 

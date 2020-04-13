@@ -585,7 +585,7 @@ void WorkTimeWindow::setInfoEscape( QString info )
     qDebug() << "#call WorkTimeWindow::setInfoEscape( " << info << ")";
 #endif
 
-    gui->EscapeValue->setText( info );
+    setWindowTitle( info );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -1224,7 +1224,7 @@ void WorkTimeWindow::configuringGUI()
 
     gui->setupUi( this );
 
-    setWindowFlags( Qt::CustomizeWindowHint | Qt::WindowCloseButtonHint );
+    setWindowFlags( Qt::Window | Qt::WindowCloseButtonHint );
 
     gui->WorkCalendar->setSelectionMode         ( QCalendarWidget::SingleSelection  );
     gui->WorkCalendar->setHorizontalHeaderFormat( QCalendarWidget::LongDayNames     );

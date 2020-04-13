@@ -33,17 +33,18 @@ private:
 
 private slots:
 
-    void refreshFull       ();
-    void refreshDataDay    ();
-    void refreshTimeDay    ();
-    void refreshTimeWeek   ();
-    void refreshTimeMonth  ();
-    void refreshTimeStart  ( int id, WTime time       );
-    void refreshTimeEnd    ( int id, WTime time       );
-    void refreshTimeReverse( QString time             );
-    void refreshTimeEscape (QString info );
-    void refreshColorDay   ( QDate date, QColor color );
-    void refreshColorLight ( QColor color             );
+    void refreshFull         ();
+    void refreshDataDay      ();
+    void refreshTimeDay      ();
+    void refreshTimeWeek     ();
+    void refreshTimeMonth    ();
+    void refreshStatisticTime();
+    void refreshTimeStart    ( int id, WTime time       );
+    void refreshTimeEnd      ( int id, WTime time       );
+    void refreshTimeReverse  ( QString time             );
+    void refreshTimeEscape   (QString info );
+    void refreshColorDay     ( QDate date, QColor color );
+    void refreshColorLight   ( QColor color             );
 
 private slots:
 

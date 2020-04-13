@@ -52,6 +52,10 @@ private:
     bool isEqualMonth( const QDate & date1, const QDate & date2 );
     bool isCorrectIntervals();
 
+private slots:
+
+    void workTimerTick();
+
 public: // From Interfaces
 
     void setDataBase( DataBaseWT * DB );
@@ -114,6 +118,7 @@ signals: // Interface signals
     void reloadWeek ();
     void reloadDay  ();
 
+    void reloadStatisticTime();
     void refreshTimeStart( int id, WTime time );
     void refreshTimeEnd  ( int id, WTime time );
 

@@ -1044,6 +1044,8 @@ void CoreWorkTime::closeApp()
     qDebug() << "#Call CoreWorkTime::closeApp()";
 #endif
 
+    qDebug() << "#Call CoreWorkTime::closeApp()";
+
     qApp->closeAllWindows();
     qApp->quit();
 }

@@ -78,6 +78,7 @@ public: // Signals
 
     virtual void enabledWait( bool ) = 0;
 
+    virtual void reloadStatisticTime() = 0;
     virtual void refreshTimeStart( int id, WTime time ) = 0;
     virtual void refreshTimeEnd  ( int id, WTime time ) = 0;
 

@@ -159,6 +159,21 @@ void PresenterWorkTime::refreshTimeMonth()
 // ------------------------------------------------------------------------------------ //
 
 /*!
+ * \brief PresenterWorkTime::refreshStatisticTime
+ */
+void PresenterWorkTime::refreshStatisticTime()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call PresenterWorkTime::refreshStatisticTime()";
+#endif
+
+    refreshTimeDay  ();
+    refreshTimeWeek ();
+    refreshTimeMonth();
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
  * \brief PresenterWorkTime::refreshTimeStart
  * \param id Идентификатор интервала дня
  * \param time Время начала интервала
@@ -407,13 +422,14 @@ void PresenterWorkTime::connectModel( IModelWorkTime * Model )
 
     QObject * ModelObj = dynamic_cast<QObject*>( Model );
 
-    connect( ModelObj, SIGNAL(refreshTimeStart  (int, WTime)), SLOT(refreshTimeStart  (int, WTime)) );
-    connect( ModelObj, SIGNAL(refreshTimeEnd    (int, WTime)), SLOT(refreshTimeEnd    (int, WTime)) );
-    connect( ModelObj, SIGNAL(reloadMonth       (          )), SLOT(refreshFull       (          )) );
-    connect( ModelObj, SIGNAL(reloadWeek        (          )), SLOT(refreshTimeWeek   (          )) );
-    connect( ModelObj, SIGNAL(reloadDay         (          )), SLOT(refreshDataDay    (          )) );
-    connect( ModelObj, SIGNAL(updateEscape      (QString   )), SLOT(refreshTimeEscape (QString   )) );
-    connect( ModelObj, SIGNAL(updateReverseTimer(QString   )), SLOT(refreshTimeReverse(QString   )) );
+    connect( ModelObj, SIGNAL(reloadStatisticTime(          )), SLOT(refreshStatisticTime(          )) );
+    connect( ModelObj, SIGNAL(refreshTimeStart   (int, WTime)), SLOT(refreshTimeStart    (int, WTime)) );
+    connect( ModelObj, SIGNAL(refreshTimeEnd     (int, WTime)), SLOT(refreshTimeEnd      (int, WTime)) );
+    connect( ModelObj, SIGNAL(reloadMonth        (          )), SLOT(refreshFull         (          )) );
+    connect( ModelObj, SIGNAL(reloadWeek         (          )), SLOT(refreshTimeWeek     (          )) );
+    connect( ModelObj, SIGNAL(reloadDay          (          )), SLOT(refreshDataDay      (          )) );
+    connect( ModelObj, SIGNAL(updateEscape       (QString   )), SLOT(refreshTimeEscape   (QString   )) );
+    connect( ModelObj, SIGNAL(updateReverseTimer (QString   )), SLOT(refreshTimeReverse  (QString   )) );
 }
 // ------------------------------------------------------------------------------------ //
 

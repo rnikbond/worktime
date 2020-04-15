@@ -56,6 +56,7 @@ CoreWorkTime::CoreWorkTime( QObject * parent ) : QObject( parent )
     connectModel   ();
     connectWorkTime();
     connectSettings();
+    connectWidget  ();
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -87,6 +88,23 @@ void CoreWorkTime::initialize()
     WorkTime->setShownMenu    ( isShownMenu             );
     WorkTime->setSelectedPage ( selectedPage            );
     WorkTime->setSelectedDate ( HelperWT::currentDate() );
+
+    initializeWidget();
+}
+// ------------------------------------------------------------------------------------ //
+
+void CoreWorkTime::initializeWidget()
+{
+    Qt::WindowFlags flagsWidget = Qt::Tool | Qt::FramelessWindowHint | Qt::WindowTitleHint;
+
+    if( isTopWidget )
+        flagsWidget = Qt::Tool | Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::WindowTitleHint;
+
+    DesktopWindow->setWindowFlags( flagsWidget );
+    DesktopWindow->move( QPoint(WidgetDesktopGeometry.x(), WidgetDesktopGeometry.y()) );
+    DesktopWindow->setWindowOpacity( toOpacity(opacityWidget) );
+
+    PresenterWT->setWidget( DesktopWindow );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -188,6 +206,9 @@ void CoreWorkTime::start()
         {
             initialize();
             WorkTime->show();
+
+            if( isViewWidget )
+                DesktopWindow->show();
         }
     }
 }
@@ -250,6 +271,9 @@ void CoreWorkTime::changedWorkingRate( int rate )
     {
         initialize();
         WorkTime->show();
+
+        if( isViewWidget )
+            DesktopWindow->show();
     }
 
     ModelWT->setWorkingRate( rate );
@@ -503,6 +527,8 @@ void CoreWorkTime::changeViewWidget( bool isSet )
 
     isViewWidget = isSet;
 
+    DesktopWindow->setVisible( isViewWidget );
+
     writeConfig();
 }
 // ------------------------------------------------------------------------------------ //
@@ -520,6 +546,15 @@ void CoreWorkTime::changeTopWidget( bool isSet )
     isTopWidget = isSet;
 
     writeConfig();
+
+    delete DesktopWindow;
+
+    DesktopWindow = new DesktopWidget( WorkTime );
+
+    initializeWidget();
+    connectWidget();
+
+    DesktopWindow->show();
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -534,6 +569,8 @@ void CoreWorkTime::changeOpacityWidget( int value )
 #endif
 
     opacityWidget = value;
+
+    DesktopWindow->setWindowOpacity( toOpacity(opacityWidget) );
 
     writeConfig();
 }
@@ -566,6 +603,19 @@ void CoreWorkTime::showWorkTime()
 {
     WorkTime->show();
     WorkTime->raise();
+}
+// ------------------------------------------------------------------------------------ //
+
+void CoreWorkTime::switchVisibleWorkTime()
+{
+    if( WorkTime->isVisible() )
+    {
+        WorkTime->close();
+    }
+    else
+    {
+        showWorkTime();
+    }
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -1108,6 +1158,7 @@ void CoreWorkTime::createObjects()
     DataBase       = new DataBaseWT       (          );
     ModelWT        = new ModelWorkTime    ( this     );
     WorkTime       = new WorkTimeWindow   (          );
+    DesktopWindow  = new DesktopWidget    ( WorkTime );
     PresenterWT    = new PresenterWorkTime( this     );
     Settings       = new SettingsWindow   (          );
     TablesWindow   = new TablesDataBase   ( DataBase );
@@ -1121,8 +1172,9 @@ void CoreWorkTime::createObjects()
 
     ModelWT->setDataBase( DataBase );
 
-    PresenterWT->setModel( ModelWT  );
-    PresenterWT->setView ( WorkTime );
+    PresenterWT->setModel ( ModelWT       );
+    PresenterWT->setView  ( WorkTime      );
+    PresenterWT->setWidget( DesktopWindow );
 
     //TablesWindow->show();
 }
@@ -1154,6 +1206,22 @@ void CoreWorkTime::createTray()
 
     // Также подключаем сигнал нажатия на иконку к обработчику данного нажатия
     connect( TrayWorkTime, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)) );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief CoreWorkTime::connectWidget
+ *
+ * Соединение сигналов от View DesktopWidget
+ */
+void CoreWorkTime::connectWidget()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call CoreWorkTime::connectWidget()";
+#endif
+
+    connect( DesktopWindow, SIGNAL(switchVisible  (     )), SLOT(switchVisibleWorkTime(     )) );
+    connect( DesktopWindow, SIGNAL(changedPosition(QRect)), SLOT(changeGeometryWidget (QRect)) );
 }
 // ------------------------------------------------------------------------------------ //
 

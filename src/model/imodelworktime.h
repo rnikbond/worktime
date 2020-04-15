@@ -52,6 +52,7 @@ public:
     virtual WTime   timeWorkedInMonth()    = 0;
     virtual WTime   timeNeedInMonth()      = 0;
 
+   virtual  WTime todayTimeEscape() = 0;
     virtual WTime timeStart( const int id ) = 0;
     virtual WTime timeEnd  ( const int id ) = 0;
 
@@ -90,7 +91,6 @@ public: // Signals
 
     virtual void updateEscape( QString info ) = 0;
     virtual void updateReverseTimer( QString time ) = 0;
-
 
     virtual void recolorDay( const QDate & date, const QColor & color ) = 0;
 };

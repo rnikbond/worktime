@@ -4,6 +4,7 @@
 // ---------------------------- //
 #include "iviewworktime.h"
 #include "imodelworktime.h"
+#include "idesktopwidget.h"
 // ---------------------------- //
 #include "presenterworktime.h"
 // ---------------------------- //
@@ -49,6 +50,16 @@ void PresenterWorkTime::setModel( IModelWorkTime * Model )
     ModelWT = Model;
 
     connectModel( Model );
+}
+// ------------------------------------------------------------------------------------ //
+
+void PresenterWorkTime::setWidget( IDesktopWidget * Widget )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call PresenterWorkTime::setWidget(...)";
+#endif
+
+    Desktop = Widget;
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -214,18 +225,19 @@ void PresenterWorkTime::refreshTimeReverse( QString time )
 #endif
 
     ViewWT->setTimeReverseTimer( time );
+    Desktop->setReverseInfo( time );
 }
 // ------------------------------------------------------------------------------------ //
 
 /*!
- * \brief PresenterWorkTime::refreshTimeEscape
+ * \brief PresenterWorkTime::refreshInfoEscape
  * \param time Время ухода
  * \param info Информация об оставшемся времени
  */
-void PresenterWorkTime::refreshTimeEscape( QString info )
+void PresenterWorkTime::refreshInfoEscape( QString info )
 {
 #ifdef WT_INFO_CALL_FUNC
-    qDebug() << "#Call PresenterWorkTime::refreshTimeEscape( " << time.toString() << ", " << info << " )";
+    qDebug() << "#Call PresenterWorkTime::refreshInfoEscape( " << info << " )";
 #endif
 
     ViewWT->setInfoEscape( info );
@@ -442,7 +454,7 @@ void PresenterWorkTime::connectModel( IModelWorkTime * Model )
     connect( ModelObj, SIGNAL(reloadMonth        (          )), SLOT(refreshFull         (          )) );
     connect( ModelObj, SIGNAL(reloadWeek         (          )), SLOT(refreshTimeWeek     (          )) );
     connect( ModelObj, SIGNAL(reloadDay          (          )), SLOT(refreshDataDay      (          )) );
-    connect( ModelObj, SIGNAL(updateEscape       (QString   )), SLOT(refreshTimeEscape   (QString   )) );
+    connect( ModelObj, SIGNAL(updateEscape       (QString   )), SLOT(refreshInfoEscape   (QString   )) );
     connect( ModelObj, SIGNAL(updateReverseTimer (QString   )), SLOT(refreshTimeReverse  (QString   )) );
 }
 // ------------------------------------------------------------------------------------ //

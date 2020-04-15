@@ -385,17 +385,17 @@ void ModelWorkTime::updateTimeEscape()
                     TimeEscape = MaxTime;
                 }
 
-                updateEscape( tr("Конец в ") + TimeEscape.toString() + InfoEscape );
+                emit updateEscape( tr("Конец в ") + TimeEscape.toString() + InfoEscape );
 
             }
             else
             {
-                updateEscape( "" );
+                emit updateEscape( "" );
             }
         }
         else
         {
-            updateEscape( "" );
+            emit updateEscape( "" );
         }
     }
     else
@@ -1007,6 +1007,20 @@ WTime ModelWorkTime::timeNeedInMonth()
     }
 
     return WorkMonth->timeNeedInMonth();
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief ModelWorkTime::todayTimeEscape
+ * \return
+ */
+WTime ModelWorkTime::todayTimeEscape()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call ModelWorkTime::todayTimeEscape()";
+#endif
+
+    return timeEscape();
 }
 // ------------------------------------------------------------------------------------ //
 

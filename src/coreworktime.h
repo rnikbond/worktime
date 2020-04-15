@@ -8,6 +8,7 @@
 #include <QSystemTrayIcon>
 // ---------------------------- //
 #include "databasewt.h"
+#include "desktopwidget.h"
 #include "modelworktime.h"
 #include "worktimewindow.h"
 #include "settingswindow.h"
@@ -52,6 +53,7 @@ class CoreWorkTime : public QObject
     PresenterWorkTime * PresenterWT;
 
     SettingsWindow    * Settings;
+    DesktopWidget     * DesktopWindow;
 
     TablesDataBase * TablesWindow;
 
@@ -66,11 +68,13 @@ public:
 
 private:
 
+    void connectWidget();
     void connectWorkTime();
     void connectSettings();
     void connectModel();
 
     void initialize();
+    void initializeWidget();
 
     void updateSettings();
 
@@ -104,6 +108,7 @@ private slots:
     // Slots from WorkTime window
     void closeWorkTimeWindow();
     void showWorkTime();
+    void switchVisibleWorkTime();
     void changeVisibleMenu( bool isShown );
     void changePage( int page );
     void changeGeometryWidget( QRect geometry );

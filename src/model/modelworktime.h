@@ -97,6 +97,8 @@ public: // From Interfaces
     WTime   timeWorkedInMonth();
     WTime   timeNeedInMonth();
 
+    WTime todayTimeEscape();
+
     WTime timeStart( const int id );
     WTime timeEnd  ( const int id );
 

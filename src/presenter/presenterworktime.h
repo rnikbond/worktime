@@ -10,6 +10,7 @@
 // ---------------------------- //
 class IViewWorkTime ;
 class IModelWorkTime;
+class IDesktopWidget;
 // ---------------------------- //
 
 class PresenterWorkTime : public QObject
@@ -18,13 +19,15 @@ class PresenterWorkTime : public QObject
 
     IViewWorkTime  * ViewWT ;
     IModelWorkTime * ModelWT;
+    IDesktopWidget * Desktop;
 
 public:
 
     explicit PresenterWorkTime( QObject * parent = 0 );
 
-    void setView ( IViewWorkTime  * View  );
-    void setModel( IModelWorkTime * Model );
+    void setView  ( IViewWorkTime  * View   );
+    void setModel ( IModelWorkTime * Model  );
+    void setWidget( IDesktopWidget * Widget );
 
 private:
 
@@ -42,7 +45,7 @@ private slots:
     void refreshTimeStart    ( int id, WTime time       );
     void refreshTimeEnd      ( int id, WTime time       );
     void refreshTimeReverse  ( QString time             );
-    void refreshTimeEscape   (QString info );
+    void refreshInfoEscape   ( QString info );
     void refreshColorDay     ( QDate date, QColor color );
     void refreshColorLight   ( QColor color             );
 

@@ -89,6 +89,9 @@ void CoreWorkTime::initialize()
     WorkTime->setSelectedPage ( selectedPage            );
     WorkTime->setSelectedDate ( HelperWT::currentDate() );
 
+    TableTimeWidget->setWorkingRate( workingRate );
+    TableTimeWidget->setDataBase( DataBase );
+
     initializeWidget();
 }
 // ------------------------------------------------------------------------------------ //
@@ -530,6 +533,9 @@ void CoreWorkTime::changeViewWidget( bool isSet )
     DesktopWindow->setVisible( isViewWidget );
 
     writeConfig();
+
+    if( Settings->isVisible() )
+        Settings->raise();
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -555,6 +561,9 @@ void CoreWorkTime::changeTopWidget( bool isSet )
     connectWidget();
 
     DesktopWindow->show();
+
+    if( Settings->isVisible() )
+        Settings->raise();
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -922,6 +931,22 @@ void CoreWorkTime::showSettings()
 // ------------------------------------------------------------------------------------ //
 
 /*!
+ * \brief CoreWorkTime::showTableTime
+ *
+ * Отображение окна "Таблица времени".
+ * Если окно уже открыто, оно будет поднято на передний план.
+ */
+void CoreWorkTime::showTableTime()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call CoreWorkTime::showTableTime()";
+#endif
+
+    showWindow( TableTimeWidget, true );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
  * \brief CoreWorkTime::normalizeGeometryWorkTime
  *
  * Нормализация геометрии главного окна.
@@ -1155,18 +1180,21 @@ void CoreWorkTime::createObjects()
     qDebug() << "#Call CoreWorkTime::createObjects()";
 #endif
 
-    DataBase       = new DataBaseWT       (          );
-    ModelWT        = new ModelWorkTime    ( this     );
-    WorkTime       = new WorkTimeWindow   (          );
-    DesktopWindow  = new DesktopWidget    ( WorkTime );
-    PresenterWT    = new PresenterWorkTime( this     );
-    Settings       = new SettingsWindow   (          );
-    TablesWindow   = new TablesDataBase   ( DataBase );
+    DataBase        = new DataBaseWT       (          );
+    ModelWT         = new ModelWorkTime    ( this     );
+    WorkTime        = new WorkTimeWindow   (          );
+    DesktopWindow   = new DesktopWidget    ( WorkTime );
+    PresenterWT     = new PresenterWorkTime( this     );
+    Settings        = new SettingsWindow   (          );
+    TablesWindow    = new TablesDataBase   ( DataBase );
+    TableTimeWidget = new TableTimeWindow  (          );
 
-    DataBaseThread = new QThread          ( this     );
+    DataBaseThread = new QThread           ( this     );
+
     DataBase->moveToThread( DataBaseThread );
 
-    WorkTime->setSettingsExists( true );
+    WorkTime->setSettingsExists ( true );
+    WorkTime->setTableTimeExists( true );
 
     Settings->setWindowModality( Qt::ApplicationModal );
 
@@ -1237,8 +1265,9 @@ void CoreWorkTime::connectWorkTime()
 #endif
 
     connect( WorkTime, SIGNAL(closeWindow    (     )), SLOT(closeWorkTimeWindow    (     )) );
-    connect( WorkTime, SIGNAL(changedGeometry(QRect)), SLOT(changeGeometryWorkTime(QRect)) );
+    connect( WorkTime, SIGNAL(changedGeometry(QRect)), SLOT(changeGeometryWorkTime (QRect)) );
     connect( WorkTime, SIGNAL(showSettings   (     )), SLOT(showSettings           (     )) );
+    connect( WorkTime, SIGNAL(showTableTime  (     )), SLOT(showTableTime          (     )) );
 }
 // ------------------------------------------------------------------------------------ //
 

@@ -35,7 +35,8 @@ HEADERS += src/model/imodelworktime.h          \
            src/view/iviewsettings.h \
            src/interface/ilog.h \
     src/view/desktopwidget.h \
-    src/interface/idesktopwidget.h
+    src/interface/idesktopwidget.h \
+    src/view/tabletimewindow.h
 
 
 SOURCES += src/main.cpp                          \
@@ -53,12 +54,14 @@ SOURCES += src/main.cpp                          \
            src/tools/network.cpp                 \
            src/coreworktime.cpp \
     src/view/settingswindow.cpp \
-    src/view/desktopwidget.cpp
+    src/view/desktopwidget.cpp \
+    src/view/tabletimewindow.cpp
 
 FORMS   += src/gui/worktimewindow.ui \
            src/model/database/tablesdatabase.ui \
     src/view/settingswindow.ui \
-    src/view/desktopwidget.ui
+    src/view/desktopwidget.ui \
+    src/view/tabletimewindow.ui
 
 #RESOURCES += resources/resource.qrc
 #RC_FILE   += resources/application.rc

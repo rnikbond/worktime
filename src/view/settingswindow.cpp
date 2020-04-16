@@ -862,7 +862,7 @@ void SettingsWindow::configureGUI()
     qDebug() << "#Call SettingsWindow::configureGUI()";
 #endif
 
-    setWindowFlags( Qt::CustomizeWindowHint | Qt::WindowCloseButtonHint | Qt::WindowStaysOnTopHint );
+    setWindowFlags( Qt::CustomizeWindowHint | Qt::WindowCloseButtonHint );
 
     gui->setupUi( this );
 

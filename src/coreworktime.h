@@ -13,6 +13,7 @@
 #include "worktimewindow.h"
 #include "settingswindow.h"
 #include "tablesdatabase.h"
+#include "tabletimewindow.h"
 #include "presenterworktime.h"
 // ---------------------------- //
 
@@ -53,6 +54,7 @@ class CoreWorkTime : public QObject
     PresenterWorkTime * PresenterWT;
 
     SettingsWindow    * Settings;
+    TableTimeWindow   * TableTimeWidget;
     DesktopWidget     * DesktopWindow;
 
     TablesDataBase * TablesWindow;
@@ -136,6 +138,7 @@ private slots:
     void resetUpdatePath();
 
     void showSettings();
+    void showTableTime();
 
     void closeApp();
 

@@ -52,8 +52,8 @@ const QTime HelperWT::currentTime()
  */
 const QDate HelperWT::currentDate()
 {
-    //return QDate::currentDate();
-    return QDate( 2020, 04, 13 );
+    //return QDate( 2020, 04, 13 );
+    return QDate::currentDate();
 }
 // ------------------------------------------------------------------------------------ //
 

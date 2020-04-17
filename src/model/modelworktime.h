@@ -38,10 +38,12 @@ public:
     explicit ModelWorkTime( QObject * parent = 0 );
     ~ModelWorkTime();
 
+    void update();
+
 private:
 
-    void load( MonthWorkTime * Month );
     void reload();
+    void load( MonthWorkTime * Month );
 
     void checkTimeStart();
     void checkLaunch();

@@ -37,6 +37,17 @@ ModelWorkTime::~ModelWorkTime()
 }
 // ------------------------------------------------------------------------------------ //
 
+void ModelWorkTime::update()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call ModelWorkTime::update()";
+#endif
+
+    reload();
+    emit reloadMonth();
+}
+// ------------------------------------------------------------------------------------ //
+
 void ModelWorkTime::reload()
 {
 #ifdef WT_INFO_CALL_FUNC

@@ -57,6 +57,7 @@ CoreWorkTime::CoreWorkTime( QObject * parent ) : QObject( parent )
     connectWorkTime();
     connectSettings();
     connectWidget  ();
+    connectSeveralDays();
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -91,6 +92,9 @@ void CoreWorkTime::initialize()
 
     TableTimeWidget->setWorkingRate( workingRate );
     TableTimeWidget->setDataBase( DataBase );
+
+    SeveralDaysWidget->setWorkingRate( workingRate );
+    SeveralDaysWidget->setDataBase( DataBase );
 
     initializeWidget();
 }
@@ -947,6 +951,22 @@ void CoreWorkTime::showTableTime()
 // ------------------------------------------------------------------------------------ //
 
 /*!
+ * \brief CoreWorkTime::showSeveralDays
+ *
+ * Отображение окна "Несколько дней".
+ * Если окно уже открыто, оно будет поднято на передний план.
+ */
+void CoreWorkTime::showSeveralDays()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call CoreWorkTime::showSeveralDays()";
+#endif
+
+    showWindow( SeveralDaysWidget, false );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
  * \brief CoreWorkTime::normalizeGeometryWorkTime
  *
  * Нормализация геометрии главного окна.
@@ -1116,6 +1136,16 @@ float CoreWorkTime::toOpacity( int value )
 }
 // ------------------------------------------------------------------------------------ //
 
+void CoreWorkTime::reloadAll()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call CoreWorkTime::reloadAll()";
+#endif
+
+    ModelWT->update();
+}
+// ------------------------------------------------------------------------------------ //
+
 /*!
  * \brief CoreWorkTime::closeApp
  *
@@ -1180,21 +1210,23 @@ void CoreWorkTime::createObjects()
     qDebug() << "#Call CoreWorkTime::createObjects()";
 #endif
 
-    DataBase        = new DataBaseWT       (          );
-    ModelWT         = new ModelWorkTime    ( this     );
-    WorkTime        = new WorkTimeWindow   (          );
-    DesktopWindow   = new DesktopWidget    ( WorkTime );
-    PresenterWT     = new PresenterWorkTime( this     );
-    Settings        = new SettingsWindow   (          );
-    TablesWindow    = new TablesDataBase   ( DataBase );
-    TableTimeWidget = new TableTimeWindow  (          );
+    DataBase          = new DataBaseWT       (          );
+    ModelWT           = new ModelWorkTime    ( this     );
+    WorkTime          = new WorkTimeWindow   (          );
+    DesktopWindow     = new DesktopWidget    ( WorkTime );
+    PresenterWT       = new PresenterWorkTime( this     );
+    Settings          = new SettingsWindow   (          );
+    TablesWindow      = new TablesDataBase   ( DataBase );
+    TableTimeWidget   = new TableTimeWindow  (          );
+    SeveralDaysWidget = new SeveralDaysWindow(          );
 
     DataBaseThread = new QThread           ( this     );
 
     DataBase->moveToThread( DataBaseThread );
 
-    WorkTime->setSettingsExists ( true );
-    WorkTime->setTableTimeExists( true );
+    WorkTime->setSettingsExists   ( true );
+    WorkTime->setTableTimeExists  ( true );
+    WorkTime->setSeveralDaysExists( true );
 
     Settings->setWindowModality( Qt::ApplicationModal );
 
@@ -1268,6 +1300,7 @@ void CoreWorkTime::connectWorkTime()
     connect( WorkTime, SIGNAL(changedGeometry(QRect)), SLOT(changeGeometryWorkTime (QRect)) );
     connect( WorkTime, SIGNAL(showSettings   (     )), SLOT(showSettings           (     )) );
     connect( WorkTime, SIGNAL(showTableTime  (     )), SLOT(showTableTime          (     )) );
+    connect( WorkTime, SIGNAL(showSeveralDays(     )), SLOT(showSeveralDays        (     )) );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -1302,6 +1335,12 @@ void CoreWorkTime::connectSettings()
     connect( Settings, SIGNAL(changedViewWidget   (bool   )), SLOT(changeViewWidget   (bool   )) );
     connect( Settings, SIGNAL(changedTopWidget    (bool   )), SLOT(changeTopWidget    (bool   )) );
     connect( Settings, SIGNAL(changedOpacityWidget(int    )), SLOT(changeOpacityWidget(int    )) );
+}
+// ------------------------------------------------------------------------------------ //
+
+void CoreWorkTime::connectSeveralDays()
+{
+    connect( SeveralDaysWidget, SIGNAL(savedChanges()), SLOT(reloadAll()) );
 }
 // ------------------------------------------------------------------------------------ //
 

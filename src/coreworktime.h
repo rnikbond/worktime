@@ -14,6 +14,7 @@
 #include "settingswindow.h"
 #include "tablesdatabase.h"
 #include "tabletimewindow.h"
+#include "severaldayswindow.h"
 #include "presenterworktime.h"
 // ---------------------------- //
 
@@ -56,6 +57,7 @@ class CoreWorkTime : public QObject
     SettingsWindow    * Settings;
     TableTimeWindow   * TableTimeWidget;
     DesktopWidget     * DesktopWindow;
+    SeveralDaysWindow * SeveralDaysWidget;
 
     TablesDataBase * TablesWindow;
 
@@ -73,6 +75,7 @@ private:
     void connectWidget();
     void connectWorkTime();
     void connectSettings();
+    void connectSeveralDays();
     void connectModel();
 
     void initialize();
@@ -139,6 +142,9 @@ private slots:
 
     void showSettings();
     void showTableTime();
+    void showSeveralDays();
+
+    void reloadAll();
 
     void closeApp();
 

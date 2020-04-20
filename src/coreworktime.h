@@ -11,6 +11,7 @@
 #include "salarywindow.h"
 #include "desktopwidget.h"
 #include "modelworktime.h"
+#include "changeswindow.h"
 #include "worktimewindow.h"
 #include "settingswindow.h"
 #include "tablesdatabase.h"
@@ -18,10 +19,17 @@
 #include "severaldayswindow.h"
 #include "presenterworktime.h"
 // ---------------------------- //
-
+#define VERSION_MAJOR    1
+#define VERSION_MINOR    1
+#define VERSION_SUBMINOR 1
+// ---------------------------- //
 class CoreWorkTime : public QObject
 {
     Q_OBJECT
+
+    int VersionMajor   ;
+    int VersionMinor   ;
+    int VersionSubminor;
 
     int workingRate;
 
@@ -60,6 +68,7 @@ class CoreWorkTime : public QObject
     DesktopWidget     * DesktopWindow;
     TableTimeWindow   * TableTimeWidget;
     SeveralDaysWindow * SeveralDaysWidget;
+    ChangesWindow     * ChangesWidget;
 
     TablesDataBase * TablesWindow;
 

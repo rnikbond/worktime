@@ -11,8 +11,6 @@
 // ---------------------------- //
 #include "coreworktime.h"
 // ---------------------------- //
-#define VERSION 0
-// ---------------------------- //
 
 CoreWorkTime::CoreWorkTime( QObject * parent ) : QObject( parent )
 {
@@ -20,6 +18,9 @@ CoreWorkTime::CoreWorkTime( QObject * parent ) : QObject( parent )
     qDebug() << "#Call CoreWorkTime::CoreWorkTime(...)";
 #endif
 
+    VersionMajor          = 0;
+    VersionMinor          = 0;
+    VersionSubminor       = 0;
     workingRate           = HelperWT::UnknownWR;
     themeIndex            = 0;
     opacityValue          = 1000;
@@ -220,6 +221,10 @@ void CoreWorkTime::start()
 
             if( isViewWidget )
                 DesktopWindow->show();
+
+
+            if( VersionMajor != VERSION_MAJOR || VersionMinor != VERSION_MINOR || VersionSubminor != VERSION_SUBMINOR )
+                showWindow( ChangesWidget, false );
         }
     }
 }
@@ -752,8 +757,6 @@ void CoreWorkTime::readConfig()
     qDebug() << "#Call CoreWorkTime::readConfig()";
 #endif
 
-    int VersionConfig = -1;
-
     int HoursLaunchStart    = 0;
     int MinutesLaunchStart  = 0;
     int HoursLaunchEnd      = 0;
@@ -775,13 +778,15 @@ void CoreWorkTime::readConfig()
     Config.setPath( QSettings::IniFormat, QSettings::UserScope, HelperWT::pathToConfig() );
 
     Config.beginGroup( "COMMON" );
-        if( Config.contains("VERSION"       ) ) VersionConfig = Config.value("VERSION"       ).toInt();
-        if( Config.contains("WORKING_RATE"  ) ) workingRate   = Config.value("WORKING_RATE"  ).toInt();
-        if( Config.contains("WINDOWS_MENU"  ) ) isContextMenu = Config.value("WINDOWS_MENU"  ).toBool();
-        if( Config.contains("OPACITY"       ) ) opacityValue  = Config.value("OPACITY"       ).toInt();
-        if( Config.contains("THEME"         ) ) themeIndex    = Config.value("THEME"         ).toInt();
-        if( Config.contains("SHOWN_MENU"    ) ) isShownMenu   = Config.value("SHOWN_MENU"    ).toBool();
-        if( Config.contains("STATISTIC_PAGE") ) selectedPage  = Config.value("STATISTIC_PAGE").toInt();
+        if( Config.contains("VERSION_MAJOR"   ) ) VersionMajor    = Config.value("VERSION_MAJOR"   ).toInt ();
+        if( Config.contains("VERSION_MINOR"   ) ) VersionMinor    = Config.value("VERSION_MINOR"   ).toInt ();
+        if( Config.contains("VERSION_SUBMINOR") ) VersionSubminor = Config.value("VERSION_SUBMINOR").toInt ();
+        if( Config.contains("WORKING_RATE"    ) ) workingRate     = Config.value("WORKING_RATE"    ).toInt ();
+        if( Config.contains("WINDOWS_MENU"    ) ) isContextMenu   = Config.value("WINDOWS_MENU"    ).toBool();
+        if( Config.contains("OPACITY"         ) ) opacityValue    = Config.value("OPACITY"         ).toInt ();
+        if( Config.contains("THEME"           ) ) themeIndex      = Config.value("THEME"           ).toInt ();
+        if( Config.contains("SHOWN_MENU"      ) ) isShownMenu     = Config.value("SHOWN_MENU"      ).toBool();
+        if( Config.contains("STATISTIC_PAGE"  ) ) selectedPage    = Config.value("STATISTIC_PAGE"  ).toInt ();
     Config.endGroup(); // COMMON
 
     Config.beginGroup("DESKTOP_WIDGET");
@@ -873,12 +878,14 @@ void CoreWorkTime::writeConfig()
     Config.clear();
 
     Config.beginGroup("COMMON");
-        Config.setValue("VERSION"       , VERSION       );
-        Config.setValue("WORKING_RATE"  , workingRate   );
-        Config.setValue("OPACITY"       , opacityValue  );
-        Config.setValue("THEME"         , themeIndex    );
-        Config.setValue("SHOWN_MENU"    , isShownMenu   );
-        Config.setValue("STATISTIC_PAGE", selectedPage  );
+        Config.setValue("VERSION_MAJOR"   , VERSION_MAJOR    );
+        Config.setValue("VERSION_MINOR"   , VERSION_MINOR    );
+        Config.setValue("VERSION_SUBMINOR", VERSION_SUBMINOR );
+        Config.setValue("WORKING_RATE"    , workingRate      );
+        Config.setValue("OPACITY"         , opacityValue     );
+        Config.setValue("THEME"           , themeIndex       );
+        Config.setValue("SHOWN_MENU"      , isShownMenu      );
+        Config.setValue("STATISTIC_PAGE"  , selectedPage     );
     Config.endGroup(); // COMMON
 
     Config.beginGroup("DESKTOP_WIDGET");
@@ -1240,6 +1247,7 @@ void CoreWorkTime::createObjects()
     TableTimeWidget   = new TableTimeWindow  (          );
     SeveralDaysWidget = new SeveralDaysWindow(          );
     SalaryWidget      = new SalaryWindow     (          );
+    ChangesWidget     = new ChangesWindow    (          );
 
     DataBaseThread = new QThread           ( this     );
 
@@ -1257,8 +1265,6 @@ void CoreWorkTime::createObjects()
     PresenterWT->setModel ( ModelWT       );
     PresenterWT->setView  ( WorkTime      );
     PresenterWT->setWidget( DesktopWindow );
-
-    TablesWindow->show();
 }
 // ------------------------------------------------------------------------------------ //
 

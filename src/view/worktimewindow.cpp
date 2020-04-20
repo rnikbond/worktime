@@ -946,7 +946,7 @@ void WorkTimeWindow::SalaryClick()
     qDebug() << "#call WorkTimeWindow::SalaryClick()";
 #endif
 
-    emit showSettings();
+    emit showSalary();
 }
 // ------------------------------------------------------------------------------------ //
 

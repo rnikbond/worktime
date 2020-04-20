@@ -32,10 +32,6 @@ class SeveralDaysWindow : public QWidget
 
     QDate SelectedDate;
 
-    QColor BackgroundWeekDay;
-    QColor BackgroundWorkDay;
-    QColor BackgroundSelectedDay;
-
 public:
 
     explicit SeveralDaysWindow( QWidget * parent = 0 );

@@ -54,6 +54,7 @@ CoreWorkTime::CoreWorkTime( QObject * parent ) : QObject( parent )
     createObjects  ();
     createTray     ();
     connectModel   ();
+    connectSalary  ();
     connectWorkTime();
     connectSettings();
     connectWidget  ();
@@ -91,10 +92,13 @@ void CoreWorkTime::initialize()
     WorkTime->setSelectedDate ( HelperWT::currentDate() );
 
     TableTimeWidget->setWorkingRate( workingRate );
-    TableTimeWidget->setDataBase( DataBase );
+    TableTimeWidget->setDataBase   ( DataBase    );
 
     SeveralDaysWidget->setWorkingRate( workingRate );
-    SeveralDaysWidget->setDataBase( DataBase );
+    SeveralDaysWidget->setDataBase   ( DataBase    );
+
+    SalaryWidget->setWorkingRate( workingRate );
+    SalaryWidget->setDataBase   ( DataBase    );
 
     initializeWidget();
 }
@@ -918,6 +922,22 @@ void CoreWorkTime::writeConfig()
 // ------------------------------------------------------------------------------------ //
 
 /*!
+ * \brief CoreWorkTime::showSalary
+ *
+ * Отображение окна "Зарплата".
+ * Если окно уже открыто, оно будет поднято на передний план.
+ */
+void CoreWorkTime::showSalary()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call CoreWorkTime::showSalary()";
+#endif
+
+    showWindow( SalaryWidget, false );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
  * \brief CoreWorkTime::showSettings
  *
  * Отображение окна "Настройки".
@@ -1219,11 +1239,13 @@ void CoreWorkTime::createObjects()
     TablesWindow      = new TablesDataBase   ( DataBase );
     TableTimeWidget   = new TableTimeWindow  (          );
     SeveralDaysWidget = new SeveralDaysWindow(          );
+    SalaryWidget      = new SalaryWindow     (          );
 
     DataBaseThread = new QThread           ( this     );
 
     DataBase->moveToThread( DataBaseThread );
 
+    WorkTime->setSalaryExists     ( true );
     WorkTime->setSettingsExists   ( true );
     WorkTime->setTableTimeExists  ( true );
     WorkTime->setSeveralDaysExists( true );
@@ -1236,7 +1258,7 @@ void CoreWorkTime::createObjects()
     PresenterWT->setView  ( WorkTime      );
     PresenterWT->setWidget( DesktopWindow );
 
-    //TablesWindow->show();
+    TablesWindow->show();
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -1299,8 +1321,24 @@ void CoreWorkTime::connectWorkTime()
     connect( WorkTime, SIGNAL(closeWindow    (     )), SLOT(closeWorkTimeWindow    (     )) );
     connect( WorkTime, SIGNAL(changedGeometry(QRect)), SLOT(changeGeometryWorkTime (QRect)) );
     connect( WorkTime, SIGNAL(showSettings   (     )), SLOT(showSettings           (     )) );
+    connect( WorkTime, SIGNAL(showSalary     (     )), SLOT(showSalary             (     )) );
     connect( WorkTime, SIGNAL(showTableTime  (     )), SLOT(showTableTime          (     )) );
     connect( WorkTime, SIGNAL(showSeveralDays(     )), SLOT(showSeveralDays        (     )) );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief CoreWorkTime::connectSalary
+ *
+ *  Соединение сигналов от View SalaryWindow
+ */
+void CoreWorkTime::connectSalary()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call CoreWorkTime::connectSalary()";
+#endif
+
+
 }
 // ------------------------------------------------------------------------------------ //
 

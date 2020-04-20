@@ -8,6 +8,7 @@
 #include <QSystemTrayIcon>
 // ---------------------------- //
 #include "databasewt.h"
+#include "salarywindow.h"
 #include "desktopwidget.h"
 #include "modelworktime.h"
 #include "worktimewindow.h"
@@ -55,8 +56,9 @@ class CoreWorkTime : public QObject
     PresenterWorkTime * PresenterWT;
 
     SettingsWindow    * Settings;
-    TableTimeWindow   * TableTimeWidget;
+    SalaryWindow      * SalaryWidget;
     DesktopWidget     * DesktopWindow;
+    TableTimeWindow   * TableTimeWidget;
     SeveralDaysWindow * SeveralDaysWidget;
 
     TablesDataBase * TablesWindow;
@@ -72,6 +74,7 @@ public:
 
 private:
 
+    void connectSalary();
     void connectWidget();
     void connectWorkTime();
     void connectSettings();
@@ -140,6 +143,7 @@ private slots:
 
     void resetUpdatePath();
 
+    void showSalary();
     void showSettings();
     void showTableTime();
     void showSeveralDays();

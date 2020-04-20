@@ -74,9 +74,16 @@ public:
     int scheduleId( const int DateID );
     int lastScheduleID();
 
-
     void insertYear( const QDate & date, int rateID );
     void insertScheduleYear(  const QDate & date, int rateID  );
+
+    int  lastSalaryID();
+    int  salaryFromDayID( const int DateID, const int id );
+    void getMonthSalaries( const int RateID, const QDate & Date, QList<QDate> & Dates, QList<float> & Salaries );
+    void addSalary( const int RateID, const QDate & Date, const float salary );
+    void removeSalary( const int id );
+    void removeSalary( const int RateID, const QDate & Date, const int id );
+    void changeSalary( const int RateID, const QDate & Date, const int id, float value );
 
     void insertWorkingRates( const QStringList & ratesList );
 

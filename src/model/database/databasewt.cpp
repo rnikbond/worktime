@@ -1051,6 +1051,257 @@ void DataBaseWT::insertScheduleYear(  const QDate & date, int rateID  )
 // ------------------------------------------------------------------------------------ //
 
 /*!
+ * \brief DataBaseWT::lastSalaryID
+ * \return Последний идентификатор, добавленный в таблицу "Salaries"
+ */
+int DataBaseWT::lastSalaryID()
+{
+    QSqlQuery GetLastIdQuery( DataBase );
+    GetLastIdQuery.prepare( "SELECT ID FROM Salaries ORDER BY ID DESC LIMIT 1" );
+
+    if( GetLastIdQuery.exec() )
+    {
+        if( GetLastIdQuery.last() )
+            return GetLastIdQuery.value(0).toInt();
+    }
+    else
+    {
+        qCritical() << "[1] lastSalaryID() :: "<< GetLastIdQuery.lastError().text();
+    }
+
+    return -1;
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief DataBaseWT::getMonthSalaries
+ * \param RateID Идентификатор рабочей ставки
+ * \param Date Дата
+ * \param Dates Список, который будет заполнен датами, когда была установлена зарплата
+ * \param Salaries Список значений зарплаты
+ */
+void DataBaseWT::getMonthSalaries( const int RateID, const QDate & Date, QList<QDate> & Dates, QList<float> & Salaries )
+{
+    for( int day = 1; day < Date.daysInMonth(); day++ )
+    {
+        QDate SalaryDate( Date.year(), Date.month(), day );
+
+        int DateID = dateID( SalaryDate, RateID );
+
+        if( DateID == -1 )
+        {
+            qCritical() << "[1] DataBaseWT::getMonthSalaries(" << RateID     << ", "
+                                                               << SalaryDate << ", ...) :: uncorrect date ID==-1";
+        }
+        else
+        {
+            QSqlQuery SelectSalaryQuery( DataBase );
+
+            SelectSalaryQuery.prepare( "SELECT Salary FROM Salaries WHERE ID_WorkDay=:ID" );
+
+            SelectSalaryQuery.bindValue( ":ID", DateID );
+
+            if( SelectSalaryQuery.exec() )
+            {
+                while( SelectSalaryQuery.next() )
+                {
+                    Dates.append( SalaryDate );
+                    Salaries.append( SelectSalaryQuery.value(0).toFloat() );
+                }
+            }
+            else
+            {
+                qCritical() << "[1] getMonthSalaries(" << RateID     << ", "
+                                                       << SalaryDate << ", ...) :: " << SelectSalaryQuery.lastError().text();
+
+                break;
+            }
+        }
+    }
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief DataBaseWT::salaryFromDayID
+ * \param DateID
+ * \param id
+ * \return
+ */
+int DataBaseWT::salaryFromDayID( const int DateID, const int id )
+{
+    if( DateID == -1 )
+    {
+        qCritical() << "[1] salaryFromDayID( " << DateID << ", "
+                                               << id     << ") :: uncorrect date ID==-1";
+    }
+    else
+    {
+        QSqlQuery GetIdQuery( DataBase );
+
+        GetIdQuery.prepare( "SELECT ID FROM Salaries WHERE ID_WorkDay=:ID_WD" );
+        GetIdQuery.bindValue( ":ID_WD", DateID );
+
+        if( GetIdQuery.exec() )
+        {
+            int countID = 0;
+
+            while( GetIdQuery.next() )
+            {
+                if( countID == id )
+                    return GetIdQuery.value(0).toInt();
+                else
+                    countID++;
+            }
+        }
+        else
+        {
+            qCritical() << "[2] salaryFromDayID( " << DateID << ", "
+                                                   << id     << ") :: "<< GetIdQuery.lastError().text();
+        }
+    }
+
+    return -1;
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief DataBaseWT::addSalary
+ * \param RateID
+ * \param Date
+ * \param salary
+ */
+void DataBaseWT::addSalary( const int RateID, const QDate & Date, const float salary )
+{
+    int DateID = dateID( Date, RateID );
+
+    if( DateID == -1 )
+    {
+        qCritical() << "[1] addSalary(" << RateID << ", "
+                                        << Date
+                                        << salary << ", ...) :: uncorrect date ID==-1";
+    }
+    else
+    {
+        int newID = lastSalaryID() + 1;
+
+        QSqlQuery SelectSalaryQuery( DataBase );
+
+        SelectSalaryQuery.prepare( "INSERT INTO Salaries(ID, ID_WorkDay, Salary) "\
+                                   "VALUES (:ID, :ID_WD, :Salary)" );
+
+        SelectSalaryQuery.bindValue( ":ID"    , newID );
+        SelectSalaryQuery.bindValue( ":ID_WD" , DateID );
+        SelectSalaryQuery.bindValue( ":Salary", salary );
+
+        if( SelectSalaryQuery.exec() == false )
+        {
+            qCritical() << "[2] addSalary(" << RateID << ", "
+                                            << Date
+                                            << salary << ", ...) :: " << SelectSalaryQuery.lastError().text();
+        }
+    }
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief DataBaseWT::changeSalary
+ * \param RateID
+ * \param Date
+ * \param id
+ * \param value
+ */
+void DataBaseWT::changeSalary( const int RateID, const QDate & Date, const int id, float value )
+{
+    int DateID = dateID( Date, RateID );
+
+    if( DateID == -1 )
+    {
+        qCritical() << "[1] changeSalary(" << RateID << ", "
+                                           << Date
+                                           << id
+                                           << value << ", ...) :: uncorrect date ID==-1";
+    }
+    else
+    {
+        int salaryID = salaryFromDayID( DateID, id );
+
+        if( salaryID >= 0 )
+        {
+            QSqlQuery ChangeSalaryQuery( DataBase );
+
+            ChangeSalaryQuery.prepare( "UPDATE Salaries SET Salary=:Salary WHERE ID=:ID" );
+            ChangeSalaryQuery.bindValue( ":Salary", value    );
+            ChangeSalaryQuery.bindValue( ":ID"    , salaryID );
+
+            if( ChangeSalaryQuery.exec() == false )
+                qCritical() << "[3] changeSalary(" << RateID   << ", "
+                                                   << Date   << ", "
+                                                   << id     << ", "
+                                                   << value  << ") :: "
+                                                   << ChangeSalaryQuery.lastError().text();
+        }
+        else
+        {
+            qCritical() << "[2] changeSalary(" << RateID << ", "
+                                               << Date   << ", "
+                                               << id     << ", "
+                                               << value  << ", ...) :: "
+                                               << "[" << salaryID << "] salary not found";
+        }
+    }
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief DataBaseWT::removeSalary
+ * \param RateID Идентификатор рабочей ставки
+ * \param Date Дата зарплаты
+ * \param id Идентификатор зарплаты в рамках дня
+ */
+void DataBaseWT::removeSalary( const int RateID, const QDate & Date, const int id )
+{
+    int DateID = dateID( Date, RateID );
+
+    if( DateID == -1 )
+    {
+        qCritical() << "[1] removeSalary(" << RateID << ", "
+                                           << Date
+                                           << id << ", ...) :: uncorrect date ID==-1";
+    }
+    else
+    {
+        int salaryID = salaryFromDayID( DateID, id );
+
+        if( salaryID >= 0 )
+        {
+            removeSalary( salaryID );
+        }
+        else
+        {
+            qCritical() << "[2] removeSalary(" << RateID << ", "
+                                               << Date
+                                               << id << ", ...) :: salary not found";
+        }
+    }
+}
+// ------------------------------------------------------------------------------------ //
+
+void DataBaseWT::removeSalary( const int id )
+{
+    QSqlQuery RemoveSalaryQuery( DataBase );
+
+    RemoveSalaryQuery.prepare( "DELETE FROM Salaries WHERE ID=:ID" );
+
+    RemoveSalaryQuery.bindValue( ":ID", id );
+
+    if( RemoveSalaryQuery.exec() == false )
+    {
+        qCritical() << "[1] removeSalary( " << id << " ) :: " << RemoveSalaryQuery.lastError().text();
+    }
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
  * \brief DataBaseWT::insertWorkingRates
  * \param ratesList Список названий рабочих ставок
  */

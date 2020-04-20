@@ -48,6 +48,9 @@ void SeveralDaysWindow::startChecked( bool )
 {
     gui->TypeDaysCBox->setEnabled( false );
     gui->SaveButton  ->setEnabled( false );
+
+    gui->DaysCalendar->setMinimumDate( gui->DateStartEdit->minimumDate() );
+    gui->DaysCalendar->setMaximumDate( gui->DateStartEdit->maximumDate() );
 }
 // ------------------------------------------------------------------------------------ //
 

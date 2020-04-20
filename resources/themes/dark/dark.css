@@ -1,0 +1,614 @@
+/* ---------------------------------------------------------- */
+/**************** QWidget ****************/
+/* ---------------------------------------------------------- */
+
+QWidget
+{
+	border: none;
+	color: #5D6165;
+	background-color: #282828;
+}
+
+/* ---------------------------------------------------------- */
+/**************** QCheckBox ****************/
+/* ---------------------------------------------------------- */
+
+QCheckBox
+{
+	padding: 2px;
+	color  : #BABABA;
+}
+
+QCheckBox::indicator:checked
+{
+	border          : none;
+	
+	width           : 20px;
+	height          : 20px;
+	
+	background-repeat: no-repeat;
+    background-position: left;
+	background-image: url(:/themes/dark/common/checkbox_checked.png);
+}
+
+QCheckBox::indicator:unchecked
+{
+	border          : none;
+	
+	width           : 20px;
+	height          : 20px;
+	
+	background-repeat: no-repeat;
+    background-position: left;
+	background-image: url(:/themes/dark/common/checkbox_unchecked.png);
+}
+
+/* ---------------------------------------------------------- */
+/**************** QMenu ****************/
+/* ---------------------------------------------------------- */
+
+QMenu
+{
+	border: 1px solid #383838;
+}
+
+QMenu::item
+{
+	color: #BABABA;
+}
+
+QMenu::item:selected
+{
+	color: #FFFFFF;
+	background-color: #383838;
+}
+
+/* ---------------------------------------------------------- */
+/**************** QTextEdit ****************/
+/* ---------------------------------------------------------- */
+
+QTextEdit
+{
+	border: none;
+
+	color: #BABABA;
+	font-size: 14px;
+}
+
+QTextEdit:hover
+{
+	color: #FFFFFF;
+	background-color: #383838;
+}
+
+QTextEdit:focus
+{
+	color: #FFFFFF;
+	background-color: #383838;
+}
+
+
+/* ---------------------------------------------------------- */
+/***************** QLabel ******************/
+/* ---------------------------------------------------------- */
+
+QLabel
+{
+	border: none;
+	color: #BABABA;
+	font-size: 12px;
+}
+
+/* ---------------------------------------------------------- */
+/**************** QProgressBar *****************/
+/* ---------------------------------------------------------- */
+
+QProgressBar
+{
+	border: 1px solid #383838;
+	text-align: center;
+	color: #BABABA;
+}
+
+/* ---------------------------------------------------------- */
+/**************** QTabWidget *****************/
+/* ---------------------------------------------------------- */
+
+QTabWidget::pane
+{
+	border: 1px solid #383838;
+	color: #BABABA;
+}
+
+QTabWidget::tab-bar
+{
+	border: 1px solid #383838;
+	padding: 20;
+}
+
+QTabBar::tab
+{
+	color: #BABABA;
+	background-color: #282828;
+}
+
+QTabBar::tab:hover
+{
+	color: #FFFFFF;
+}
+
+QTabBar::tab:selected
+{
+	color: #FFFFFF;
+	background-color: #383838;
+}
+
+QTabBar::tab:!selected
+{
+	color: #BABABA;
+}
+
+/* ---------------------------------------------------------- */
+/**************** QToolBox *****************/
+/* ---------------------------------------------------------- */
+
+QToolBox
+{
+	border: 1px solid #383838;
+	color: #BABABA;
+}
+
+QToolBox::tab
+ {
+	border: 1px solid #383838;
+	padding: 20;
+}
+
+QToolBox::tab:hover
+{
+	color: #FFFFFF;
+}
+
+QToolBox::tab:selected
+{
+	color: #FFFFFF;
+	background-color: #383838;
+}
+
+/* ---------------------------------------------------------- */
+/*************** QComboBox ****************/
+/* ---------------------------------------------------------- */
+
+QComboBox {
+
+	border: 1px solid #383838;
+	
+	color: #BABABA;
+	background-color: #282828;
+
+	selection-color: #FFFFFF;
+
+	padding-left : 4px;
+	padding-right: 4px;
+
+	font-size: 14px;
+}
+
+QComboBox QAbstractItemView {
+
+	border: none;
+
+	background-color: #383838;
+	color: #BABABA;
+  
+	selection-color: #FFFFFF;
+	selection-background-color: #4F4F4F;
+
+	padding: 10;
+}
+
+QComboBox:hover {
+	color: #FFFFFF;
+ 	background-color: #383838;
+}
+
+QComboBox::drop-down
+{
+	subcontrol-origin: padding;
+	subcontrol-position: top right;
+	width: 35px;
+
+	image-position: right;
+	image: url(:/themes/dark/common/combo_down.png);
+}
+
+QComboBox::down-arrow
+{
+	subcontrol-origin: padding;
+	subcontrol-position: top right;
+	width: 35px;
+}
+
+QComboBox::indicator {
+	subcontrol-origin: padding;
+	subcontrol-position: top right;
+	width: 35px;
+}
+
+/* ---------------------------------------------------------- */
+/*************** QListWidget ****************/
+/* ---------------------------------------------------------- */
+
+QListView
+{
+	border       : 1px solid #383838;
+
+	color: #BABABA;
+	alternate-background-color: #383838;
+
+	padding: 10;
+	font-size: 14px;
+}
+
+QListView::item
+{
+	border: 1px solid #282828;
+}
+
+QListView::item:alternate
+{
+	border: 1px solid #383838;
+	background: #383838;
+}
+
+QListView::item:selected
+{
+	border: 1px solid #383838;
+	
+	color: #FFFFFF;
+	background: #383838;
+}
+
+QListView::item:selected:!active
+{
+	border: 1px solid #383838;
+	color: #FFFFFF;
+}
+
+QListView::item:selected:active
+{
+	border: 1px solid #383838;
+	color: #FFFFFF;
+}
+
+QListView::item:hover
+{
+	color: #BABABA;
+}
+
+/* ---------------------------------------------------------- */
+/*************** QGroupBox ****************/
+/* ---------------------------------------------------------- */
+
+QGroupBox
+{
+	border       : 1px solid #383838;
+	margin-top   : 15px;
+	
+}
+
+QGroupBox::title
+{
+    subcontrol-origin : margin;
+    subcontrol-position : top center;
+    padding : 0 10px;	
+	font-weight : normal;
+	color : #BABABA;
+	font-size : 14px;
+}
+
+/* ---------------------------------------------------------- */
+/**************** QTimeEdit ****************/
+/* ---------------------------------------------------------- */
+
+/* Стилизация QTimeEdit, QDateEdit */
+QTimeEdit, QDateEdit
+{
+	border: 1px solid #383838;
+
+	color: #BABABA;
+	background-color: #292929;
+
+	font-size: 14px;
+}
+
+/* Стилизация QTimeEdit, QDateEdit при получении фокуса */
+QTimeEdit:focus, QDateEdit:focus
+{
+	border: 1px solid #FFFFFF;
+	color: #FFFFFF;
+	background-color: #4F4F4F;
+}
+ 	
+/* Стилизация QTimeEdit, QDateEdit при наведении */
+QTimeEdit:hover, QDateEdit:hover
+{
+	color: white;
+	background-color: #4F4F4F;
+}
+
+/* ---------------------------------------------------------- */
+/**************** QLineEdit ****************/
+/* ---------------------------------------------------------- */
+
+QLineEdit
+{
+	border: 1px solid #383838;
+	
+	color: #BABABA;
+	background-color: #303030;
+}
+
+QLineEdit:!enabled
+{
+	border: 1px solid #303030;
+	
+	color: #585858;
+	background-color: #303030;
+}
+
+/* ---------------------------------------------------------- */
+/*************** QPushButton **************/
+/* ---------------------------------------------------------- */
+
+QPushButton
+{
+	border: none;
+	font-weight: bold;
+}
+
+QPushButton:!enabled
+{
+	border: none;
+	font-weight: normal;
+	color: #585858;
+}
+	
+QPushButton:hover
+{
+	color: white;
+}
+
+/* ---------------------------------------------------------- */
+/************* QCalendarWidget *************/
+/* ---------------------------------------------------------- */
+
+QCalendarWidget QWidget
+{
+	background-color: #383838;               /* Цвет фона всего календаря */
+	alternate-background-color: #383838; /* Цвет фона ячеек названий дней недели */
+}
+
+/* Стилизация отображаемых данных текущего месяца */
+QCalendarWidget QAbstractItemView:enabled 
+{
+	border: 0px solid #323232; /* Рамка вокруг всех всех дней без заголовка */
+
+    color: #BABABA;                    /* Цвет текста дней и названия дней недели */
+	background-color: #282828;  /* Цвет фона дней календаря */
+
+	selection-color: #FFFFFF;                   /* Цвет текста выбранного дня */
+	selection-background-color: #808080; /* Цвет фона выбранного дня */
+
+	font-size: 14px;  /* Размер шрифта дней и названий дней недели */
+}
+
+/* Стилизация отображаемых данных НЕ текущего месяца */
+QCalendarWidget QAbstractItemView:disabled
+{
+    color: #484848;                    /* Цвет текста дней */
+}
+
+/* Стилизация заголовка календаря */
+QCalendarWidget QToolButton
+ {
+	border               : none;
+	padding             : 5px;
+	color                  : #BABABA; /* Цвет текста кнопок в заголовке */
+	background-color: #383838; /* Цвет фона кнопок в заголовке */
+}
+
+/* Стилизация кнопки предыдущего месяца в заголовке календаря */
+QCalendarWidget QToolButton#qt_calendar_prevmonth
+{
+    image: url(:/themes/dark/calendar/prev_month.png);
+	qproperty-icon: none;
+	qproperty-iconSize: 20px;
+}
+
+/* Стилизация кнопки предыдущего месяца в заголовке календаря при наведении */
+QCalendarWidget QToolButton#qt_calendar_prevmonth:hover
+{
+    image: url(:/themes/dark/calendar/prev_month_hover.png);
+}
+
+/* Стилизация кнопки следующего месяца в заголовке календаря */
+QCalendarWidget QToolButton#qt_calendar_nextmonth
+{
+	image: url(:/themes/dark/calendar/next_month.png);
+	qproperty-icon: none;
+	qproperty-iconSize: 20px;
+}
+
+/* Стилизация кнопки следующего месяца в заголовке календаря при наведении */
+QCalendarWidget QToolButton#qt_calendar_nextmonth:hover
+{
+	image: url(:/themes/dark/calendar/next_month_hover.png);
+}
+
+/* ---------------------------------------------------------------------------- */
+/************* Стилизация объектов по имени *************/
+/* ---------------------------------------------------------------------------- */
+
+QPushButton#SalaryButton
+{
+	text-align: left;
+	padding-left: 60;
+	background-repeat: no-repeat;
+    background-position: left;
+	background-image: url(:/themes/dark/menu/money.png);
+}
+
+QPushButton#SalaryButton:hover
+{
+	background-repeat: no-repeat;
+    background-position: left;
+	background-image: url(:/themes/dark/menu/money_hover.png);
+}
+
+QPushButton#TableTimeButton
+{
+	text-align: left;
+	padding-left: 60;
+	background-repeat: no-repeat;
+    background-position: left;
+	background-image: url(:/themes/dark/menu/table_time.png);
+}
+
+QPushButton#TableTimeButton:hover
+{
+	background-repeat: no-repeat;
+    background-position: left;
+	background-image: url(:/themes/dark/menu/table_time_hover.png);
+}
+
+QPushButton#ScheduleButton
+{
+	text-align: left;
+	padding-left: 60;
+	background-repeat: no-repeat;
+    background-position: left;
+	background-image: url(:/themes/dark/menu/schedule.png);
+}
+
+QPushButton#ScheduleButton:hover
+{
+	background-repeat: no-repeat;
+    background-position: left;
+	background-image: url(:/themes/dark/menu/schedule_hover.png);
+}
+
+QPushButton#SeveralDaysButton
+{
+	text-align: left;
+	padding-left: 60;
+	background-repeat: no-repeat;
+    background-position: left;
+	background-image: url(:/themes/dark/menu/several_days.png);
+}
+
+QPushButton#SeveralDaysButton:hover
+{
+	background-repeat: no-repeat;
+    background-position: left;
+	background-image: url(:/themes/dark/menu/several_days_hover.png);
+}
+
+QPushButton#SettingsButton
+{
+	text-align: left;
+	padding-left: 60;
+	background-repeat: no-repeat;
+    background-position: left;
+	background-image: url(:/themes/dark/menu/settings.png);
+}
+
+QPushButton#SettingsButton:hover
+{
+	background-repeat: no-repeat;
+    background-position: left;
+	background-image: url(:/themes/dark/menu/settings_hover.png);
+}
+
+QPushButton#UpdateWorkTimeButton
+{
+	text-align: left;
+	padding-left: 60;
+	background-repeat: no-repeat;
+    background-position: left;
+	background-image: url(:/themes/dark/menu/update.png);
+}
+
+QPushButton#UpdateWorkTimeButton:hover
+{
+	background-repeat: no-repeat;
+    background-position: left;
+	background-image: url(:/themes/dark/menu/update_hover.png);
+}
+
+QPushButton#ChangesButton
+{
+	text-align: left;
+	padding-left: 60;
+	background-repeat: no-repeat;
+    background-position: left;
+	background-image: url(:/themes/dark/menu/info.png);
+}
+
+QPushButton#ChangesButton:hover
+{
+	text-align: left;
+	padding-left: 60;
+	background-repeat: no-repeat;
+    background-position: left;
+	background-image: url(:/themes/dark/menu/info_hover.png);
+}
+
+QPushButton#MenuButton
+{
+	text-align: left;
+	padding-left: 60;
+	background-repeat: no-repeat;
+    background-position: center;
+	background-image: url(:/themes/dark/common/menu.png);
+}
+
+QPushButton#MenuButton:hover
+{
+	background-repeat: no-repeat;
+    background-position: center;
+	background-image: url(:/themes/dark/common/menu_hover.png);
+}
+
+QPushButton#StopTimeButton
+{
+	background-repeat: no-repeat;
+    background-position: center;
+	background-image: url(:/themes/dark/common/pause.png);
+}
+
+QPushButton#StopTimeButton:hover
+{
+	background-repeat: no-repeat;
+    background-position: center;
+	background-image: url(:/themes/dark/common/pause_hover.png);
+}
+
+QPushButton#RunTimeButton
+{
+	background-repeat: no-repeat;
+    background-position: center;
+	background-image: url(:/themes/dark/common/play.png);
+}
+
+QPushButton#RunTimeButton:hover
+{
+	background-repeat: no-repeat;
+    background-position: center;
+	background-image: url(:/themes/dark/common/play_hover.png);
+}
+
+QLabel#ReverseTimer
+{
+	font-size: 24px;
+}

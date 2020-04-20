@@ -355,7 +355,7 @@ QColor DayWorkTime::colorDay( TypesDay Type )
 {
     switch( Type )
     {
-        case WorkDay   : return QColor( "#000000" );
+        case WorkDay   : return QColor( "#FFFFFF" );
         case Weekend   : return QColor( "#E32636" );
         case Hospital  : return QColor( "#4682B4" );
         case Secondment: return QColor( "#66CDAA" );

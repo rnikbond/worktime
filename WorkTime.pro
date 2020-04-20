@@ -72,8 +72,8 @@ FORMS   += src/gui/worktimewindow.ui \
     src/view/salarywindow.ui \
     src/view/changeswindow.ui
 
-#RESOURCES += resources/resource.qrc
-#RC_FILE   += resources/application.rc
+RESOURCES += resources/resource.qrc
+RC_FILE   += resources/application.rc
 
 UI_DIR      = .autocreate/ui
 MOC_DIR     = .autocreate/moc

@@ -26,6 +26,12 @@ void ChangesWindow::setInfo()
                               .arg(VERSION_MINOR   )
                               .arg(VERSION_SUBMINOR) );
 
+    QString Info;
+
+    Info += "<center><b>Добро пожаловать!</b></center><br/>" \
+            "На этом месте могла бы быть Ваша реклама...<br/><br/>";
+
+    gui->ChangesInfo->setText( Info );
 
 }
 // ------------------------------------------------------------------------------------ //

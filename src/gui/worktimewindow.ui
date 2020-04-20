@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>888</width>
-    <height>623</height>
+    <height>666</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -85,6 +85,11 @@
           <height>50</height>
          </size>
         </property>
+        <property name="font">
+         <font>
+          <pointsize>14</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>00:00:00</string>
         </property>
@@ -123,6 +128,9 @@
    </item>
    <item>
     <widget class="QWidget" name="Content" native="true">
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
      <layout class="QGridLayout" name="gridLayout_3">
       <property name="leftMargin">
        <number>5</number>
@@ -235,19 +243,6 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="ChangesButton">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>Изменения</string>
-           </property>
-          </widget>
-         </item>
-         <item>
           <widget class="QPushButton" name="SettingsButton">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
@@ -257,6 +252,19 @@
            </property>
            <property name="text">
             <string>Настройки</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="ChangesButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Изменения</string>
            </property>
           </widget>
          </item>
@@ -283,6 +291,9 @@
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Выбрать сегодняшний день в календаре&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="text">
          <string>Сегодня в календаре</string>
@@ -529,28 +540,19 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_3">
            <item>
-            <widget class="QListWidget" name="IntervalsList"/>
+            <widget class="QListWidget" name="IntervalsList">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:11pt;&quot;&gt;Список интервалов&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Чтобы добавить интервал - вызовете меню при помощи правой кнопки мыши.&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Чтобы переименовать интервал - нажмите на него два раза левой кнопкой мыши.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+            </widget>
            </item>
            <item>
             <layout class="QGridLayout" name="gridLayout_2">
              <property name="spacing">
               <number>5</number>
              </property>
-             <item row="0" column="2" rowspan="2">
-              <spacer name="horizontalSpacer">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
              <item row="0" column="3" rowspan="2">
-              <widget class="QPushButton" name="StopRunTimeButton">
+              <widget class="QPushButton" name="RunTimeButton">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                  <horstretch>0</horstretch>
@@ -569,8 +571,39 @@
                  <height>50</height>
                 </size>
                </property>
+               <property name="toolTip">
+                <string>Включить таймер</string>
+               </property>
                <property name="text">
-                <string>С/П</string>
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="2" rowspan="2">
+              <widget class="QPushButton" name="StopTimeButton">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>50</width>
+                 <height>50</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>50</width>
+                 <height>50</height>
+                </size>
+               </property>
+               <property name="toolTip">
+                <string>Остановить таймер</string>
+               </property>
+               <property name="text">
+                <string/>
                </property>
               </widget>
              </item>
@@ -578,6 +611,13 @@
               <widget class="QLabel" name="TimeEndLabel">
                <property name="text">
                 <string>Конец в</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="TimeStartLabel">
+               <property name="text">
+                <string>Начало в</string>
                </property>
               </widget>
              </item>
@@ -600,13 +640,6 @@
                </property>
               </widget>
              </item>
-             <item row="0" column="0">
-              <widget class="QLabel" name="TimeStartLabel">
-               <property name="text">
-                <string>Начало в</string>
-               </property>
-              </widget>
-             </item>
              <item row="1" column="1">
               <widget class="QTimeEdit" name="TimeEndValue">
                <property name="minimumSize">
@@ -625,19 +658,6 @@
                 <string>hh:mm</string>
                </property>
               </widget>
-             </item>
-             <item row="0" column="4" rowspan="2">
-              <spacer name="horizontalSpacer_2">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
              </item>
             </layout>
            </item>
@@ -711,7 +731,7 @@
               <x>0</x>
               <y>0</y>
               <width>220</width>
-              <height>202</height>
+              <height>245</height>
              </rect>
             </property>
             <attribute name="label">
@@ -849,7 +869,7 @@
               <x>0</x>
               <y>0</y>
               <width>220</width>
-              <height>202</height>
+              <height>245</height>
              </rect>
             </property>
             <attribute name="label">
@@ -984,7 +1004,7 @@
               <x>0</x>
               <y>0</y>
               <width>220</width>
-              <height>202</height>
+              <height>245</height>
              </rect>
             </property>
             <attribute name="label">
@@ -1107,9 +1127,6 @@
     </widget>
    </item>
   </layout>
-  <zorder>TitleWidget</zorder>
-  <zorder>Content</zorder>
-  <zorder>IntervalsGBox</zorder>
  </widget>
  <resources/>
  <connections/>

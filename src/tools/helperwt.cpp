@@ -134,7 +134,7 @@ const QString HelperWT::pathToDataBase()
  */
 const QString HelperWT::pathToThemes()
 {
-    return "resources/themes";
+    return ":/themes";
 }
 // ------------------------------------------------------------------------------------ //
 

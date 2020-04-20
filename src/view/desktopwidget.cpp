@@ -22,7 +22,7 @@ DesktopWidget::~DesktopWidget()
 
 void DesktopWidget::setReverseInfo( QString info )
 {
-    gui->ReverseTimeLabel->setText( info );
+    gui->ReverseTimer->setText( info );
 }
 // ------------------------------------------------------------------------------------ //
 

@@ -1039,24 +1039,48 @@ void WorkTimeWindow::UpdateClick()
 }
 // ------------------------------------------------------------------------------------ //
 
-void WorkTimeWindow::stopRunClick()
+/*!
+ * \brief WorkTimeWindow::runTimeClick
+ *
+ * Запуск таймера
+ */
+void WorkTimeWindow::runTimeClick()
 {
 #ifdef WT_INFO_CALL_FUNC
-    qDebug() << "#Call WorkTimeWindow::stopRunClick()";
+    qDebug() << "#Call WorkTimeWindow::runTimeClick()";
 #endif
 
-    isRunTimer = !isRunTimer;
+    isRunTimer = false;
 
-    if( isRunTimer )
-    {
-
-    }
-    else
-    {
-
-    }
+    gui->RunTimeButton ->hide();
+    gui->StopTimeButton->show();
 
     emit runTimer( isRunTimer );
+
+    gui->StopTimeButton->setFocus();
+}
+// ------------------------------------------------------------------------------------ //
+
+
+/*!
+ * \brief WorkTimeWindow::stopTimeClick
+ *
+ * Остановка таймера
+ */
+void WorkTimeWindow::stopTimeClick()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call WorkTimeWindow::stopTimeClick()";
+#endif
+
+    isRunTimer = true;
+
+    gui->RunTimeButton ->show();
+    gui->StopTimeButton->hide();
+
+    emit runTimer( isRunTimer );
+
+    gui->RunTimeButton->setFocus();
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -1197,7 +1221,8 @@ void WorkTimeWindow::connectSingnalSlot()
      qDebug() << "#call WorkTimeWindow::connectSingnalSlot()";
 #endif
 
-    connect( gui->StopRunTimeButton, SIGNAL(clicked(bool)), SLOT(stopRunClick()) );
+    connect( gui->StopTimeButton, SIGNAL(clicked(bool)), SLOT(stopTimeClick()) );
+    connect( gui->RunTimeButton , SIGNAL(clicked(bool)), SLOT(runTimeClick ()) );
 
     // -------------------------------- CALENDAR -------------------------------- //
     connect( gui->WorkCalendar, SIGNAL(selectionChanged(    )), SLOT(selectDate()) );
@@ -1249,6 +1274,7 @@ void WorkTimeWindow::configuringGUI()
 
     gui->setupUi( this );
 
+    setWindowIcon( QIcon(":/icons/logo/worktime.png") );
     setWindowFlags( Qt::Window | Qt::WindowCloseButtonHint );
 
     setMouseTracking( true );
@@ -1277,6 +1303,18 @@ void WorkTimeWindow::configuringGUI()
     setSettingsExists   ( false );
 
     gui->UpdateButton->hide();
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::showEvent
+ * \param ShowEvent
+ */
+void WorkTimeWindow::showEvent( QShowEvent * ShowEvent )
+{
+    stopTimeClick();
+
+    QWidget::showEvent( ShowEvent );
 }
 // ------------------------------------------------------------------------------------ //
 

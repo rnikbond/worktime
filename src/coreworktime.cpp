@@ -206,7 +206,7 @@ void CoreWorkTime::start()
 
         DataBase->insertWorkingRates( HelperWT::namesWorkingRates() );
 
-        //applyTheme( themeIndex );
+        applyTheme( themeIndex );
 
         if( workingRate == HelperWT::UnknownWR )
         {
@@ -994,6 +994,19 @@ void CoreWorkTime::showSeveralDays()
 // ------------------------------------------------------------------------------------ //
 
 /*!
+ * \brief CoreWorkTime::showChanges
+ */
+void CoreWorkTime::showChanges()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call CoreWorkTime::showChanges()";
+#endif
+
+    showWindow( ChangesWidget, false );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
  * \brief CoreWorkTime::normalizeGeometryWorkTime
  *
  * Нормализация геометрии главного окна.
@@ -1257,6 +1270,7 @@ void CoreWorkTime::createObjects()
     WorkTime->setSettingsExists   ( true );
     WorkTime->setTableTimeExists  ( true );
     WorkTime->setSeveralDaysExists( true );
+    WorkTime->setChangesExists    ( true );
 
     Settings->setWindowModality( Qt::ApplicationModal );
 
@@ -1272,7 +1286,7 @@ void CoreWorkTime::createTray()
 {
     // Инициализируем иконку трея, устанавливаем иконку из набора системных иконок, а также задаем всплывающую подсказку
     TrayWorkTime = new QSystemTrayIcon( this );
-    TrayWorkTime->setIcon(QIcon(":/icons/icons/logo/worktime.png"));
+    TrayWorkTime->setIcon(QIcon(":/icons/logo/worktime.png"));
     TrayWorkTime->setToolTip( tr("WorkTime") );
 
     // После чего создаем контекстное меню из двух пунктов
@@ -1330,6 +1344,7 @@ void CoreWorkTime::connectWorkTime()
     connect( WorkTime, SIGNAL(showSalary     (     )), SLOT(showSalary             (     )) );
     connect( WorkTime, SIGNAL(showTableTime  (     )), SLOT(showTableTime          (     )) );
     connect( WorkTime, SIGNAL(showSeveralDays(     )), SLOT(showSeveralDays        (     )) );
+    connect( WorkTime, SIGNAL(showChanges    (     )), SLOT(showChanges            (     )) );
 }
 // ------------------------------------------------------------------------------------ //
 

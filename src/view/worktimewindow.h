@@ -130,7 +130,8 @@ private slots:
     void SettingsClick   ();
     void UpdateClick     ();
 
-    void stopRunClick();
+    void stopTimeClick();
+    void runTimeClick();
 
 signals:
 
@@ -163,6 +164,7 @@ signals:
 
 protected:
 
+    void showEvent ( QShowEvent  * ShowEvent  );
     void closeEvent( QCloseEvent * CloseEvent );
 };
 // ------------------------------------------------------------------------------------ //

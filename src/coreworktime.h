@@ -156,6 +156,7 @@ private slots:
     void showSettings();
     void showTableTime();
     void showSeveralDays();
+    void showChanges();
 
     void reloadAll();
 

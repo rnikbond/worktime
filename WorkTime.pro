@@ -30,16 +30,18 @@ HEADERS += src/model/imodelworktime.h          \
            src/tools/interval.h                \
            src/tools/monthworktime.h           \
            src/tools/network.h                 \
-           src/coreworktime.h \
-           src/view/settingswindow.h \
-           src/view/iviewsettings.h \
-           src/interface/ilog.h \
-    src/view/desktopwidget.h \
-    src/interface/idesktopwidget.h \
-    src/view/tabletimewindow.h \
-    src/view/severaldayswindow.h \
-    src/view/salarywindow.h \
-    src/view/changeswindow.h
+           src/coreworktime.h                  \
+           src/view/settingswindow.h           \
+           src/view/iviewsettings.h            \
+           src/interface/ilog.h                \
+           src/view/desktopwidget.h            \
+           src/interface/idesktopwidget.h      \
+           src/view/tabletimewindow.h          \
+           src/view/severaldayswindow.h        \
+           src/view/salarywindow.h             \
+           src/view/changeswindow.h            \
+           src/tools/qzipreader_p.h            \
+           src/tools/qzipwriter_p.h
 
 
 SOURCES += src/main.cpp                          \
@@ -55,22 +57,23 @@ SOURCES += src/main.cpp                          \
            src/tools/interval.cpp                \
            src/tools/monthworktime.cpp           \
            src/tools/network.cpp                 \
-           src/coreworktime.cpp \
-    src/view/settingswindow.cpp \
-    src/view/desktopwidget.cpp \
-    src/view/tabletimewindow.cpp \
-    src/view/severaldayswindow.cpp \
-    src/view/salarywindow.cpp \
-    src/view/changeswindow.cpp
+           src/coreworktime.cpp                  \
+           src/view/settingswindow.cpp           \
+           src/view/desktopwidget.cpp            \
+           src/view/tabletimewindow.cpp          \
+           src/view/severaldayswindow.cpp        \
+           src/view/salarywindow.cpp             \
+           src/view/changeswindow.cpp            \
+           src/tools/qzip.cpp
 
-FORMS   += src/gui/worktimewindow.ui \
+FORMS   += src/gui/worktimewindow.ui            \
            src/model/database/tablesdatabase.ui \
-    src/view/settingswindow.ui \
-    src/view/desktopwidget.ui \
-    src/view/tabletimewindow.ui \
-    src/view/severaldayswindow.ui \
-    src/view/salarywindow.ui \
-    src/view/changeswindow.ui
+           src/view/settingswindow.ui           \
+           src/view/desktopwidget.ui            \
+           src/view/tabletimewindow.ui          \
+           src/view/severaldayswindow.ui        \
+           src/view/salarywindow.ui             \
+           src/view/changeswindow.ui
 
 RESOURCES += resources/resource.qrc
 RC_FILE   += resources/application.rc

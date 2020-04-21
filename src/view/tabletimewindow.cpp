@@ -29,12 +29,20 @@ TableTimeWindow::TableTimeWindow( QWidget * parent ) : QWidget( parent ), gui( n
     connect( gui->SavePdfButton     , SIGNAL(clicked            (bool)), SLOT(saveToPdfClick   ()) );
     connect( gui->PrintButton       , SIGNAL(clicked            (bool)), SLOT(printClick       ()) );
     connect( gui->CurrentMonthButton, SIGNAL(clicked            (bool)), SLOT(currentMonthClick()) );
+    connect( gui->CustomTextEdit    , SIGNAL(editingFinished    (    )), SLOT(addCustomText    ()) );
+    connect( gui->CustomTextEdit    , SIGNAL(returnPressed      (    )), SLOT(addCustomText    ()) );
 }
 // ------------------------------------------------------------------------------------ //
 
 TableTimeWindow::~TableTimeWindow()
 {
     delete gui;
+}
+// ------------------------------------------------------------------------------------ //
+
+void TableTimeWindow::addCustomText()
+{
+    updateTable();
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -181,6 +189,8 @@ void TableTimeWindow::updateTable()
     MonthHtmlTime += "</tr>";
 
     MonthHtmlTime += "</table>";
+
+    MonthHtmlTime += tr("<h4 align=right>%1</h4>").arg(gui->CustomTextEdit->text());
 
     MonthHtmlTime += tr("<h4 align=right>Таблица рабочего времени создана в программе WorkTime %1</h4>")
                      .arg(HelperWT::currentDate().toString("dd.MM.yyyy"));

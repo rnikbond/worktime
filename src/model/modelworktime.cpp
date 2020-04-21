@@ -1186,7 +1186,10 @@ void ModelWorkTime::addInterval( const QString & title )
         {
             if( WorkMonth->timeStart(selectedDate, intervasCount - 1).isEmpty() )
             {
-                setTimeStart( intervasCount - 1, WorkMonth->timeEnd(selectedDate, intervasCount - 2) );
+                WTime TimeEnd = WorkMonth->timeEnd(selectedDate, intervasCount - 2);
+                WTime Current = HelperWT::currentTime();
+
+                setTimeStart( intervasCount - 1, Current > TimeEnd ? Current : TimeEnd );
             }
         }
 

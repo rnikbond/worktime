@@ -3,8 +3,11 @@
 #include <QCloseEvent>
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QDirIterator>
 // ---------------------------- //
 #include "helperwt.h"
+#include "qzipreader_p.h"
+#include "qzipwriter_p.h"
 // ---------------------------- //
 #include "settingswindow.h"
 #include "ui_settingswindow.h"
@@ -815,6 +818,113 @@ void SettingsWindow::setOpacityWidget( int value )
 // ------------------------------------------------------------------------------------ //
 
 /*!
+ * \brief SettingsWindow::importClick
+ */
+void SettingsWindow::importClick()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call SettingsWindow::importClick()";
+#endif
+
+    QString SavePath = QFileDialog::getOpenFileName( this,
+                                                     tr("Импорт данных"),
+                                                     QDir::homePath() + "/Desktop",
+                                                     tr("WorkTime (*.save)")
+                                                    );
+
+    if( QFile(SavePath).exists() )
+    {
+        if( QDir( HelperWT::pathToWorkDir() ).exists() )
+            removeDir( HelperWT::pathToWorkDir() );
+        else
+            QDir().mkdir( HelperWT::pathToWorkDir() );
+
+
+
+        QZipReader zip_reader( SavePath );
+
+        zip_reader.extractAll( HelperWT::pathToWorkDir() );
+
+        QMessageBox MessageBox;
+        MessageBox.setText( tr("Импорт данных") );
+        MessageBox.setStandardButtons( QMessageBox::Ok );
+        MessageBox.setDefaultButton( QMessageBox::Ok );
+        MessageBox.setInformativeText( tr("Данные успешно импортированы.\nПерезапустите программу, чтобы применить изменения" ) );
+        MessageBox.exec();
+
+        qApp->exit( 0 );
+    }
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief SettingsWindow::exportClick
+ */
+void SettingsWindow::exportClick()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call SettingsWindow::exportClick()";
+#endif
+
+    QString Path = QDir::homePath() + "/Desktop/WorkTime.save";
+
+    QMessageBox MessageBox;
+    MessageBox.setText( tr("Экспорт данных") );
+    MessageBox.setStandardButtons( QMessageBox::Ok );
+    MessageBox.setDefaultButton( QMessageBox::Ok );
+
+    if( QFile(Path).exists() )
+        QFile::remove( Path );
+
+    QZipWriter zip( Path );
+
+    if( zip.status() == QZipWriter::NoError )
+    {
+        zip.setCompressionPolicy(QZipWriter::AutoCompress);
+
+        QString path = ( HelperWT::pathToWorkDir() + "/" );
+
+        QDirIterator it( path, QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot, QDirIterator::Subdirectories );
+
+        while( it.hasNext() )
+        {
+            QString file_path = it.next();
+
+            if( it.fileInfo().isDir() )
+            {
+                zip.setCreationPermissions( QFile::permissions(file_path) );
+                zip.addDirectory( file_path.remove(path) );
+            }
+            else if( it.fileInfo().isFile() )
+            {
+                QFile file(file_path);
+
+                if (!file.open(QIODevice::ReadOnly))
+                    continue;
+
+                zip.setCreationPermissions( QFile::permissions(file_path) );
+
+                QByteArray ByteArray = file.readAll();
+
+                zip.addFile( file_path.remove(path), ByteArray );
+            }
+        }
+
+        zip.close();
+
+
+        MessageBox.setInformativeText( tr("Эксортированный файл находится\nна рабочем столе\nс названием WorkTime.save") );
+    }
+    else
+    {
+        MessageBox.setInformativeText( tr("Ошибка экспорта данных" ) );
+    }
+
+    MessageBox.exec();
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
  * \brief SettingsWindow::updateTimeEnabled
  */
 void SettingsWindow::updateTimeEnabled()
@@ -930,6 +1040,32 @@ void SettingsWindow::closeEvent( QCloseEvent * CloseEvent )
 }
 // ------------------------------------------------------------------------------------ //
 
+bool SettingsWindow::removeDir( QString path )
+{
+    bool result = true;
+
+    QFileInfo info( path );
+
+    if( info.isDir() )
+    {
+        QDir dir( path );
+
+        foreach( const QString &entry, dir.entryList(QDir::AllDirs | QDir::Files | QDir::Hidden | QDir::NoDotAndDotDot) )
+        {
+            result &= removeDir( dir.absoluteFilePath(entry) );
+        }
+
+        if( !info.dir().rmdir(info.fileName()) )
+            return false;
+    }
+    else
+    {
+        result = QFile::remove( path );
+    }
+    return result;
+}
+// ------------------------------------------------------------------------------------ //
+
 /*!
  * \brief SettingsWindow::configureGUI
  *
@@ -952,11 +1088,12 @@ void SettingsWindow::configureGUI()
     gui->SelectWorkingRateLabel->setAlignment( Qt::AlignCenter );
     gui->SelectWorkingRateLabel->setText( tr("ВЫБЕРЕТЕ РАБОЧУЮ СТАВКУ ДЛЯ НАЧАЛА РАБОТЫ") );
 
-    gui->MenuLWidget->addItem( tr("Время работы" ) );
-    gui->MenuLWidget->addItem( tr("Внешний вид"  ) );
-    gui->MenuLWidget->addItem( tr("Автоматизация") );
-    gui->MenuLWidget->addItem( tr("Время"        ) );
-    gui->MenuLWidget->addItem( tr("Виджет"       ) );
+    gui->MenuLWidget->addItem( tr("Время работы"  ) );
+    gui->MenuLWidget->addItem( tr("Внешний вид"   ) );
+    gui->MenuLWidget->addItem( tr("Автоматизация" ) );
+    gui->MenuLWidget->addItem( tr("Время"         ) );
+    gui->MenuLWidget->addItem( tr("Виджет"        ) );
+    gui->MenuLWidget->addItem( tr("Импорт/Экспорт") );
 
     gui->OpacitySlider->setMinimum( 100 );
     gui->OpacitySlider->setMaximum( 1000 );
@@ -1008,5 +1145,9 @@ void SettingsWindow::connectGUI()
     connect( gui->ViewWidgetCheck    , SIGNAL(clicked     (bool)), SLOT(checkedViewWidget  (   )) );
     connect( gui->TopWidgetCheck     , SIGNAL(clicked     (bool)), SLOT(checkedTopWidget   (   )) );
     connect( gui->OpacityWidgetSlider, SIGNAL(valueChanged(int )), SLOT(changeOpacityWidget(int)) );
+
+    // Import/Export Page
+    connect( gui->ImportButton, SIGNAL(clicked(bool)), SLOT(importClick()) );
+    connect( gui->ExportButton, SIGNAL(clicked(bool)), SLOT(exportClick()) );
 }
 // ------------------------------------------------------------------------------------ //

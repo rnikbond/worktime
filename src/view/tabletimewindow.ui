@@ -14,9 +14,6 @@
    <string>Таблица времени</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
-   <property name="spacing">
-    <number>5</number>
-   </property>
    <property name="leftMargin">
     <number>5</number>
    </property>
@@ -109,6 +106,22 @@
     </layout>
    </item>
    <item>
+    <widget class="QLineEdit" name="CustomTextEdit">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>30</height>
+      </size>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+     <property name="placeholderText">
+      <string>Добавьте свою подпись и нажмите Enter...</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QScrollArea" name="scrollArea">
      <property name="verticalScrollBarPolicy">
       <enum>Qt::ScrollBarAlwaysOn</enum>
@@ -131,7 +144,7 @@
         <x>0</x>
         <y>0</y>
         <width>772</width>
-        <height>821</height>
+        <height>782</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">

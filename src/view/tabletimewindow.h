@@ -44,6 +44,7 @@ private slots:
     void changedMonth();
     void saveToPdfClick();
     void printClick();
+    void addCustomText();
 };
 
 #endif // TABLETIMEWINDOW_H

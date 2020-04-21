@@ -52,6 +52,8 @@ private:
     void updateTimeEnabled();
     void updateMenuEnabled();
 
+    bool removeDir( QString path );
+
 protected:
 
     void showEvent ( QShowEvent  * ShowEvent  );
@@ -92,6 +94,9 @@ private slots:
     void checkedViewWidget  ();
     void checkedTopWidget   ();
     void changeOpacityWidget( int value );
+
+    void importClick();
+    void exportClick();
 
 signals: // From Interfaces
 

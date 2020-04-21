@@ -81,6 +81,11 @@
               <height>70</height>
              </size>
             </property>
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+             </font>
+            </property>
             <property name="text">
              <string>ВЫБЕРЕТЕ ВРЕМЯ РАБОТЫ</string>
             </property>

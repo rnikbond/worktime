@@ -292,7 +292,10 @@ void CoreWorkTime::changedWorkingRate( int rate )
             DesktopWindow->show();
     }
 
-    ModelWT->setWorkingRate( rate );
+    ModelWT          ->setWorkingRate( workingRate );
+    TableTimeWidget  ->setWorkingRate( workingRate );
+    SeveralDaysWidget->setWorkingRate( workingRate );
+    SalaryWidget     ->setWorkingRate( workingRate );
 
     writeConfig();
 

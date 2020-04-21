@@ -160,7 +160,7 @@ signals:
     void showChanges    ();
     void showSettings   ();
 
-    void runTimer( bool isRun );
+    void runTimer( bool isRun, bool isNewInterval );
 
 protected:
 

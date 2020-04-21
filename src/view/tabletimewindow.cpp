@@ -131,15 +131,20 @@ void TableTimeWindow::updateTable()
             }
             else
             {
-                //"<td align=center style='color: #008080;'>"
+
+                QString Need = Day->timeNeed().toString();
+
+                if( Day->timeNeed().isEmpty() == false )
+                    Need = "-" + Need;
+
                 DayHtmlTable += "<tr>" \
                                     "<td align=center>"  + QDate::shortDayName(Date.dayOfWeek()) + "</td>" \
                                     "<td align=center>"  + Date.toString("dd.MM.yyyy")            + "</td>"\
                                     "<td align=center>"  + DayWorkTime::nameDay(Day->typeDay())   + "</td>"\
                                     "<td colspan=3></td>"\
-                                    "<td align=center >" + Day->timeWorked().toString() + "</td>" \
-                                    "<td align=center >" + Day->timeWorked().toString() + "</td>" \
-                                    "<td align=center >" + Day->timeNeed  ().toString() + "</td>" \
+                                    "<td align=center >" + WTime().toString() + "</td>" \
+                                    "<td align=center >" + WTime().toString() + "</td>" \
+                                    "<td align=center >" + Need               + "</td>" \
                                 "</tr>";
             }
 

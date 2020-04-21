@@ -425,13 +425,13 @@ void PresenterWorkTime::userChangeNote( QString note )
  * \brief PresenterWorkTime::userChnageTimerState
  * \param state
  */
-void PresenterWorkTime::userChangeTimerState( bool state )
+void PresenterWorkTime::userChangeTimerState( bool state, bool isNewInterval )
 {
 #ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call PresenterWorkTime::userChnageTimerState( " << state << " )";
 #endif
 
-    ModelWT->setTimerState( state );
+    ModelWT->setTimerState( state, isNewInterval );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -483,6 +483,6 @@ void PresenterWorkTime::connectView( IViewWorkTime * View )
     QObject::connect( ViewObj, SIGNAL(userAddInterval    (QString     )), SLOT(userAddInterval     (QString     )) );
     QObject::connect( ViewObj, SIGNAL(userChangeTypeDay  (int         )), SLOT(userChangeTypeDay   (int         )) );
     QObject::connect( ViewObj, SIGNAL(userChangeNote     (QString     )), SLOT(userChangeNote      (QString     )) );
-    QObject::connect( ViewObj, SIGNAL(runTimer           (bool        )), SLOT(userChangeTimerState(bool        )) );
+    QObject::connect( ViewObj, SIGNAL(runTimer           (bool, bool  )), SLOT(userChangeTimerState(bool, bool  )) );
 }
 // ------------------------------------------------------------------------------------ //

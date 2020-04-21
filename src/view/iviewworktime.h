@@ -90,7 +90,7 @@ public: // Signals
     virtual void showChanges    () = 0;
     virtual void showSettings   () = 0;
 
-    virtual void runTimer( bool isRun ) = 0;
+    virtual void runTimer( bool isRun, bool isNewInterval ) = 0;
 };
 
 #endif // IVIEWWORKTIME

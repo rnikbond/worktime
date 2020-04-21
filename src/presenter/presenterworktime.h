@@ -63,7 +63,7 @@ private slots:
     void userChangeTypeDay  ( int type           );
     void userChangeNote     ( QString note       );
 
-    void userChangeTimerState( bool state );
+    void userChangeTimerState( bool state , bool isNewInterval );
 };
 
 #endif // PRESENTERWORKTIME_H

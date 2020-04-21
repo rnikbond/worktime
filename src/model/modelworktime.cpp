@@ -1429,16 +1429,22 @@ void ModelWorkTime::setNote( QString note )
 }
 // ------------------------------------------------------------------------------------ //
 
-void ModelWorkTime::setTimerState( bool state )
+void ModelWorkTime::setTimerState( bool state, bool isNewInterval )
 {
 #ifdef WT_INFO_CALL_FUNC
-    qDebug() << "#Call ModelWorkTime::setTimerState( " << state <<  " )";
+    qDebug() << "#Call ModelWorkTime::setTimerState( " << state << ", " << isNewInterval << " )";
 #endif
 
     isTickTimer = state;
 
     if( isTickTimer )
     {
+        if( isNewInterval )
+        {
+            addInterval( DayWorkTime::nameDay(DayWorkTime::WorkDay) );
+            emit reloadMonth();
+        }
+
         workTimerTick();
         updateTimeEnd();
 

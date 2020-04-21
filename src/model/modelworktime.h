@@ -116,7 +116,7 @@ public: // From Interfaces
 
     void setNote( QString note );
 
-    void setTimerState( bool state );
+    void setTimerState( bool state, bool isNewInterval );
 
 signals: // Interface signals
 

@@ -1050,12 +1050,12 @@ void WorkTimeWindow::runTimeClick()
     qDebug() << "#Call WorkTimeWindow::runTimeClick()";
 #endif
 
-    isRunTimer = false;
+    isRunTimer = true;
 
     gui->RunTimeButton ->hide();
     gui->StopTimeButton->show();
 
-    emit runTimer( isRunTimer );
+    emit runTimer( isRunTimer, true );
 
     gui->StopTimeButton->setFocus();
 }
@@ -1073,12 +1073,12 @@ void WorkTimeWindow::stopTimeClick()
     qDebug() << "#Call WorkTimeWindow::stopTimeClick()";
 #endif
 
-    isRunTimer = true;
+    isRunTimer = false;
 
     gui->RunTimeButton ->show();
     gui->StopTimeButton->hide();
 
-    emit runTimer( isRunTimer );
+    emit runTimer( isRunTimer, false );
 
     gui->RunTimeButton->setFocus();
 }
@@ -1312,7 +1312,14 @@ void WorkTimeWindow::configuringGUI()
  */
 void WorkTimeWindow::showEvent( QShowEvent * ShowEvent )
 {
-    stopTimeClick();
+    isRunTimer = true;
+
+    gui->RunTimeButton ->hide();
+    gui->StopTimeButton->show();
+
+    emit runTimer( isRunTimer, false );
+
+    gui->WorkCalendar->setFocus();
 
     QWidget::showEvent( ShowEvent );
 }

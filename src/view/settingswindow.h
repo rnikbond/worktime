@@ -49,6 +49,7 @@ private:
     void connectGUI();
     void configureGUI();
 
+    void updateTimeEnabled();
     void updateMenuEnabled();
 
 protected:

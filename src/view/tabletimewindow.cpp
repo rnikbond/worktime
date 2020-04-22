@@ -1,5 +1,6 @@
 // ---------------------------- //
 #include <QPrinter>
+#include <QScrollBar>
 #include <QFileDialog>
 #include <QPrintDialog>
 #include <QTextDocument>
@@ -43,6 +44,7 @@ TableTimeWindow::~TableTimeWindow()
 void TableTimeWindow::addCustomText()
 {
     updateTable();
+    gui->scrollArea->verticalScrollBar()->setSliderPosition( gui->TableTimeValue->height() );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -255,6 +257,8 @@ void TableTimeWindow::changedMonth()
 {
     loadMonth();
     updateTable();
+
+    gui->scrollArea->verticalScrollBar()->setSliderPosition( gui->TableTimeValue->height() );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -265,7 +269,6 @@ void TableTimeWindow::currentMonthClick()
     gui->MonthCBox->blockSignals( false );
 
     changedMonth();
-
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -297,8 +300,6 @@ void TableTimeWindow::saveToPdfClick()
                                                      .arg(gui->MonthCBox->currentText())
                                                      .arg(HelperWT::currentDate().year()),
                                                      "*.pdf" );
-
-
 
     if( FileName.isEmpty() == false )
     {

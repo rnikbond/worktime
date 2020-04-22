@@ -346,7 +346,7 @@ void ModelWorkTime::updateTimeEnd()
                     CurrentMonth->setTimeEnd( selectedDate, interval, CurretnTime.toQTime(), true );
                     DataBase    ->setTimeEnd( selectedDate, workingRate, interval, CurretnTime );
 
-                    emit refreshTimeEnd( interval, CurretnTime );
+                    emit reloadStatisticTime();
 
                     checkLaunch();
                 }

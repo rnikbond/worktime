@@ -1,4 +1,5 @@
 // ---------------------------- //
+#include <QTextCharFormat>
 // ---------------------------- //
 #include "helperwt.h"
 #include "databasewt.h"
@@ -66,6 +67,8 @@ void SalaryWindow::selectDate()
     }
 
     gui->SalaryList->setCurrentRow( gui->SalaryList->count() - 1 );
+
+    selectSalary();
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -80,6 +83,30 @@ void SalaryWindow::reloadSalary()
 
     for( int i = 0; i < Dates.count(); i++ )
         SalaryMonth.append( Salary( Dates.at(i), Salaries.at(i) ) );
+
+    for( int day = 0; day < SelectedDate.daysInMonth(); day++ )
+    {
+        bool isExistsSalary = false;
+
+        QDate Date( SelectedDate.year(), SelectedDate.month(), day );
+
+        for( int i = 0; i < SalaryMonth.count(); i++ )
+        {
+            if( SalaryMonth.at(i).date == Date )
+            {
+                isExistsSalary = true;
+                break;
+            }
+        }
+
+        QTextCharFormat TextCharFormat = gui->SalaryCalendar->dateTextFormat( Date );
+
+        TextCharFormat.setForeground( isExistsSalary ? Qt::green : Qt::white );
+
+        gui->SalaryCalendar->setDateTextFormat( Date, TextCharFormat );
+    }
+
+    selectDate();
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -102,7 +129,9 @@ void SalaryWindow::selectSalary()
             SummSalary += SalaryMonth.at(i).value;
 
             if( SalaryMonth.at(i).date == Date )
+            {
                 gui->SalaryEdit->setText( QString::number(SalaryMonth.at(i).value) );
+            }
         }
 
         gui->MonthValue->setText( QString::number(SummSalary) );
@@ -110,6 +139,10 @@ void SalaryWindow::selectSalary()
         gui->SalaryCalendar->setSelectedDate( Date );
 
         SelectedDate = Date;
+    }
+    else
+    {
+        gui->SalaryEdit->clear();
     }
 }
 // ------------------------------------------------------------------------------------ //

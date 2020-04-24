@@ -174,7 +174,7 @@ void ModelWorkTime::workTimerTick()
                     }
                     else
                     {
-                        emit updateReverseTimer( (CurrentTimeExt - TimeEndExt).toString() );
+                        emit updateReverseTimer( "+ " + (CurrentTimeExt - TimeEndExt).toString() );
                     }
 
                 }
@@ -346,6 +346,7 @@ void ModelWorkTime::updateTimeEnd()
                     CurrentMonth->setTimeEnd( selectedDate, interval, CurretnTime.toQTime(), true );
                     DataBase    ->setTimeEnd( selectedDate, workingRate, interval, CurretnTime );
 
+                    emit refreshTimeEnd( interval, CurretnTime );
                     emit reloadStatisticTime();
 
                     checkLaunch();
@@ -1137,12 +1138,19 @@ WTime ModelWorkTime::timeEscape()
                 for( int interval = 0; interval < lastInterval; interval++ )
                     TodayWorked += Today->timeWorked( interval );
 
-                if( lastInterval >= 0 )
-                    TimeStart = Today->timeStart( lastInterval );
+                if( RemainTime > TodayWorked )
+                {
+                    if( lastInterval >= 0 )
+                        TimeStart = Today->timeStart( lastInterval );
 
-                RemainTime -= TodayWorked;
+                    RemainTime -= TodayWorked;
 
-                TimeEscape = TimeStart + RemainTime;
+                    TimeEscape = TimeStart + RemainTime;
+                }
+                else
+                {
+                    TimeEscape = Today->timeStart(0) + RemainTime;
+                }
             }
         }
     }

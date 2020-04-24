@@ -39,10 +39,7 @@ HEADERS += src/model/imodelworktime.h          \
            src/view/tabletimewindow.h          \
            src/view/severaldayswindow.h        \
            src/view/salarywindow.h             \
-           src/view/changeswindow.h            \
-           src/tools/qzipreader_p.h            \
-           src/tools/qzipwriter_p.h
-
+           src/view/changeswindow.h
 
 SOURCES += src/main.cpp                          \
            src/model/modelworktime.cpp           \
@@ -63,8 +60,7 @@ SOURCES += src/main.cpp                          \
            src/view/tabletimewindow.cpp          \
            src/view/severaldayswindow.cpp        \
            src/view/salarywindow.cpp             \
-           src/view/changeswindow.cpp            \
-           src/tools/qzip.cpp
+           src/view/changeswindow.cpp
 
 FORMS   += src/gui/worktimewindow.ui            \
            src/model/database/tablesdatabase.ui \

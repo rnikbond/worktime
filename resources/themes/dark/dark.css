@@ -363,7 +363,6 @@ QLineEdit:!enabled
 
 QPushButton
 {
-	border: none;
 	font-weight: bold;
 }
 
@@ -385,6 +384,7 @@ QPushButton:hover
 
 QCalendarWidget QWidget
 {
+	border: none;
 	background-color: #383838;               /* Цвет фона всего календаря */
 	alternate-background-color: #383838; /* Цвет фона ячеек названий дней недели */
 }
@@ -421,6 +421,7 @@ QCalendarWidget QToolButton
 /* Стилизация кнопки предыдущего месяца в заголовке календаря */
 QCalendarWidget QToolButton#qt_calendar_prevmonth
 {
+	border: none;
     image: url(:/themes/dark/calendar/prev_month.png);
 	qproperty-icon: none;
 	qproperty-iconSize: 20px;
@@ -435,6 +436,7 @@ QCalendarWidget QToolButton#qt_calendar_prevmonth:hover
 /* Стилизация кнопки следующего месяца в заголовке календаря */
 QCalendarWidget QToolButton#qt_calendar_nextmonth
 {
+	border: none;
 	image: url(:/themes/dark/calendar/next_month.png);
 	qproperty-icon: none;
 	qproperty-iconSize: 20px;
@@ -606,6 +608,11 @@ QPushButton#RunTimeButton:hover
 	background-repeat: no-repeat;
     background-position: center;
 	background-image: url(:/themes/dark/common/play_hover.png);
+}
+
+QPushButton#TodayButton
+{
+	border: none;
 }
 
 QLabel#ReverseTimer

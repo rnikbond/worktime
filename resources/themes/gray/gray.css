@@ -81,7 +81,7 @@ QCheckBox::indicator:checked
 	
 	background-repeat: no-repeat;
     background-position: left;
-	background-image: url(:/themes/themes/gray/common/checkbox_checked.png);
+	background-image: url(:/themes/gray/common/checkbox_checked.png);
 }
 
 QCheckBox::indicator:unchecked
@@ -93,7 +93,7 @@ QCheckBox::indicator:unchecked
 	
 	background-repeat: no-repeat;
     background-position: left;
-	background-image: url(:/themes/themes/gray/common/checkbox_unchecked.png);
+	background-image: url(:/themes/gray/common/checkbox_unchecked.png);
 }
 
 /* ---------------------------------------------------------- */
@@ -185,7 +185,7 @@ QCalendarWidget QToolButton
 /* Стилизация кнопки предыдущего месяца в заголовке календаря */
 QCalendarWidget QToolButton#qt_calendar_prevmonth
 {
-    image: url(:/themes/themes/gray/calendar/prev_month.png);
+    image: url(:/themes/gray/calendar/prev_month.png);
 	qproperty-icon: none;
 	qproperty-iconSize: 20px;
 }
@@ -193,13 +193,13 @@ QCalendarWidget QToolButton#qt_calendar_prevmonth
 /* Стилизация кнопки предыдущего месяца в заголовке календаря при наведении */
 QCalendarWidget QToolButton#qt_calendar_prevmonth:hover
 {
-    image: url(:/themes/themes/gray/calendar/prev_month_hover.png);
+    image: url(:/themes/gray/calendar/prev_month_hover.png);
 }
 
 /* Стилизация кнопки следующего месяца в заголовке календаря */
 QCalendarWidget QToolButton#qt_calendar_nextmonth
 {
-	image: url(:/themes/themes/gray/calendar/next_month.png);
+	image: url(:/themes/gray/calendar/next_month.png);
 	qproperty-icon: none;
 	qproperty-iconSize: 20px;
 }
@@ -207,7 +207,7 @@ QCalendarWidget QToolButton#qt_calendar_nextmonth
 /* Стилизация кнопки следующего месяца в заголовке календаря при наведении */
 QCalendarWidget QToolButton#qt_calendar_nextmonth:hover
 {
-	image: url(:/themes/themes/gray/calendar/next_month_hover.png);
+	image: url(:/themes/gray/calendar/next_month_hover.png);
 }
 
 /* ---------------------------------------------------------- */
@@ -355,7 +355,7 @@ QComboBox::drop-down
 	width: 35px;
 
 	image-position: right;
-	image: url(:/themes/themes/gray/common/combo_down.png);
+	image: url(:/themes/gray/common/combo_down.png);
 }
 
 QComboBox::down-arrow
@@ -493,14 +493,14 @@ QPushButton#SalaryButton
 	padding-left: 60;
 	background-repeat: no-repeat;
     background-position: left;
-	background-image: url(:/themes/themes/gray/menu/money.png);
+	background-image: url(:/themes/gray/menu/money.png);
 }
 
 QPushButton#SalaryButton:hover
 {
 	background-repeat: no-repeat;
     background-position: left;
-	background-image: url(:/themes/themes/gray/menu/money_hover.png);
+	background-image: url(:/themes/gray/menu/money_hover.png);
 }
 
 QPushButton#TableTimeButton
@@ -509,14 +509,14 @@ QPushButton#TableTimeButton
 	padding-left: 60;
 	background-repeat: no-repeat;
     background-position: left;
-	background-image: url(:/themes/themes/gray/menu/table_time.png);
+	background-image: url(:/themes/gray/menu/table_time.png);
 }
 
 QPushButton#TableTimeButton:hover
 {
 	background-repeat: no-repeat;
     background-position: left;
-	background-image: url(:/themes/themes/gray/menu/table_time_hover.png);
+	background-image: url(:/themes/gray/menu/table_time_hover.png);
 }
 
 QPushButton#ScheduleButton
@@ -525,14 +525,14 @@ QPushButton#ScheduleButton
 	padding-left: 60;
 	background-repeat: no-repeat;
     background-position: left;
-	background-image: url(:/themes/themes/gray/menu/schedule.png);
+	background-image: url(:/themes/gray/menu/schedule.png);
 }
 
 QPushButton#ScheduleButton:hover
 {
 	background-repeat: no-repeat;
     background-position: left;
-	background-image: url(:/themes/themes/gray/menu/schedule_hover.png);
+	background-image: url(:/themes/gray/menu/schedule_hover.png);
 }
 
 QPushButton#SeveralDaysButton
@@ -541,14 +541,14 @@ QPushButton#SeveralDaysButton
 	padding-left: 60;
 	background-repeat: no-repeat;
     background-position: left;
-	background-image: url(:/themes/themes/gray/menu/several_days.png);
+	background-image: url(:/themes/gray/menu/several_days.png);
 }
 
 QPushButton#SeveralDaysButton:hover
 {
 	background-repeat: no-repeat;
     background-position: left;
-	background-image: url(:/themes/themes/gray/menu/several_days_hover.png);
+	background-image: url(:/themes/gray/menu/several_days_hover.png);
 }
 
 QPushButton#SettingsButton
@@ -557,14 +557,14 @@ QPushButton#SettingsButton
 	padding-left: 60;
 	background-repeat: no-repeat;
     background-position: left;
-	background-image: url(:/themes/themes/gray/menu/settings.png);
+	background-image: url(:/themes/gray/menu/settings.png);
 }
 
 QPushButton#SettingsButton:hover
 {
 	background-repeat: no-repeat;
     background-position: left;
-	background-image: url(:/themes/themes/gray/menu/settings_hover.png);
+	background-image: url(:/themes/gray/menu/settings_hover.png);
 }
 
 QPushButton#UpdateWorkTimeButton
@@ -573,14 +573,14 @@ QPushButton#UpdateWorkTimeButton
 	padding-left: 60;
 	background-repeat: no-repeat;
     background-position: left;
-	background-image: url(:/themes/themes/gray/menu/update.png);
+	background-image: url(:/themes/gray/menu/update.png);
 }
 
 QPushButton#UpdateWorkTimeButton:hover
 {
 	background-repeat: no-repeat;
     background-position: left;
-	background-image: url(:/themes/themes/gray/menu/update_hover.png);
+	background-image: url(:/themes/gray/menu/update_hover.png);
 }
 
 QPushButton#ChangesButton
@@ -589,7 +589,7 @@ QPushButton#ChangesButton
 	padding-left: 60;
 	background-repeat: no-repeat;
     background-position: left;
-	background-image: url(:/themes/themes/gray/menu/info.png);
+	background-image: url(:/themes/gray/menu/info.png);
 }
 
 QPushButton#ChangesButton:hover
@@ -598,7 +598,7 @@ QPushButton#ChangesButton:hover
 	padding-left: 60;
 	background-repeat: no-repeat;
     background-position: left;
-	background-image: url(:/themes/themes/gray/menu/info_hover.png);
+	background-image: url(:/themes/gray/menu/info_hover.png);
 }
 
 QPushButton#MenuButton
@@ -607,14 +607,47 @@ QPushButton#MenuButton
 	padding-left: 60;
 	background-repeat: no-repeat;
     background-position: center;
-	background-image: url(:/themes/themes/gray/common/menu.png);
+	background-image: url(:/themes/dark/common/menu.png);
 }
 
 QPushButton#MenuButton:hover
 {
 	background-repeat: no-repeat;
     background-position: center;
-	background-image: url(:/themes/themes/gray/common/menu_hover.png);
+	background-image: url(:/themes/gray/common/menu_hover.png);
+}
+
+QPushButton#StopTimeButton
+{
+	background-repeat: no-repeat;
+    background-position: center;
+	background-image: url(:/themes/gray/common/pause.png);
+}
+
+QPushButton#StopTimeButton:hover
+{
+	background-repeat: no-repeat;
+    background-position: center;
+	background-image: url(:/themes/dark/common/pause_hover.png);
+}
+
+QPushButton#RunTimeButton
+{
+	background-repeat: no-repeat;
+    background-position: center;
+	background-image: url(:/themes/dark/common/play.png);
+}
+
+QPushButton#RunTimeButton:hover
+{
+	background-repeat: no-repeat;
+    background-position: center;
+	background-image: url(:/themes/dark/common/play_hover.png);
+}
+
+QPushButton#TodayButton
+{
+	border: none;
 }
 
 QLabel#ReverseTimer

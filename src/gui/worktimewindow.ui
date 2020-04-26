@@ -19,6 +19,9 @@
   <property name="windowTitle">
    <string/>
   </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
     <number>0</number>
@@ -108,7 +111,7 @@
         </property>
         <property name="minimumSize">
          <size>
-          <width>35</width>
+          <width>88</width>
           <height>35</height>
          </size>
         </property>
@@ -119,7 +122,7 @@
          </size>
         </property>
         <property name="text">
-         <string>=</string>
+         <string/>
         </property>
        </widget>
       </item>
@@ -154,6 +157,23 @@
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <property name="minimumDate">
+         <date>
+          <year>2020</year>
+          <month>4</month>
+          <day>12</day>
+         </date>
+        </property>
+        <property name="maximumDate">
+         <date>
+          <year>2020</year>
+          <month>4</month>
+          <day>29</day>
+         </date>
         </property>
        </widget>
       </item>
@@ -270,6 +290,9 @@
          </item>
          <item>
           <widget class="QPushButton" name="UpdateButton">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="sizePolicy">
             <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
              <horstretch>0</horstretch>
@@ -544,6 +567,9 @@
              <property name="toolTip">
               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:11pt;&quot;&gt;Список интервалов&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Чтобы добавить интервал - вызовете меню при помощи правой кнопки мыши.&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Чтобы переименовать интервал - нажмите на него два раза левой кнопкой мыши.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
+             <property name="currentRow">
+              <number>-1</number>
+             </property>
             </widget>
            </item>
            <item>
@@ -561,7 +587,7 @@
                </property>
                <property name="minimumSize">
                 <size>
-                 <width>50</width>
+                 <width>88</width>
                  <height>50</height>
                 </size>
                </property>
@@ -589,7 +615,7 @@
                </property>
                <property name="minimumSize">
                 <size>
-                 <width>50</width>
+                 <width>88</width>
                  <height>50</height>
                 </size>
                </property>
@@ -625,7 +651,7 @@
               <widget class="QTimeEdit" name="TimeStartValue">
                <property name="minimumSize">
                 <size>
-                 <width>120</width>
+                 <width>0</width>
                  <height>0</height>
                 </size>
                </property>
@@ -644,7 +670,7 @@
               <widget class="QTimeEdit" name="TimeEndValue">
                <property name="minimumSize">
                 <size>
-                 <width>120</width>
+                 <width>0</width>
                  <height>0</height>
                 </size>
                </property>
@@ -730,8 +756,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>216</width>
-              <height>223</height>
+              <width>220</width>
+              <height>245</height>
              </rect>
             </property>
             <attribute name="label">
@@ -868,8 +894,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>216</width>
-              <height>223</height>
+              <width>220</width>
+              <height>245</height>
              </rect>
             </property>
             <attribute name="label">

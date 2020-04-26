@@ -4,9 +4,9 @@
 
 QWidget
 {
-	border: none;
+	border: 1px solid transparent;
 	color: #FFFFFF;
-	background-color: #808080;
+	background-color: #9E9E9E;
 }
 
 /* ---------------------------------------------------------- */
@@ -68,16 +68,16 @@ QProgressBar
 
 QCheckBox
 {
-	padding: 2px;
-	color  : #BABABA;
+	padding: 5px;
+	color  : #F0F0F0;
 }
 
 QCheckBox::indicator:checked
 {
 	border          : none;
 	
-	width           : 20px;
-	height          : 20px;
+	width           : 25px;
+	height          : 25px;
 	
 	background-repeat: no-repeat;
     background-position: left;
@@ -88,8 +88,8 @@ QCheckBox::indicator:unchecked
 {
 	border          : none;
 	
-	width           : 20px;
-	height          : 20px;
+	width           : 25px;
+	height          : 25px;
 	
 	background-repeat: no-repeat;
     background-position: left;
@@ -102,19 +102,20 @@ QCheckBox::indicator:unchecked
 
 QMenu
 {
-	border: 1px solid #606060;
+	border: none;
 	border-radius: 2;
 }
 
 QMenu::item
 {
-	color: #FFFFFF;
+	color: #E0E0E0;
+	background-color: 707070;
 }
 
 QMenu::item:selected
 {
 	color: #FFFFFF;
-	background-color: #606060;
+	background-color: #808080;
 }
 
 /* ---------------------------------------------------------- */
@@ -125,21 +126,24 @@ QPushButton
 {
 	border: none;
 	border-radius: 2;
-	color: #B0B0B0;
+	color: #d1d1d1;
+	background: #858585;
 	font-weight: bold;
 	margin: 1;
+	padding: 10;
 }
 
-QPushButton:!enabled
+QPushButton:disabled
 {
 	border: none;
-	font-weight: normal;
-	color: #606060;
+	color: #808080;
+	background: #626262;
 }
 
 QPushButton:hover
 {
 	color: #FFFFFF;
+	background: #959595;
 }
 
 
@@ -153,24 +157,22 @@ QCalendarWidget QWidget
 	alternate-background-color: #606060; /* Цвет фона ячеек названий дней недели */
 }
 
-/* Стилизация отображаемых данных текущего месяца */
-QCalendarWidget QAbstractItemView:enabled 
+QCalendarWidget QAbstractItemView
 {
-	border: 0px solid #323232; /* Рамка вокруг всех всех дней без заголовка */
-
-    color: #FFFFFF;                    /* Цвет текста дней и названия дней недели */
-	background-color: #808080;  /* Цвет фона дней календаря */
-
-	selection-color: #FFFFFF;                   /* Цвет текста выбранного дня */
-	selection-background-color: #606060; /* Цвет фона выбранного дня */
-
 	font-size: 14px;  /* Размер шрифта дней и названий дней недели */
+	
+	border: none; /* Рамка вокруг всех всех дней без заголовка */
+
+    color                     : #FFFFFF;  /* Цвет текста дней и названия дней недели */
+	background-color          : #808080;  /* Цвет фона дней календаря */
+	alternate-background-color: #707070;  /* Цвет фона горизонтального и вертикального заголовков */
+	selection-color           : #FFFFFF;  /* Цвет текста выбранного дня */
+	selection-background-color: #606060;  /* Цвет фона выбранного дня */
 }
 
-/* Стилизация отображаемых данных НЕ текущего месяца */
-QCalendarWidget QAbstractItemView:disabled
-{
-    color: #606060;                    /* Цвет текста дней */
+QCalendarWidget QAbstractItemView:disabled 
+{ 
+	color: #606060; 
 }
 
 /* Стилизация заголовка календаря */
@@ -216,29 +218,39 @@ QCalendarWidget QToolButton#qt_calendar_nextmonth:hover
 
 QToolBox
 {
-	border: 2px solid #008080;
-	border-radius: 2;
-	color: #FFFFFF;
+	border: none;
 	font-size: 14px;
 }
 
 QToolBox::tab
  {
-	border: 1px solid #707070;
+	border: none;
+	border-radius: 1;
+
+	color: #D1D1D1;
 	background-color: #707070;
-	border-radius: 2;
-	padding: 20;
+}
+
+QToolBox::tab:selected
+{
+	color: #E1E1E1;
+	background-color: #909090;
 }
 
 QToolBox::tab:hover
 {
 	color: #FFFFFF;
+	background-color: #808080;
 }
 
-QToolBox::tab:selected
+QToolBox::tab:selected:hover
 {
-	color: #282828;
-	background-color: #909090;
+	color: #FFFFFF;
+}
+
+QToolBox QScrollArea {
+	border: 1px solid #808080;
+	border-radius: 4px;
 }
 
 /* ---------------------------------------------------------- */
@@ -247,46 +259,39 @@ QToolBox::tab:selected
 
 QListView
 {
-	border       : 1px solid #606060;
-	border-radius: 2;
-	color: #FFFFFF;
-	alternate-background-color: #4F4F4F;
-
+	border          : 1px solid #808080;
+	border-radius: 1;
+	font-size       : 14px;
 	padding: 10;
-	font-size: 14px;
 }
 
-QListView::item
+QListView::item:enabled
 {
-	border: 1px solid transparent;
-	border-radius: 2px;
-}
-
-QListView::item:alternate
-{
-	border: 1px solid transparent;
-	background: #909090;
-}
-
-QListView::item:selected
-{
-	border: 1px solid #008080;
 	
-	color: #282828;
-	background: #B0B0B0;
+	border: none;
+	color: #D0D0D0;
+	background: #808080;
+	margin-top: 3;
+	padding: 2;
+	
 }
 
-QListView::item:selected:active
+QListView::item:disabled
 {
-	border: 1px solid #008080;
-	
-	color: #282828;
-	background: #B0B0B0;
+	color: #808080;
+	background: #626262;
 }
 
 QListView::item:hover
 {
-	border: 1px solid #606060;
+	color          : #FFFFFF;
+	background: #909090;	
+}
+
+QListView::item:selected
+{
+	color          : #FFFFFF;
+	background: #909090;	
 }
 
 /* ---------------------------------------------------------- */
@@ -295,20 +300,20 @@ QListView::item:hover
 
 QGroupBox
 {
-	border       : 2px solid #008080;
+	border       : 1px solid #707070;
 	border-radius: 2;
-	margin-top   : 15px;
-	font-size : 12px;
-	font-weight: bold;
+	margin-top   : 8px;
+	font-size    : 12px;
+	font-weight  : bold;
 	
 }
 
 QGroupBox::title
 {
-    subcontrol-origin : margin;
-    subcontrol-position : top center;
-    padding : 0 10px;	
-	color : #FFFFFF;
+    subcontrol-origin  : margin;
+    subcontrol-position: top center;
+    padding            : 0 5px;	
+	color              : #F0F0F0;
 }
 
 /* ---------------------------------------------------------- */
@@ -317,10 +322,10 @@ QGroupBox::title
 
 QComboBox {
 
-	border: 1px solid #008080;
+	border: none;
 	
-	color: #BABABA;
-	background-color: #696969;
+	color: #E0E0E0;
+	background-color: #707070;
 
 	selection-color: #FFFFFF;
 
@@ -334,8 +339,9 @@ QComboBox QAbstractItemView {
 
 	border: none;
 
-	background-color: #696969;
-	color: #BABABA;
+	color: #E0E0E0;
+	background-color: #707070;
+	
   
 	selection-color: #FFFFFF;
 	selection-background-color: #808080;
@@ -372,41 +378,16 @@ QComboBox::indicator {
 }
 
 /* ---------------------------------------------------------- */
-/**************** QToolBox *****************/
-/* ---------------------------------------------------------- */
-
-QToolBox
-{
-	border: 1px solid #008080;
-	color: #FFFFFF;
-}
-
-QToolBox::tab
- {
-	border: 1px solid #008080;
-	padding: 20;
-}
-
-QToolBox::tab:hover
-{
-	color: #F0F0F0;
-}
-
-QToolBox::tab:selected
-{
-	color: #FFFFFF;
-	background-color: #696969;
-}
-
-/* ---------------------------------------------------------- */
 /***************** QLabel ******************/
 /* ---------------------------------------------------------- */
 
 QLabel
 {
 	border: none;
+	border-radius: 1;
 	color: #FFFFFF;
-	background-color: transparent;
+	background-color: #909090;
+	padding: 5;
 	font-size: 12px;
 }
 
@@ -417,24 +398,36 @@ QLabel
 /* Стилизация QTimeEdit, QDateEdit */
 QTimeEdit, QDateEdit
 {
-	border: 1px solid transparent;
+	border: none;
 	border-radius: 2;
-	color: #000000;
-	background-color: #FFFFFF;
+	color: #202020;
+	background-color: #E0E0E0;
+	padding: 3 10 3 10;
+	font-size: 13px;
+}
 
-	font-size: 14px;
+QTimeEdit:disabled, QDateEdit:disabled
+{
+	border: none;
+	border-radius: 2;
+	color: #909090;
+	background-color: #C0C0C0;
+	padding: 3 10 3 10;
+	font-size: 13px;
 }
 
 /* Стилизация QTimeEdit, QDateEdit при получении фокуса */
 QTimeEdit:focus, QDateEdit:focus
 {
-	border: 1px solid #008080;
+	color: #000000;
+	background-color: #FFFFFF;
 }
  	
 /* Стилизация QTimeEdit, QDateEdit при наведении */
 QTimeEdit:hover, QDateEdit:hover
 {
-	border: 1px solid #707070;
+	color: #000000;
+	background-color: #FFFFFF;
 }
 
 /* ---------------------------------------------------------- */
@@ -443,19 +436,22 @@ QTimeEdit:hover, QDateEdit:hover
 
 QLineEdit
 {
-	border: 1px solid #686868;
+	border: none;
 	border-radius: 2;
-	
-	color: #000000;
-	background-color: #FFFFFF;
+	color: #202020;
+	background-color: #E0E0E0;
+	padding: 3 10 3 10;
+	font-size: 12px;
 }
 
-QLineEdit:!enabled
+QLineEdit:disabled
 {
-	border: 1px solid #686868;
-	
-	color: #000000;
-	background-color: #FFFFFF;
+	border: none;
+	border-radius: 2;
+	color: #909090;
+	background-color: #C0C0C0;
+	padding: 3 10 3 10;
+	font-size: 13px;
 }
 
 /* ---------------------------------------------------------- */
@@ -467,21 +463,9 @@ QTextEdit
 	border: none;
 	border-radius: 2;
 	color: #000000;
-	background-color: #FFFFFF;
+	background-color: #E0E0E0;
 	font-size: 14px;
 }
-
-/* ---------------------------------------------------------- */
-/**************** QCheckBox ****************/
-/* ---------------------------------------------------------- */
-
-/* ---------------------------------------------------------- */
-/**************** QMenu ****************/
-/* ---------------------------------------------------------- */
-
-/* ---------------------------------------------------------- */
-/**************** QProgressBar *****************/
-/* ---------------------------------------------------------- */
 
 /* ---------------------------------------------------------------------------- */
 /************* Стилизация объектов по имени *************/
@@ -628,21 +612,21 @@ QPushButton#StopTimeButton:hover
 {
 	background-repeat: no-repeat;
     background-position: center;
-	background-image: url(:/themes/dark/common/pause_hover.png);
+	background-image: url(:/themes/gray/common/pause_hover.png);
 }
 
 QPushButton#RunTimeButton
 {
 	background-repeat: no-repeat;
     background-position: center;
-	background-image: url(:/themes/dark/common/play.png);
+	background-image: url(:/themes/gray/common/play.png);
 }
 
 QPushButton#RunTimeButton:hover
 {
 	background-repeat: no-repeat;
     background-position: center;
-	background-image: url(:/themes/dark/common/play_hover.png);
+	background-image: url(:/themes/gray/common/play_hover.png);
 }
 
 QPushButton#TodayButton
@@ -653,4 +637,5 @@ QPushButton#TodayButton
 QLabel#ReverseTimer
 {
 	font-size: 24px;
+	background: transparent;
 }

@@ -69,7 +69,7 @@
          </size>
         </property>
         <property name="currentIndex">
-         <number>5</number>
+         <number>2</number>
         </property>
         <widget class="QWidget" name="WorkingRatePage">
          <layout class="QGridLayout" name="gridLayout">
@@ -253,6 +253,9 @@
            <widget class="QCheckBox" name="UpdatesCheck">
             <property name="text">
              <string>Проверять обновления</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
             </property>
            </widget>
           </item>

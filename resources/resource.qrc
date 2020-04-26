@@ -81,5 +81,9 @@
         <file>themes/dark/dark.css</file>
         <file>icons/logo/worktime.ico</file>
         <file>icons/logo/worktime.png</file>
+        <file>themes/gray/common/pause.png</file>
+        <file>themes/gray/common/pause_hover.png</file>
+        <file>themes/gray/common/play.png</file>
+        <file>themes/gray/common/play_hover.png</file>
     </qresource>
 </RCC>

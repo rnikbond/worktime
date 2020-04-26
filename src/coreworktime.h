@@ -21,7 +21,7 @@
 // ---------------------------- //
 #define VERSION_MAJOR    1
 #define VERSION_MINOR    1
-#define VERSION_SUBMINOR 4
+#define VERSION_SUBMINOR 5
 // ---------------------------- //
 class CoreWorkTime : public QObject
 {

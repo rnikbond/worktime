@@ -21,7 +21,7 @@
 // ---------------------------- //
 #define VERSION_MAJOR    1
 #define VERSION_MINOR    1
-#define VERSION_SUBMINOR 5
+#define VERSION_SUBMINOR 6
 // ---------------------------- //
 class CoreWorkTime : public QObject
 {
@@ -102,7 +102,6 @@ private:
     void createTray();
 
     void removeOld();
-    bool isAlreadyRunning();
 
     void readConfig();
     void writeConfig();
@@ -166,6 +165,8 @@ private slots:
 
     void infoLog ( const QString & logText );
     void errorLog( const QString & logText );
+
+    void updateWorkTime( QString path );
 };
 
 #endif // COREWORKTIME_H

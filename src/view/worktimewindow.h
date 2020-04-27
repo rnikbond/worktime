@@ -160,12 +160,16 @@ signals:
     void showChanges    ();
     void showSettings   ();
 
+    void userDropUpdate( QString );
+
     void runTimer( bool isRun, bool isNewInterval );
 
 protected:
 
     void showEvent ( QShowEvent  * ShowEvent  );
     void closeEvent( QCloseEvent * CloseEvent );
+    void dragEnterEvent( QDragEnterEvent* event );
+    void dropEvent( QDropEvent* event );
 };
 // ------------------------------------------------------------------------------------ //
 

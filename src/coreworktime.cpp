@@ -189,67 +189,34 @@ void CoreWorkTime::start()
 
     removeOld();
 
-    if( isAlreadyRunning() )
-    {
-        QMessageBox MsgBox( QMessageBox::Critical, "", QObject::tr("Программа уже запущена") );
-        MsgBox.exec();
+    readConfig();
 
-        closeApp();
+    WorkTime->setGeometry( WorkTimeGeometry );
+
+    DataBaseThread->start();
+
+    DataBase->insertWorkingRates( HelperWT::namesWorkingRates() );
+
+    applyTheme( themeIndex );
+
+    if( workingRate == HelperWT::UnknownWR )
+    {
+        updateSettings();
+        showWindow( Settings, true );
+
     }
     else
     {
-        readConfig();
+        initialize();
+        WorkTime->show();
 
-        WorkTime->setGeometry( WorkTimeGeometry );
-
-        DataBaseThread->start();
-
-        DataBase->insertWorkingRates( HelperWT::namesWorkingRates() );
-
-        applyTheme( themeIndex );
-
-        if( workingRate == HelperWT::UnknownWR )
-        {
-            updateSettings();
-            showWindow( Settings, true );
-
-        }
-        else
-        {
-            initialize();
-            WorkTime->show();
-
-            if( isViewWidget )
-                DesktopWindow->show();
+        if( isViewWidget )
+            DesktopWindow->show();
 
 
-            if( VersionMajor != VERSION_MAJOR || VersionMinor != VERSION_MINOR || VersionSubminor != VERSION_SUBMINOR )
-                showWindow( ChangesWidget, false );
-        }
+        if( VersionMajor != VERSION_MAJOR || VersionMinor != VERSION_MINOR || VersionSubminor != VERSION_SUBMINOR )
+            showWindow( ChangesWidget, false );
     }
-}
-// ------------------------------------------------------------------------------------ //
-
-/*!
- * \brief CoreWorkTime::isAlreadyRunning
- * \return FALSE, если программа не запущена. Иначе TRUE.
- *
- * Проверка уже запущенной программы реализована через класс QSharedMemory.
- */
-bool CoreWorkTime::isAlreadyRunning()
-{
-#ifdef WT_INFO_CALL_FUNC
-    qDebug() << "#Call CoreWorkTime::checkAlreadyRunning()";
-#endif
-
-    QSharedMemory SharedWorkTime ("work-time-15041996-c333de4444f5");
-
-    if( !SharedWorkTime.create(512, QSharedMemory::ReadWrite) )
-        return true;
-
-    SharedWorkTime.attach( QSharedMemory::ReadOnly );
-
-    return false;
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -262,6 +229,13 @@ void CoreWorkTime::removeOld()
 #ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call CoreWorkTime::removeOld()";
 #endif
+
+    QString OldFilePath = QApplication::applicationDirPath() + "/old_WorkTime.exe";
+
+    if( QFile(OldFilePath).exists() )
+    {
+        QFile(OldFilePath).remove();
+    }
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -1341,13 +1315,14 @@ void CoreWorkTime::connectWorkTime()
     qDebug() << "#Call CoreWorkTime::connectWorkTime()";
 #endif
 
-    connect( WorkTime, SIGNAL(closeWindow    (     )), SLOT(closeWorkTimeWindow    (     )) );
-    connect( WorkTime, SIGNAL(changedGeometry(QRect)), SLOT(changeGeometryWorkTime (QRect)) );
-    connect( WorkTime, SIGNAL(showSettings   (     )), SLOT(showSettings           (     )) );
-    connect( WorkTime, SIGNAL(showSalary     (     )), SLOT(showSalary             (     )) );
-    connect( WorkTime, SIGNAL(showTableTime  (     )), SLOT(showTableTime          (     )) );
-    connect( WorkTime, SIGNAL(showSeveralDays(     )), SLOT(showSeveralDays        (     )) );
-    connect( WorkTime, SIGNAL(showChanges    (     )), SLOT(showChanges            (     )) );
+    connect( WorkTime, SIGNAL(closeWindow    (       )), SLOT(closeWorkTimeWindow    (       )) );
+    connect( WorkTime, SIGNAL(changedGeometry(QRect  )), SLOT(changeGeometryWorkTime (QRect  )) );
+    connect( WorkTime, SIGNAL(showSettings   (       )), SLOT(showSettings           (       )) );
+    connect( WorkTime, SIGNAL(showSalary     (       )), SLOT(showSalary             (       )) );
+    connect( WorkTime, SIGNAL(showTableTime  (       )), SLOT(showTableTime          (       )) );
+    connect( WorkTime, SIGNAL(showSeveralDays(       )), SLOT(showSeveralDays        (       )) );
+    connect( WorkTime, SIGNAL(showChanges    (       )), SLOT(showChanges            (       )) );
+    connect( WorkTime, SIGNAL(userDropUpdate (QString)), SLOT(updateWorkTime         (QString)) );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -1438,5 +1413,46 @@ void CoreWorkTime::infoLog( const QString & logText )
 void CoreWorkTime::errorLog( const QString & logText )
 {
     qDebug() << "errorLog == " << logText;
+}
+// ------------------------------------------------------------------------------------ //
+
+void CoreWorkTime::updateWorkTime( QString path )
+{
+    QString AppFilePath = QApplication::applicationFilePath();
+    QString NewFilePath = QApplication::applicationDirPath() + "/new_WorkTime.exe";
+    QString OldFilePath = QApplication::applicationDirPath() + "/old_WorkTime.exe";
+
+    if( QFile::copy( path, NewFilePath ) )
+    {
+        //qDebug() << "Success copy new file";
+
+        if( QFile::rename(QApplication::applicationFilePath(), OldFilePath) )
+        {
+            //qDebug() << "Success rename old file";
+
+            if( QFile::rename(NewFilePath, AppFilePath) )
+            {
+                //qDebug() << "Success rename new file";
+
+                QProcess * ProcessWorkTime = new QProcess( NULL );
+
+                ProcessWorkTime->start( AppFilePath );
+
+                closeApp();
+            }
+            else
+            {
+                //qDebug() << "Error rename new file";
+            }
+        }
+        else
+        {
+            //qDebug() << "Error rename old file";
+        }
+    }
+    else
+    {
+        //qDebug() << "Error copy new file";
+    }
 }
 // ------------------------------------------------------------------------------------ //

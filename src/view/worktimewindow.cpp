@@ -1,6 +1,9 @@
 // ---------------------------- //
 #include <QMenu>
 #include <QDebug>
+#include <QMimeData>
+#include <QFileInfo>
+#include <QMessageBox>
 #include <QMouseEvent>
 #include <QDesktopWidget>
 // ---------------------------- //
@@ -1274,7 +1277,8 @@ void WorkTimeWindow::configuringGUI()
 
     gui->setupUi( this );
 
-    setWindowIcon( QIcon(":/icons/logo/worktime.png") );
+    setAcceptDrops( true );
+    setWindowIcon ( QIcon(":/icons/logo/worktime.png") );
     setWindowFlags( Qt::Window | Qt::WindowCloseButtonHint );
 
     setMouseTracking( true );
@@ -1294,6 +1298,8 @@ void WorkTimeWindow::configuringGUI()
     gui->IntervalsList->setContextMenuPolicy( Qt::CustomContextMenu              );
 
     gui->TypeDayCBox->addItems( DayWorkTime::namesDay() );
+
+    gui->NoteEdit->setAcceptDrops( false );
 
     setSalaryExists     ( false );
     setTableTimeExists  ( false );
@@ -1338,5 +1344,27 @@ void WorkTimeWindow::closeEvent( QCloseEvent * CloseEvent )
     emit closeWindow();
 
     CloseEvent->ignore();
+}
+// ------------------------------------------------------------------------------------ //
+
+void WorkTimeWindow::dragEnterEvent( QDragEnterEvent* DragEnterEvent )
+{
+    DragEnterEvent->accept();
+}
+// ------------------------------------------------------------------------------------ //
+
+void WorkTimeWindow::dropEvent( QDropEvent * DropEvent )
+{
+    QString filePath = DropEvent->mimeData()->urls()[0].toLocalFile();
+
+    if( QFile(filePath).exists() && QFileInfo(filePath).isExecutable() )
+    {
+        emit userDropUpdate( filePath );
+    }
+    else
+    {
+        QMessageBox MsgBox( QMessageBox::Warning, "", QObject::tr("Некорректный файл для обновления") );
+        MsgBox.exec();
+    }
 }
 // ------------------------------------------------------------------------------------ //

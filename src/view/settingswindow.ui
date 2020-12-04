@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>751</width>
-    <height>473</height>
+    <width>842</width>
+    <height>442</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -57,7 +57,7 @@
       <item>
        <widget class="QStackedWidget" name="SettingsWStack">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -69,7 +69,7 @@
          </size>
         </property>
         <property name="currentIndex">
-         <number>2</number>
+         <number>3</number>
         </property>
         <widget class="QWidget" name="WorkingRatePage">
          <layout class="QGridLayout" name="gridLayout">
@@ -322,88 +322,43 @@
           <property name="verticalSpacing">
            <number>20</number>
           </property>
-          <item row="3" column="0">
-           <widget class="QLabel" name="MaxTimeLabel">
+          <item row="0" column="2">
+           <widget class="QLabel" name="ExampleTime">
             <property name="text">
-             <string>Максимальное время конца рабочего дня</string>
+             <string>ЧЧ : ММ</string>
             </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="LaunchTimeLabel">
-            <property name="text">
-             <string>Длительность обеда</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QTimeEdit" name="LaunchStartValue">
             <property name="alignment">
              <set>Qt::AlignCenter</set>
-            </property>
-            <property name="buttonSymbols">
-             <enum>QAbstractSpinBox::NoButtons</enum>
-            </property>
-            <property name="displayFormat">
-             <string>hh:mm</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QTimeEdit" name="LaunchEndValue">
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-            <property name="buttonSymbols">
-             <enum>QAbstractSpinBox::NoButtons</enum>
-            </property>
-            <property name="displayFormat">
-             <string>hh:mm</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QTimeEdit" name="LaunchTimeValue">
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-            <property name="buttonSymbols">
-             <enum>QAbstractSpinBox::NoButtons</enum>
-            </property>
-            <property name="displayFormat">
-             <string>hh:mm</string>
             </property>
            </widget>
           </item>
           <item row="1" column="0">
-           <widget class="QLabel" name="LaunchEndLabel">
-            <property name="text">
-             <string>Время окончания обеда</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
            <widget class="QLabel" name="LaunchStartLabel">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
              <string>Время начала обеда</string>
             </property>
            </widget>
           </item>
-          <item row="6" column="0" colspan="2">
-           <spacer name="verticalSpacer_6">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
+          <item row="1" column="2">
+           <widget class="QTimeEdit" name="LaunchStartValue">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
             </property>
-            <property name="sizeHint" stdset="0">
+            <property name="minimumSize">
              <size>
-              <width>592</width>
-              <height>185</height>
+              <width>100</width>
+              <height>0</height>
              </size>
             </property>
-           </spacer>
-          </item>
-          <item row="4" column="1">
-           <widget class="QTimeEdit" name="BeforeTimeValue">
             <property name="alignment">
              <set>Qt::AlignCenter</set>
             </property>
@@ -415,15 +370,33 @@
             </property>
            </widget>
           </item>
-          <item row="5" column="0">
-           <widget class="QLabel" name="AfterTimeLabel">
+          <item row="2" column="0">
+           <widget class="QLabel" name="LaunchEndLabel">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
-             <string>Автоматически добавлять ко времени конца</string>
+             <string>Время окончания обеда</string>
             </property>
            </widget>
           </item>
-          <item row="3" column="1">
-           <widget class="QTimeEdit" name="MaxTimeValue">
+          <item row="2" column="2">
+           <widget class="QTimeEdit" name="LaunchEndValue">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
             </property>
@@ -435,15 +408,120 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="0">
+          <item row="3" column="0">
+           <widget class="QLabel" name="LaunchTimeLabel">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Длительность обеда</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="2">
+           <widget class="QTimeEdit" name="LaunchTimeValue">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+            <property name="buttonSymbols">
+             <enum>QAbstractSpinBox::NoButtons</enum>
+            </property>
+            <property name="displayFormat">
+             <string>hh:mm</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0" colspan="2">
+           <widget class="QLabel" name="MaxTimeLabel">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Максимальное время конца рабочего дня</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="2">
+           <widget class="QTimeEdit" name="MaxTimeValue">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+            <property name="buttonSymbols">
+             <enum>QAbstractSpinBox::NoButtons</enum>
+            </property>
+            <property name="displayFormat">
+             <string>hh:mm</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="3">
+           <widget class="QCheckBox" name="NotifyEndWorkDay">
+            <property name="toolTip">
+             <string>Вам поступит уведомление</string>
+            </property>
+            <property name="text">
+             <string>Предупредить
+за 15 минут</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0" colspan="2">
            <widget class="QLabel" name="BeforeTimeLabel">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
              <string>Автоматически отнимать от времени начала</string>
             </property>
            </widget>
           </item>
-          <item row="5" column="1">
-           <widget class="QTimeEdit" name="AfterTimeValue">
+          <item row="5" column="2">
+           <widget class="QTimeEdit" name="BeforeTimeValue">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
             </property>
@@ -454,6 +532,57 @@
              <string>hh:mm</string>
             </property>
            </widget>
+          </item>
+          <item row="6" column="0" colspan="2">
+           <widget class="QLabel" name="AfterTimeLabel">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Автоматически добавлять ко времени конца</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="2">
+           <widget class="QTimeEdit" name="AfterTimeValue">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+            <property name="buttonSymbols">
+             <enum>QAbstractSpinBox::NoButtons</enum>
+            </property>
+            <property name="displayFormat">
+             <string>hh:mm</string>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="1">
+           <spacer name="verticalSpacer_5">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>120</height>
+             </size>
+            </property>
+           </spacer>
           </item>
          </layout>
         </widget>
@@ -474,20 +603,45 @@
            </widget>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_4">
-            <item>
+           <widget class="QPushButton" name="ResetPosWidgetButton">
+            <property name="text">
+             <string>Сбросить положения виджета</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QGridLayout" name="gridLayout_3">
+            <item row="0" column="0">
              <widget class="QLabel" name="OpacityWidgetLabel">
               <property name="text">
                <string>Прозрачность
-виджета</string>
+фона виджета</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>
               </property>
              </widget>
             </item>
-            <item>
+            <item row="0" column="1">
              <widget class="QSlider" name="OpacityWidgetSlider">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="OpacityTextLabel">
+              <property name="text">
+               <string>Прозрачность
+текста виджета</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QSlider" name="OpacityTextSlider">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>

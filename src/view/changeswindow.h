@@ -3,6 +3,7 @@
 #define CHANGESWINDOW_H
 // ---------------------------- //
 #include <QWidget>
+#include <QVBoxLayout>
 // ---------------------------- //
 namespace Ui { class ChangesWindow; }
 // ---------------------------- //
@@ -10,6 +11,9 @@ namespace Ui { class ChangesWindow; }
 class ChangesWindow : public QWidget
 {
     Q_OBJECT
+
+    QVBoxLayout *MainScrollLayout;
+    QWidget *ScrollWidget;
 
 public:
 
@@ -21,6 +25,8 @@ private:
     Ui::ChangesWindow * gui;
 
     void setInfo();
+
+    void addInfoAboutVersion( QString Version, QString Title, QString Content );
 };
 
 #endif // CHANGESWINDOW_H

@@ -80,6 +80,24 @@ int MonthWorkTime::month()
 }
 // --------------------------------------------------------------------------------- //
 
+void MonthWorkTime::setTypeData( const QDate& date, DayWorkTime::TypesData type )
+{
+    DayWorkTime* Day = dayAtDate( date );
+
+    if( Day != NULL )
+    {
+        Day->setTypeData( type );
+    }
+    else
+    {
+#ifdef WT_DEBUG
+        qCritical() << " #Error :: MonthWorkTime::setTypeData("
+                    << date << ", " << type << ") - day not found";
+#endif
+    }
+}
+// --------------------------------------------------------------------------------- //
+
 void MonthWorkTime::setTimeStart( const QDate& date, const int interval, const QTime& time,  bool isUpdate )
 {
 #ifdef WT_INFO_CALL_FUNC
@@ -216,6 +234,25 @@ QString MonthWorkTime::titleInterval( const QDate& date, const int interval )
     }
 
     return "";
+}
+// --------------------------------------------------------------------------------- //
+
+DayWorkTime::TypesData MonthWorkTime::typeData( const QDate& date )
+{
+    DayWorkTime* Day = dayAtDate( date );
+
+    if( Day != NULL )
+    {
+        return Day->typeData();
+    }
+    else
+    {
+#ifdef WT_DEBUG
+        qCritical() << " #Error :: MonthWorkTime::typeData(" << date << ") - day not found";
+#endif
+    }
+
+    return DayWorkTime::ScheduleData;
 }
 // --------------------------------------------------------------------------------- //
 

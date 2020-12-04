@@ -234,24 +234,29 @@ WTimeExt::WTimeExt()
     Hours   = 0;
     Minutes = 0;
     Seconds = 0;
+
+    isRecheck = true;
 }
 // ------------------------------------------------------------------------ //
 
 WTimeExt::WTimeExt(int h, int m , int s)
 {
     setTime( h, m, s );
+    isRecheck = true;
 }
 // ------------------------------------------------------------------------ //
 
 WTimeExt::WTimeExt( QTime Time )
 {
     setTime( Time.hour(), Time.minute(), Time.second() );
+    isRecheck = true;
 }
 // ------------------------------------------------------------------------ //
 
 WTimeExt::WTimeExt( WTime Time )
 {
     setTime( Time.hours(), Time.minutes(), 0 );
+    isRecheck = true;
 }
 // ------------------------------------------------------------------------ //
 
@@ -260,6 +265,13 @@ WTimeExt::WTimeExt( QString StringTime )
     QTime Time = QTime::fromString( StringTime, "hh:mm:ss" );
 
     setTime( Time.hour(), Time.minute(), Time.second() );
+    isRecheck = true;
+}
+// ------------------------------------------------------------------------ //
+
+void WTimeExt::setRecheck( bool recheck )
+{
+    isRecheck = recheck;
 }
 // ------------------------------------------------------------------------ //
 
@@ -277,7 +289,8 @@ void WTimeExt::setTime( int h, int m, int s )
     Minutes = m;
     Seconds = s;
 
-    checkTime();
+    if( isRecheck )
+        checkTime();
 }
 // ------------------------------------------------------------------------ //
 
@@ -328,42 +341,54 @@ int WTimeExt::seconds() const
 void WTimeExt::setHour( int h )
 {
     Hours = h;
-    checkTime();
+
+    if( isRecheck )
+        checkTime();
 }
 // ------------------------------------------------------------------------ //
 
 void WTimeExt::setMinutes( int m )
 {
     Minutes = m;
-    checkTime();
+
+    if( isRecheck )
+        checkTime();
 }
 // ------------------------------------------------------------------------ //
 
 void WTimeExt::setSeconds( int s )
 {
     Seconds = s;
-    checkTime();
+
+    if( isRecheck )
+        checkTime();
 }
 // ------------------------------------------------------------------------ //
 
 void WTimeExt::addHour( int h )
 {
     Hours += h;
-    checkTime();
+
+    if( isRecheck )
+        checkTime();
 }
 // ------------------------------------------------------------------------ //
 
 void WTimeExt::addMinutes( int m )
 {
     Minutes += m;
-    checkTime();
+
+    if( isRecheck )
+        checkTime();
 }
 // ------------------------------------------------------------------------ //
 
 void WTimeExt::addSeconds( int s )
 {
     Seconds += s;
-    checkTime();
+
+    if( isRecheck )
+        checkTime();
 }
 // ------------------------------------------------------------------------ //
 

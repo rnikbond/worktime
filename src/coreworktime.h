@@ -4,25 +4,37 @@
 // ---------------------------- //
 #include <QLabel>
 #include <QMovie>
+#include <QTimer>
 #include <QObject>
 #include <QSystemTrayIcon>
 // ---------------------------- //
 #include "databasewt.h"
 #include "salarywindow.h"
+#include "notifywindow.h"
 #include "desktopwidget.h"
 #include "modelworktime.h"
 #include "changeswindow.h"
 #include "worktimewindow.h"
 #include "settingswindow.h"
 #include "tablesdatabase.h"
+#include "calctimewindow.h"
 #include "tabletimewindow.h"
 #include "severaldayswindow.h"
 #include "presenterworktime.h"
 // ---------------------------- //
+#include "updatesworktime.h"
+// ---------------------------- //
 #define VERSION_MAJOR    1
 #define VERSION_MINOR    1
-#define VERSION_SUBMINOR 6
+#define VERSION_SUBMINOR 21
 // ---------------------------- //
+
+/*
+    * Напоминание в выбранный день
+    * Доделать серую тему
+*/
+
+
 class CoreWorkTime : public QObject
 {
     Q_OBJECT
@@ -46,9 +58,11 @@ class CoreWorkTime : public QObject
     QTime MaxTime;
     QTime BeforeTime;
     QTime AfterTime;
+    bool UseNotifyEndWorkDay;
     bool isViewWidget;
     bool isTopWidget;
     int opacityWidget;
+    int opacityText;
     QRect WorkTimeGeometry;
     QRect WidgetDesktopGeometry;
     bool isShownMenu;
@@ -56,7 +70,6 @@ class CoreWorkTime : public QObject
 
     QLabel * WaitLabel;
 
-    QThread           * DataBaseThread;
     DataBaseWT        * DataBase;
 
     ModelWorkTime     * ModelWT;
@@ -68,11 +81,18 @@ class CoreWorkTime : public QObject
     DesktopWidget     * DesktopWindow;
     TableTimeWindow   * TableTimeWidget;
     SeveralDaysWindow * SeveralDaysWidget;
+    CalcTimeWindow    * CalcTimeWidget;
+    NotifyWindow      * NotifyWidget;
     ChangesWindow     * ChangesWidget;
 
     TablesDataBase * TablesWindow;
 
     QSystemTrayIcon * TrayWorkTime;
+
+    UpdatesWorkTime *UpdaterObj;
+    QThread *UpdateThread;
+
+    QTimer *NotifyTimer;
 
 public:
 
@@ -117,6 +137,9 @@ private:
 
     float toOpacity( int value );
 
+    void updateAutorunRecord();
+    void updateNotifyEndWorkDay();
+
 private slots:
 
     void wait(bool isWait );
@@ -131,23 +154,29 @@ private slots:
     void changeGeometryWorkTime( QRect geometry );
 
     // Slots from Settings window
-    void changedWorkingRate  ( int     );
-    void changeTheme        ( int     );
-    void changeOpacityValue ( int     );
-    void changeAutorun      ( bool    );
-    void changeTray         ( bool    );
-    void changeContextMenu  ( bool    );
-    void changeUpdates      ( bool    );
-    void changeUpdatePath   ( QString );
-    void changeLaunchStart  ( QTime   );
-    void changeLaunchEnd    ( QTime   );
-    void changeLaunchTime   ( QTime   );
-    void changeMaxTime      ( QTime   );
-    void changeBeforeTime   ( QTime   );
-    void changeAfterTime    ( QTime   );
-    void changeViewWidget   ( bool    );
-    void changeTopWidget    ( bool    );
-    void changeOpacityWidget( int     );
+    void changedWorkingRate    ( int     );
+    void changeTheme           ( int     );
+    void changeOpacityValue    ( int     );
+    void changeAutorun         ( bool    );
+    void changeTray            ( bool    );
+    void changeContextMenu     ( bool    );
+    void changeUpdates         ( bool    );
+    void changeUpdatePath      ( QString );
+    void changeLaunchStart     ( QTime   );
+    void changeLaunchEnd       ( QTime   );
+    void changeLaunchTime      ( QTime   );
+    void changeMaxTime         ( QTime   );
+    void changeBeforeTime      ( QTime   );
+    void changeAfterTime       ( QTime   );
+    void changeNotifyEndWorkDay( bool    );
+    void changeViewWidget      ( bool    );
+    void changeTopWidget       ( bool    );
+    void resetPositionWidget   (         );
+    void changeOpacityWidget   ( int     );
+    void changeOpacityText     ( int     );
+
+    void updateButtonUpdate();
+    void showMessageEndWorkDay();
 
     void resetUpdatePath();
 
@@ -155,6 +184,8 @@ private slots:
     void showSettings();
     void showTableTime();
     void showSeveralDays();
+    void showCalcTime();
+    void showNotify();
     void showChanges();
 
     void reloadAll();

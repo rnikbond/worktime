@@ -52,7 +52,7 @@ const QTime HelperWT::currentTime()
  */
 const QDate HelperWT::currentDate()
 {
-    //return QDate( 2020, 04, 13 );
+    //return QDate( 2020, 9, 18 );
     return QDate::currentDate();
 }
 // ------------------------------------------------------------------------------------ //
@@ -114,7 +114,7 @@ const WTime HelperWT::timeNeedSchedule( const QDate & date, const int rate )
  */
 const QString HelperWT::pathToUpdates()
 {
-    return QDir::toNativeSeparators( "E:/WorkTime" );
+    return QDir::toNativeSeparators( ("//10.128.39.14/проекты/Разное/WorkTime/WorkTime.exe") );
 }
 // ------------------------------------------------------------------------------------ //
 

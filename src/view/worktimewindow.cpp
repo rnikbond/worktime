@@ -31,6 +31,8 @@ WorkTimeWindow::WorkTimeWindow( QWidget * parent ) : QWidget( parent ), gui( new
     connectSingnalSlot();
 
     isRunTimer = true;
+
+    gui->InfoUserEdit->hide();
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -41,6 +43,22 @@ WorkTimeWindow::~WorkTimeWindow()
 #endif
 
     delete gui;
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::setInfoUser
+ * \param text Информация для пользователя
+ */
+void WorkTimeWindow::setInfoUser( QString text )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#call WorkTimeWindow::setInfoUser( " << text << " )";
+#endif
+
+    QString oldInfo = gui->InfoUserEdit->text();
+
+    gui->InfoUserEdit->setText( oldInfo.isEmpty() ? text : oldInfo + "|" + text);
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -148,6 +166,75 @@ void WorkTimeWindow::changeNote()
     emit userChangeNote( gui->NoteEdit->toPlainText() );
 }
 // ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::contextMenuNote
+ *
+ * Отображение контекстного меню в редакторе заметки
+ */
+void WorkTimeWindow::contextMenuNote( QPoint MenuPoint )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "call contextMenuNote(" << MenuPoint << ")";
+#endif
+
+    QMenu NoteMenu;
+
+    NoteMenu.addAction( tr("В HTML"         ), this, SLOT(convertToHtml      ()) );
+    NoteMenu.addAction( tr("В обычный текст"), this, SLOT(convertToSimpleText()) );
+
+    NoteMenu.exec( gui->NoteEdit->mapToGlobal(MenuPoint) );
+}
+// ------------------------------------------------------------------------------------ //
+
+void WorkTimeWindow::checkedUserData( bool isChecked )
+{
+    gui->NeedDayValue->setReadOnly( !isChecked );
+    emit userChangeTypeData( isChecked );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::convertToHtml
+ *
+ * Конвертирование текста в HTML
+ */
+void WorkTimeWindow::convertToHtml()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#call WorkTimeWindow::convertToHtml()";
+#endif
+
+    gui->NoteEdit->blockSignals( true );
+
+    QString TextHTML = gui->NoteEdit->toPlainText();
+    gui->NoteEdit->clear();
+    gui->NoteEdit->appendHtml( TextHTML );
+
+    gui->NoteEdit->blockSignals( false );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::convertToHtml
+ *
+ * Конвертирование текста из HTML в обычный текст
+ */
+void WorkTimeWindow::convertToSimpleText()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#call WorkTimeWindow::convertToSimpleText()";
+#endif
+
+    gui->NoteEdit->blockSignals( true );
+
+    QString TextHTML = gui->NoteEdit->toPlainText();
+    gui->NoteEdit->setPlainText( TextHTML );
+
+    gui->NoteEdit->blockSignals( false );
+}
+// ------------------------------------------------------------------------------------ //
+
 
 /*!
  * \brief WorkTimeWindow::todayClick
@@ -394,8 +481,23 @@ void WorkTimeWindow::setNote( QString note )
 #endif
 
     gui->NoteEdit->blockSignals( true );
-    gui->NoteEdit->setText( note );
+    gui->NoteEdit->clear();
+    gui->NoteEdit->appendHtml( note );
     gui->NoteEdit->blockSignals( false );
+}
+// ------------------------------------------------------------------------------------ //
+
+void WorkTimeWindow::setTypeData( int type )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#call WorkTimeWindow::setTypeData( " << type << ")";
+#endif
+
+    gui->UserDataCheck->blockSignals( true );
+    gui->UserDataCheck->setChecked( type );
+    gui->UserDataCheck->blockSignals( false );
+
+    gui->NeedDayValue->setReadOnly( !type );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -996,6 +1098,33 @@ void WorkTimeWindow::SeveralDaysClick()
 // ------------------------------------------------------------------------------------ //
 
 /*!
+ * \brief WorkTimeWindow::CalcTimeClick
+ * Выозов окна "Калькулятор времени"
+ */
+void WorkTimeWindow::CalcTimeClick()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#call WorkTimeWindow::CalcTimeClick()";
+#endif
+    emit showCalcTime();
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::NotifyClick
+ * Вызов окна "Оповещения"
+ */
+void WorkTimeWindow::NotifyClick()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#call WorkTimeWindow::CalcTimeClick()";
+#endif
+
+    emit showNotify();
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
  * \brief WorkTimeWindow::ChangesClick
  * Вызов окна "Изменения"
  */
@@ -1039,6 +1168,8 @@ void WorkTimeWindow::UpdateClick()
     qDebug() << "#call WorkTimeWindow::UpdateClick()";
 #endif
 
+
+    emit userDropUpdate( "" );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -1189,6 +1320,47 @@ void WorkTimeWindow::setSettingsExists( bool isExists )
 }
 // ------------------------------------------------------------------------------------ //
 
+/*!
+ * \brief WorkTimeWindow::setCalcTimeExists
+ * \param isExists == TRUE, кнопка для открытия окна "Калькулятор времени" будет отображена.
+ * Иначе она будет скрыта с формы.
+ */
+void WorkTimeWindow::setCalcTimeExists( bool isExists )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call WorkTimeWindow::setCalcTimeExists( " << isExists << " )";
+#endif
+
+    gui->CalcTimeButton->setVisible( isExists );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::setNotifyExists
+ * \param isExists == TRUE, кнопка для открытия окна "Оповещения" будет отображена.
+ * Иначе она будет скрыта с формы.
+ */
+void WorkTimeWindow::setNotifyExists( bool isExists )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call WorkTimeWindow::setNotifyExists( " << isExists << " )";
+#endif
+
+    gui->NotifyButton->setVisible( isExists );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::setUpdatesExists
+ * \param isExists == TRUE, кнопка для открытия окна "Обновления" будет отображена.
+ * Иначе она будет скрыта с формы.
+ */
+void WorkTimeWindow::setUpdatesExists( bool isExists )
+{
+    gui->UpdateButton->setVisible( isExists );
+}
+// ------------------------------------------------------------------------------------ //
+
  /*!
   * \brief WorkTimeWindow::updateTitles
   *
@@ -1237,6 +1409,8 @@ void WorkTimeWindow::connectSingnalSlot()
     connect( gui->TableTimeButton  , SIGNAL(clicked(bool)), SLOT(TableTimeClick  ()) );
     connect( gui->ScheduleButton   , SIGNAL(clicked(bool)), SLOT(ScheduleClick   ()) );
     connect( gui->SeveralDaysButton, SIGNAL(clicked(bool)), SLOT(SeveralDaysClick()) );
+    connect( gui->CalcTimeButton   , SIGNAL(clicked(bool)), SLOT(CalcTimeClick   ()) );
+    connect( gui->NotifyButton     , SIGNAL(clicked(bool)), SLOT(NotifyClick     ()) );
     connect( gui->ChangesButton    , SIGNAL(clicked(bool)), SLOT(ChangesClick    ()) );
     connect( gui->SettingsButton   , SIGNAL(clicked(bool)), SLOT(SettingsClick   ()) );
     connect( gui->UpdateButton     , SIGNAL(clicked(bool)), SLOT(UpdateClick     ()) );
@@ -1249,6 +1423,8 @@ void WorkTimeWindow::connectSingnalSlot()
     connect( gui->IntervalsList, SIGNAL(customContextMenuRequested(QPoint          )), SLOT(contextMenuIntervals(QPoint          )) );
     connect( gui->IntervalsList, SIGNAL(itemChanged               (QListWidgetItem*)), SLOT(renameInterval      (QListWidgetItem*)) );
 
+    connect( gui->UserDataCheck, SIGNAL(clicked(bool)), SLOT(checkedUserData(bool)) );
+
     // -------------------------------- CHANGE TIME -------------------------------- //
     connect( gui->TimeStartValue, SIGNAL(timeChanged    (QTime)), SLOT(changeTimeStart      (QTime)) );
     connect( gui->TimeEndValue  , SIGNAL(timeChanged    (QTime)), SLOT(changeTimeEnd        (QTime)) );
@@ -1258,6 +1434,10 @@ void WorkTimeWindow::connectSingnalSlot()
 
     // -------------------------------- NOTE -------------------------------- //
     connect( gui->NoteEdit, SIGNAL(textChanged()), SLOT(changeNote()) );
+    connect( gui->NoteEdit, SIGNAL(customContextMenuRequested(QPoint)), SLOT(contextMenuNote(QPoint)) );
+
+    // -------------------------------- STATISTIC -------------------------------- //
+    connect( gui->StatisticToolBox, SIGNAL(currentChanged(int)), SLOT(selectPage(int)) );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -1300,6 +1480,7 @@ void WorkTimeWindow::configuringGUI()
     gui->TypeDayCBox->addItems( DayWorkTime::namesDay() );
 
     gui->NoteEdit->setAcceptDrops( false );
+    gui->NoteEdit->setContextMenuPolicy( Qt::CustomContextMenu );
 
     setSalaryExists     ( false );
     setTableTimeExists  ( false );
@@ -1307,6 +1488,8 @@ void WorkTimeWindow::configuringGUI()
     setSeveralDaysExists( false );
     setChangesExists    ( false );
     setSettingsExists   ( false );
+    setCalcTimeExists   ( false );
+    setNotifyExists     ( false );
 
     gui->UpdateButton->hide();
 }
@@ -1328,6 +1511,19 @@ void WorkTimeWindow::showEvent( QShowEvent * ShowEvent )
     gui->WorkCalendar->setFocus();
 
     QWidget::showEvent( ShowEvent );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief WorkTimeWindow::hideEvent
+ * \param HideEvent
+ */
+void WorkTimeWindow::hideEvent( QHideEvent * HideEvent )
+{
+    gui->WorkCalendar->setSelectedDate( HelperWT::currentDate() );
+    selectDate();
+
+    QWidget::hideEvent( HideEvent );
 }
 // ------------------------------------------------------------------------------------ //
 

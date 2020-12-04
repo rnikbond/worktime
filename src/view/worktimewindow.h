@@ -34,12 +34,17 @@ public:
     explicit WorkTimeWindow( QWidget * parent = 0 );
     ~WorkTimeWindow();
 
+    void setInfoUser( QString text );
+
     void setSalaryExists     ( bool isExists );
     void setTableTimeExists  ( bool isExists );
     void setScheduleExists   ( bool isExists );
     void setSeveralDaysExists( bool isExists );
     void setChangesExists    ( bool isExists );
     void setSettingsExists   ( bool isExists );
+    void setCalcTimeExists   ( bool isExists );
+    void setNotifyExists     ( bool isExists );
+    void setUpdatesExists    ( bool isExists );
 
 public: // Interface functions
 
@@ -53,6 +58,7 @@ public: // Interface functions
     void setTimeEnd   ( WTime       time, int id );
     void setIntervals ( QStringList list         );
     void setNote      ( QString     note         );
+    void setTypeData  ( int type                 );
 
     void setTimeWorkedInDay   ( WTime time                );
     void setTimeStatisticInDay( WTime time, QString title );
@@ -119,6 +125,11 @@ private slots:
 
     // Change note
     void changeNote();
+    void convertToHtml();
+    void convertToSimpleText();
+    void contextMenuNote( QPoint );
+
+    void checkedUserData( bool isChecked );
 
     // Menu slots
     void MenuClick       ();
@@ -126,6 +137,8 @@ private slots:
     void TableTimeClick  ();
     void ScheduleClick   ();
     void SeveralDaysClick();
+    void CalcTimeClick   ();
+    void NotifyClick     ();
     void ChangesClick    ();
     void SettingsClick   ();
     void UpdateClick     ();
@@ -144,6 +157,7 @@ signals:
     void userChangeTimeEnd  ( int id, WTime time                  );
     void userChangeTimeNeed ( WTime   time                        );
     void userChangeNote     ( QString note                        );
+    void userChangeTypeData ( int type                            );
 
     void userAddInterval( const QString & title );
 
@@ -157,6 +171,8 @@ signals:
     void showTableTime  ();
     void showSchedule   ();
     void showSeveralDays();
+    void showCalcTime   ();
+    void showNotify     ();
     void showChanges    ();
     void showSettings   ();
 
@@ -166,10 +182,11 @@ signals:
 
 protected:
 
-    void showEvent ( QShowEvent  * ShowEvent  );
-    void closeEvent( QCloseEvent * CloseEvent );
-    void dragEnterEvent( QDragEnterEvent* event );
-    void dropEvent( QDropEvent* event );
+    void showEvent     ( QShowEvent      * ShowEvent  );
+    void hideEvent     ( QHideEvent      * HideEvent  );
+    void closeEvent    ( QCloseEvent     * CloseEvent );
+    void dragEnterEvent( QDragEnterEvent * event      );
+    void dropEvent     ( QDropEvent      * event      );
 };
 // ------------------------------------------------------------------------------------ //
 

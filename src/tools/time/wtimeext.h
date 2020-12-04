@@ -13,6 +13,8 @@ class WTimeExt
     int Minutes;
     int Seconds;
 
+    bool isRecheck;
+
 public:
 
     WTimeExt();
@@ -20,6 +22,10 @@ public:
     WTimeExt( WTime Time );
     WTimeExt( QString StringTime );
     WTimeExt( int h, int m, int s );
+
+    void checkTime();
+
+    void setRecheck( bool recheck );
 
     void clear();
 
@@ -63,7 +69,6 @@ public:
 
 private:
 
-    void checkTime();
     void NormalizeTime( int& hours, int& minutes, int& seconds );
 };
 

@@ -85,5 +85,19 @@
         <file>themes/gray/common/pause_hover.png</file>
         <file>themes/gray/common/play.png</file>
         <file>themes/gray/common/play_hover.png</file>
+        <file>themes/dark/origin/calc.png</file>
+        <file>themes/dark/menu/calc.png</file>
+        <file>themes/dark/menu/calc_hover.png</file>
+        <file>themes/gray/menu/calc.png</file>
+        <file>themes/gray/menu/calc_hover.png</file>
+        <file>themes/gray/common/checkbox_checked_disabled.png</file>
+        <file>themes/gray/common/checkbox_unchecked_disabled.png</file>
+        <file>themes/gray/origin/checkbox_checked_disabled.png</file>
+        <file>themes/gray/origin/checkbox_unchecked_disabled.png</file>
+        <file>mask/desktop-widget/all-angles.png</file>
+        <file>mask/desktop-widget/bottom-left.png</file>
+        <file>mask/desktop-widget/bottom-right.png</file>
+        <file>mask/desktop-widget/top-left.png</file>
+        <file>mask/desktop-widget/top-right.png</file>
     </qresource>
 </RCC>

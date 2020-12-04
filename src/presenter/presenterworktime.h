@@ -62,6 +62,7 @@ private slots:
     void userAddInterval    ( QString title      );
     void userChangeTypeDay  ( int type           );
     void userChangeNote     ( QString note       );
+    void userChangeTypeData ( int type           );
 
     void userChangeTimerState( bool state , bool isNewInterval );
 };

@@ -40,6 +40,8 @@ public:
     bool isLoaded();
     bool isThisMonth( const QDate& date );
 
+    void setTypeData( const QDate& date, DayWorkTime::TypesData type );
+
     void setTimeStart( const QDate& date, const int interval, const QTime& time, bool isUpdate );
     void setTimeEnd  ( const QDate& date, const int interval, const QTime& time,  bool isUpdate );
     void setTimeNeed ( const QDate& date, const QTime& time, bool isUpdate );
@@ -65,6 +67,8 @@ public:
     QStringList titlesIntervals( const QDate& date );
 
     QString titleInterval( const QDate& date, const int interval );
+
+    DayWorkTime::TypesData typeData( const QDate& date );
 
     WTime timeStart( const QDate& date, const int interval);
     WTime timeEnd  ( const QDate& date, const int interval);

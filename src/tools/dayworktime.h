@@ -25,6 +25,12 @@ public:
         Vacation   =  4
     };
 
+    enum TypesData
+    {
+        ScheduleData,
+        UserData
+    };
+
     static QStringList namesDay();
     static QString nameDay( TypesDay Type );
     static QColor colorDay( TypesDay Type );
@@ -36,6 +42,7 @@ protected:
     WTime TimeNeedSchedule;
 
     TypesDay TypeDay;
+    TypesData TypeData;
 
     QDate Date;
 
@@ -48,12 +55,14 @@ public:
     QString intervalTitle( int id );
     const QList<Interval*> & intervals();
 
+    void setTypeData( TypesData type );
     void setTypeDay( TypesDay type );
     void setTimeStart( const WTime time, int interval );
     void setTimeEnd  ( const WTime time, int interval );
     void setTimeNeed ( const WTime time );
     void setTimeNeedSchedule ( const WTime time );
 
+    TypesData typeData();
     void addInterval( const QString title );
     void addInterval( Interval* Item );
     void removeInterval( const int interval );

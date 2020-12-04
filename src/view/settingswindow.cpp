@@ -23,6 +23,10 @@ SettingsWindow::SettingsWindow( QWidget * parent ) : QWidget( parent ), gui( new
 
     configureGUI();
     connectGUI();
+
+    // Не прокатило
+    gui->OpacityTextSlider->hide();
+    gui->OpacityTextLabel ->hide();
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -436,6 +440,22 @@ void SettingsWindow::changeAfterTime( QTime time )
 // ------------------------------------------------------------------------------------ //
 
 /*!
+ * \brief SettingsWindow::checkNotifyEndWorkday
+ * \param isChecked Признак оповещения о конце рабочего дня
+ *
+ * Испускается сигнал \a SettingsWindow::changedNotifyEndWorkDay.
+ */
+void SettingsWindow::checkNotifyEndWorkday( bool isChecked )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call SettingsWindow::checkNotifyEndWorkday( " << isChecked << " )";
+#endif
+
+    emit changedNotifyEndWorkDay( isChecked );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
  * \brief SettingsWindow::checkedViewWidget
  *
  * Выбор отображения виджета рабочего стола.
@@ -475,6 +495,21 @@ void SettingsWindow::checkedTopWidget()
 // ------------------------------------------------------------------------------------ //
 
 /*!
+ * \brief SettingsWindow::moveInCenterWidget
+ *
+ * Перемещенеи виджета в центр экрана
+ */
+void SettingsWindow::resetPosWidget()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call SettingsWindow::resetPosWidget()";
+#endif
+
+    emit resetPositionWidget();
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
  * \brief SettingsWindow::changeOpacityWidget
  * \param value Прозрачность виджета
  *
@@ -489,6 +524,22 @@ void SettingsWindow::changeOpacityWidget( int value )
     emit changedOpacityWidget( value );
 }
 // ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief SettingsWindow::changeOpacityText
+ * \param value Прозрачность текста виджета
+ *
+ * Испускается сигнал \a SettingsWindow::changedOpacityText.
+ */
+void SettingsWindow::changeOpacityText( int value )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call SettingsWindow::changeOpacityText( " << value << " )";
+#endif
+    emit changedOpacityText( value );
+}
+// ------------------------------------------------------------------------------------ //
+
 
 /*!
  * \brief SettingsWindow::setWorkingRate
@@ -767,6 +818,18 @@ void SettingsWindow::setAfterTime( QTime time )
 // ------------------------------------------------------------------------------------ //
 
 /*!
+ * \brief SettingsWindow::setNotifyEndWorkDay
+ * \param isSet Признак использования оповещения о конце рабочего дня
+ */
+void SettingsWindow::setNotifyEndWorkDay( bool isSet )
+{
+    gui->NotifyEndWorkDay->blockSignals( true  );
+    gui->NotifyEndWorkDay->setChecked( isSet );
+    gui->NotifyEndWorkDay->blockSignals( false );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
  * \brief SettingsWindow::setViewWidget
  * \param isSet Признак использования виджета рабочего стола
  */
@@ -814,6 +877,22 @@ void SettingsWindow::setOpacityWidget( int value )
     gui->OpacityWidgetSlider->blockSignals( true  );
     gui->OpacityWidgetSlider->setValue( value );
     gui->OpacityWidgetSlider->blockSignals( false );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief SettingsWindow::setOpacityText
+ * \param value Значение прозрачности текста виджета от 100 до 1000.
+ */
+void SettingsWindow::setOpacityText( int value )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call SettingsWindow::setOpacityText( " << value << " )";
+#endif
+
+    gui->OpacityTextSlider->blockSignals( true  );
+    gui->OpacityTextSlider->setValue( value );
+    gui->OpacityTextSlider->blockSignals( false );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -1095,11 +1174,20 @@ void SettingsWindow::configureGUI()
     gui->MenuLWidget->addItem( tr("Виджет"        ) );
     gui->MenuLWidget->addItem( tr("Импорт/Экспорт") );
 
+    gui->OpacityWidgetSlider->setMinimum( 100 );
+    gui->OpacityWidgetSlider->setMaximum( 1000 );
+
+    gui->OpacityTextSlider->setMinimum( 100 );
+    gui->OpacityTextSlider->setMaximum( 1000 );
+
     gui->OpacitySlider->setMinimum( 100 );
     gui->OpacitySlider->setMaximum( 1000 );
 
-    gui->OpacityWidgetSlider->setMinimum( 100 );
-    gui->OpacityWidgetSlider->setMaximum( 1000 );
+    gui->BeforeTimeValue->setMaximumTime( QTime(0, 59) );
+    gui->AfterTimeValue ->setMaximumTime( QTime(0, 59) );
+
+    gui->BeforeTimeValue->setToolTip( tr("Максимум: %1").arg( gui->BeforeTimeValue->maximumTime().toString("hh:mm")) );
+    gui->AfterTimeValue ->setToolTip( tr("Максимум: %1").arg( gui->AfterTimeValue ->maximumTime().toString("hh:mm")) );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -1134,17 +1222,20 @@ void SettingsWindow::connectGUI()
     connect( gui->ResetPathButton , SIGNAL(clicked(bool)), SLOT(clickResetPath    ()) );
 
     // Time PAGE
-    connect( gui->LaunchStartValue, SIGNAL(timeChanged(QTime)), SLOT(changeLaunchStart(QTime)) );
-    connect( gui->LaunchEndValue  , SIGNAL(timeChanged(QTime)), SLOT(changeLaunchEnd  (QTime)) );
-    connect( gui->LaunchTimeValue , SIGNAL(timeChanged(QTime)), SLOT(changeLaunchTime (QTime)) );
-    connect( gui->MaxTimeValue    , SIGNAL(timeChanged(QTime)), SLOT(changeMaxTime    (QTime)) );
-    connect( gui->BeforeTimeValue , SIGNAL(timeChanged(QTime)), SLOT(changeBeforeTime (QTime)) );
-    connect( gui->AfterTimeValue  , SIGNAL(timeChanged(QTime)), SLOT(changeAfterTime  (QTime)) );
+    connect( gui->LaunchStartValue, SIGNAL(timeChanged(QTime)), SLOT(changeLaunchStart    (QTime)) );
+    connect( gui->LaunchEndValue  , SIGNAL(timeChanged(QTime)), SLOT(changeLaunchEnd      (QTime)) );
+    connect( gui->LaunchTimeValue , SIGNAL(timeChanged(QTime)), SLOT(changeLaunchTime     (QTime)) );
+    connect( gui->MaxTimeValue    , SIGNAL(timeChanged(QTime)), SLOT(changeMaxTime        (QTime)) );
+    connect( gui->BeforeTimeValue , SIGNAL(timeChanged(QTime)), SLOT(changeBeforeTime     (QTime)) );
+    connect( gui->AfterTimeValue  , SIGNAL(timeChanged(QTime)), SLOT(changeAfterTime      (QTime)) );
+    connect( gui->NotifyEndWorkDay, SIGNAL(clicked    (bool )), SLOT(checkNotifyEndWorkday(bool )) );
 
     // Widget PAGE
-    connect( gui->ViewWidgetCheck    , SIGNAL(clicked     (bool)), SLOT(checkedViewWidget  (   )) );
-    connect( gui->TopWidgetCheck     , SIGNAL(clicked     (bool)), SLOT(checkedTopWidget   (   )) );
-    connect( gui->OpacityWidgetSlider, SIGNAL(valueChanged(int )), SLOT(changeOpacityWidget(int)) );
+    connect( gui->ViewWidgetCheck     , SIGNAL(clicked     (bool)), SLOT(checkedViewWidget  (   )) );
+    connect( gui->TopWidgetCheck      , SIGNAL(clicked     (bool)), SLOT(checkedTopWidget   (   )) );
+    connect( gui->ResetPosWidgetButton, SIGNAL(clicked     (bool)), SLOT(resetPosWidget     (   )) );
+    connect( gui->OpacityWidgetSlider , SIGNAL(valueChanged(int )), SLOT(changeOpacityWidget(int)) );
+    connect( gui->OpacityTextSlider   , SIGNAL(valueChanged(int )), SLOT(changeOpacityText  (int)) );
 
     // Import/Export Page
     connect( gui->ImportButton, SIGNAL(clicked(bool)), SLOT(importClick()) );

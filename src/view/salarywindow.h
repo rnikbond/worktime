@@ -7,6 +7,7 @@
 // ---------------------------- //
 namespace Ui { class SalaryWindow; }
 // ---------------------------- //
+class QCPBars;
 class DataBaseWT;
 // ---------------------------- //
 
@@ -37,13 +38,32 @@ class SalaryWindow : public QWidget
 {
     Q_OBJECT
 
+    enum Months
+    {
+        January    = 0 ,
+        February   = 1 ,
+        March      = 2 ,
+        April      = 3 ,
+        May        = 4 ,
+        June       = 5 ,
+        July       = 6 ,
+        August     = 7 ,
+        September  = 8 ,
+        October    = 9 ,
+        November   = 10,
+        December   = 11,
+        CountMonth = 12
+    };
+
     int workingRate;
 
     DataBaseWT * DataBase ;
 
     QDate SelectedDate;
 
-    QList<Salary> SalaryMonth;
+    QList<Salary> SalaryMonth[CountMonth];
+
+    QCPBars *fossil;
 
 public:
 
@@ -58,14 +78,22 @@ private:
     Ui::SalaryWindow * gui;
 
     void reloadSalary();
+    void reloadCalendar();
+    void reloadFull();
+
+    void updateStatistic();
+    void updateChart();
 
 protected:
 
     void showEvent( QShowEvent * ShowEvent );
+    void resizeEvent( QResizeEvent *ResizeEvent );
 
 private slots:
 
     void selectDate  ();
+    void changedPageCalendar(int year, int month );
+
     void selectSalary();
 
     void addSalary   ();

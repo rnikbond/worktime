@@ -39,7 +39,11 @@ HEADERS += src/model/imodelworktime.h          \
            src/view/tabletimewindow.h          \
            src/view/severaldayswindow.h        \
            src/view/salarywindow.h             \
-           src/view/changeswindow.h
+           src/view/changeswindow.h \
+    src/view/calctimewindow.h \
+    src/tools/updatesworktime.h \
+    src/view/notifywindow.h \
+    src/tools/qcustomplot.h
 
 SOURCES += src/main.cpp                          \
            src/model/modelworktime.cpp           \
@@ -60,7 +64,11 @@ SOURCES += src/main.cpp                          \
            src/view/tabletimewindow.cpp          \
            src/view/severaldayswindow.cpp        \
            src/view/salarywindow.cpp             \
-           src/view/changeswindow.cpp
+           src/view/changeswindow.cpp \
+    src/view/calctimewindow.cpp \
+    src/tools/updatesworktime.cpp \
+    src/view/notifywindow.cpp \
+    src/tools/qcustomplot.cpp
 
 FORMS   += src/gui/worktimewindow.ui            \
            src/model/database/tablesdatabase.ui \
@@ -69,7 +77,9 @@ FORMS   += src/gui/worktimewindow.ui            \
            src/view/tabletimewindow.ui          \
            src/view/severaldayswindow.ui        \
            src/view/salarywindow.ui             \
-           src/view/changeswindow.ui
+           src/view/changeswindow.ui \
+    src/view/calctimewindow.ui \
+    src/view/notifywindow.ui
 
 RESOURCES += resources/resource.qrc
 RC_FILE   += resources/application.rc

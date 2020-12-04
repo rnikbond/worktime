@@ -65,6 +65,9 @@ public:
     void setTimeEnd ( const QDate & date, const int rateID, const int id , const WTime & time );
     void setTimeNeed( const QDate & date, const int rateID , WTime time, TypeTimeNeed type );
 
+    int typeData( const QDate & date, const int rateID );
+    void setTypeData(const QDate & date, const int rateID , int type);
+
     void setTypeDay( const QDate & date, const int rateID, const int type );
 
     int noteId( const int DateID );

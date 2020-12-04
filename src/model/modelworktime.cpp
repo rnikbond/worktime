@@ -111,6 +111,7 @@ void ModelWorkTime::load( MonthWorkTime * Month )
         WTime TimeNeed = DataBase->timeNeed(Date, workingRate);
         WTime TimeNeedSchedule = DataBase->timeNeedSchedule(Date, workingRate);
 
+        NewDay->setTypeData( DayWorkTime::TypesData(DataBase->typeData(Date, workingRate)) );
         NewDay->setTypeDay ( DayWorkTime::TypesDay(DataBase->typeDay(Date, workingRate)) );
         NewDay->setTimeNeed( TimeNeed );
         NewDay->setTimeNeedSchedule( TimeNeedSchedule );
@@ -229,7 +230,8 @@ void ModelWorkTime::checkTimeStart()
 
                 TimeStart -= BeforeTime;
 
-                setTimeStart( intervalID, TimeStart );
+                if( TimeStart.isEmpty() == false )
+                    setTimeStart( intervalID, TimeStart );
             }
         }
     }
@@ -257,6 +259,9 @@ void ModelWorkTime::checkLaunch()
         workingRate == HelperWT::Hours_30_NoLanch || workingRate == HelperWT::Hours_40_4_Days   )
     {
         DayWorkTime * Day = WorkMonth->dayAtDate( selectedDate );
+
+        if( Day->typeData() == DayWorkTime::UserData )
+            return;
 
         const QList<Interval*> & IntervalsList = Day->intervals();
 
@@ -579,6 +584,39 @@ void ModelWorkTime::setTimeAfter( WTime time )
     AfterTime = time;
 
     updateTimeEnd();
+}
+// ------------------------------------------------------------------------------------ //
+
+int ModelWorkTime::typeData()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call ModelWorkTime::typeData()";
+#endif
+
+    if( WorkMonth == NULL )
+    {
+        qWarning() << "[ERROR] ModelWorkTime::typeData() = WorkMonth is NULL";
+        return -1;
+    }
+
+    return WorkMonth->typeData( selectedDate );
+}
+// ------------------------------------------------------------------------------------ //
+
+void ModelWorkTime::setTypeData( int type )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call ModelWorkTime::setTypeData( " << type << " )";
+#endif
+
+    if( WorkMonth == NULL )
+    {
+        qWarning() << "[ERROR] ModelWorkTime::setTypeDay() = WorkMonth is NULL";
+        return;
+    }
+
+    WorkMonth->setTypeData( selectedDate, (DayWorkTime::TypesData)type );
+    DataBase->setTypeData( selectedDate, workingRate, (DayWorkTime::TypesData)type );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -1453,6 +1491,29 @@ void ModelWorkTime::setTimerState( bool state, bool isNewInterval )
         if( isNewInterval )
         {
             addInterval( DayWorkTime::nameDay(DayWorkTime::WorkDay) );
+
+            int newIntervalID = WorkMonth->lastInterval( selectedDate );
+
+            if( newIntervalID > 0 )
+            {
+                WTime TimeEnd = timeEnd( newIntervalID - 1 );
+
+                // Если пользователь заранее задал время, во сколько он уйдет,
+                // затем поставил на паузу, потом снова запустил таймер,
+                // и время конца, которое указал ранее позже текущего времени, то:
+                //   1. Для предыдущего интервала ставим то время, когда он поставил на паузу
+                //   2. Время начала нового интервала - текущее время.
+                //   3. Время конца нового интервала - то время, которое он указал в прошлом интервале.
+
+                if( TimeEnd > HelperWT::currentTime() )
+                {
+                    setTimeEnd( newIntervalID - 1, TimeOnStopped );
+
+                    setTimeStart( newIntervalID, HelperWT::currentTime() );
+                    setTimeEnd( newIntervalID, TimeEnd );
+                }
+            }
+
             emit reloadMonth();
         }
 
@@ -1463,6 +1524,8 @@ void ModelWorkTime::setTimerState( bool state, bool isNewInterval )
     }
     else
     {
+        // Сохраняем время, во сколько поставил пользователь на паузу
+        TimeOnStopped = HelperWT::currentTime();
         WorkTimer->stop();
     }
 }

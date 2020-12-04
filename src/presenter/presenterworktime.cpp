@@ -96,6 +96,7 @@ void PresenterWorkTime::refreshDataDay()
     ViewWT->setTypeDay  ( ModelWT->typeDay  () );
     ViewWT->setIntervals( ModelWT->intervals() );
     ViewWT->setNote     ( ModelWT->note     () );
+    ViewWT->setTypeData ( ModelWT->typeData () );
 
     refreshTimeDay();
 }
@@ -421,6 +422,12 @@ void PresenterWorkTime::userChangeNote( QString note )
 }
 // ------------------------------------------------------------------------------------ //
 
+void PresenterWorkTime::userChangeTypeData ( int type )
+{
+    ModelWT->setTypeData( type );
+}
+// ------------------------------------------------------------------------------------ //
+
 /*!
  * \brief PresenterWorkTime::userChnageTimerState
  * \param state
@@ -484,5 +491,6 @@ void PresenterWorkTime::connectView( IViewWorkTime * View )
     QObject::connect( ViewObj, SIGNAL(userChangeTypeDay  (int         )), SLOT(userChangeTypeDay   (int         )) );
     QObject::connect( ViewObj, SIGNAL(userChangeNote     (QString     )), SLOT(userChangeNote      (QString     )) );
     QObject::connect( ViewObj, SIGNAL(runTimer           (bool, bool  )), SLOT(userChangeTimerState(bool, bool  )) );
+    QObject::connect( ViewObj, SIGNAL(userChangeTypeData (int         )), SLOT(userChangeTypeData  (int         )) );
 }
 // ------------------------------------------------------------------------------------ //

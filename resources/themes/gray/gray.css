@@ -84,6 +84,18 @@ QCheckBox::indicator:checked
 	background-image: url(:/themes/gray/common/checkbox_checked.png);
 }
 
+QCheckBox::indicator:checked:disabled
+{
+	border          : none;
+	
+	width           : 25px;
+	height          : 25px;
+	
+	background-repeat: no-repeat;
+    background-position: left;
+	background-image: url(:/themes/gray/common/checkbox_checked_disabled.png);
+}
+
 QCheckBox::indicator:unchecked
 {
 	border          : none;
@@ -94,6 +106,18 @@ QCheckBox::indicator:unchecked
 	background-repeat: no-repeat;
     background-position: left;
 	background-image: url(:/themes/gray/common/checkbox_unchecked.png);
+}
+
+QCheckBox::indicator:unchecked:disabled
+{
+	border          : none;
+	
+	width           : 25px;
+	height          : 25px;
+	
+	background-repeat: no-repeat;
+    background-position: left;
+	background-image: url(:/themes/gray/common/checkbox_unchecked_disabled.png);
 }
 
 /* ---------------------------------------------------------- */
@@ -467,6 +491,19 @@ QTextEdit
 	font-size: 14px;
 }
 
+/* ---------------------------------------------------------- */
+/**************** QPlainTextEdit ****************/
+/* ---------------------------------------------------------- */
+
+QPlainTextEdit
+{
+        border: none;
+        border-radius: 2;
+        color: #000000;
+        background-color: #E0E0E0;
+        font-size: 14px;
+}
+
 /* ---------------------------------------------------------------------------- */
 /************* Стилизация объектов по имени *************/
 /* ---------------------------------------------------------------------------- */
@@ -551,47 +588,63 @@ QPushButton#SettingsButton:hover
 	background-image: url(:/themes/gray/menu/settings_hover.png);
 }
 
-QPushButton#UpdateWorkTimeButton
+QPushButton#UpdateButton
 {
-	text-align: left;
-	padding-left: 60;
-	background-repeat: no-repeat;
+    text-align: left;
+    padding-left: 60;
+    background-repeat: no-repeat;
     background-position: left;
-	background-image: url(:/themes/gray/menu/update.png);
+    background-image: url(:/themes/gray/menu/update.png);
 }
 
-QPushButton#UpdateWorkTimeButton:hover
+QPushButton#UpdateButton:hover
 {
-	background-repeat: no-repeat;
+    background-repeat: no-repeat;
     background-position: left;
-	background-image: url(:/themes/gray/menu/update_hover.png);
+    background-image: url(:/themes/gray/menu/update_hover.png);
+}
+
+QPushButton#CalcTimeButton
+{
+    text-align: left;
+    padding-left: 60;
+    background-repeat: no-repeat;
+    background-position: left;
+    background-image: url(:/themes/gray/menu/calc.png);
+}
+
+QPushButton#CalcTimeButton:hover
+{
+    background-repeat: no-repeat;
+    background-position: left;
+    background-image: url(:/themes/gray/menu/calc_hover.png);
 }
 
 QPushButton#ChangesButton
 {
-	text-align: left;
-	padding-left: 60;
-	background-repeat: no-repeat;
+    text-align: left;
+    padding-left: 60;
+    background-repeat: no-repeat;
     background-position: left;
-	background-image: url(:/themes/gray/menu/info.png);
+    background-image: url(:/themes/gray/menu/info.png);
 }
 
 QPushButton#ChangesButton:hover
 {
-	text-align: left;
-	padding-left: 60;
-	background-repeat: no-repeat;
+    text-align: left;
+    padding-left: 60;
+    background-repeat: no-repeat;
     background-position: left;
-	background-image: url(:/themes/gray/menu/info_hover.png);
+    background-image: url(:/themes/gray/menu/info_hover.png);
 }
 
 QPushButton#MenuButton
 {
-	text-align: left;
-	padding-left: 60;
-	background-repeat: no-repeat;
+    text-align: left;
+    padding-left: 60;
+    background-repeat: no-repeat;
     background-position: center;
-	background-image: url(:/themes/dark/common/menu.png);
+    background-image: url(:/themes/dark/common/menu.png);
 }
 
 QPushButton#MenuButton:hover

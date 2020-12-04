@@ -967,6 +967,69 @@ void DataBaseWT::setTimeNeed( const QDate & date, const int rateID , WTime time,
 }
 // ------------------------------------------------------------------------------------ //
 
+int DataBaseWT::typeData( const QDate & date, const int rateID )
+{
+    int DateID = dateID( date, rateID );
+
+    if( DateID >= 0 )
+    {
+        QSqlQuery GetUserDataTypeQuery( DataBase );
+        GetUserDataTypeQuery.prepare( "SELECT TypeData FROM ScheduleTime WHERE ID=:ID" );
+        GetUserDataTypeQuery.bindValue( ":ID", DateID );
+
+        if( GetUserDataTypeQuery.exec() )
+        {
+            if( GetUserDataTypeQuery.last() )
+                return GetUserDataTypeQuery.value(0).toInt();
+        }
+        else
+        {
+            qCritical() << "[2] typeData( " << date << ", " << rateID << " ) :: " << GetUserDataTypeQuery.lastError().text();
+        }
+    }
+    else
+    {
+        qCritical() << "[1] typeData( " << date << ", " << rateID << " ) :: Day not dound";
+    }
+
+    return 0;
+}
+// ------------------------------------------------------------------------------------ //
+
+void DataBaseWT::setTypeData( const QDate & date, const int rateID, int type )
+{
+    int DateID = dateID( date, rateID );
+
+    if( DateID == -1 )
+    {
+        qCritical() << "[1] setTypeData(" << date << ", "
+                                          << rateID << ", ...) :: uncorrect date ID==-1";
+    }
+    else
+    {
+        int scheduleID = scheduleId( DateID );
+
+        if( scheduleID >= 0 )
+        {
+            QSqlQuery ChangeTypeDataQuery( DataBase );
+
+            ChangeTypeDataQuery.prepare( "UPDATE ScheduleTime SET TypeData=:Type WHERE ID=:ID" );
+            ChangeTypeDataQuery.bindValue( ":Type", type       );
+            ChangeTypeDataQuery.bindValue( ":ID"  , scheduleID );
+
+            if( ChangeTypeDataQuery.exec() == false )
+                qCritical() << "[3] setTypeData(" << date << ", "
+                                                  << rateID << ChangeTypeDataQuery.lastError().text();
+        }
+        else
+        {
+            qCritical() << "[2] setTypeData(" << date << ", "
+                                              << rateID << "[" << scheduleID << "] shedule not found";
+        }
+    }
+}
+// ------------------------------------------------------------------------------------ //
+
 /*!
  * \brief DataBaseWT::insertYear
  * \param date Дата, из которой будет получен год
@@ -1082,7 +1145,7 @@ int DataBaseWT::lastSalaryID()
  */
 void DataBaseWT::getMonthSalaries( const int RateID, const QDate & Date, QList<QDate> & Dates, QList<float> & Salaries )
 {
-    for( int day = 1; day < Date.daysInMonth(); day++ )
+    for( int day = 1; day <= Date.daysInMonth(); day++ )
     {
         QDate SalaryDate( Date.year(), Date.month(), day );
 
@@ -1479,6 +1542,10 @@ bool DataBaseWT::configureDataBase()
             break;
         }
     }
+
+    QSqlQuery AlterUserColumn( DataBase );
+    AlterUserColumn.prepare( "ALTER TABLE ScheduleTime ADD COLUMN TypeData INTEGER DEFAULT 0" );
+    AlterUserColumn.exec();
 
     return isSuccessCreateTables;
 }

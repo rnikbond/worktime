@@ -22,22 +22,24 @@ CoreWorkTime::CoreWorkTime( QObject * parent ) : QObject( parent )
     VersionMinor          = 0;
     VersionSubminor       = 0;
     workingRate           = HelperWT::UnknownWR;
-    themeIndex            = 0;
+    themeIndex            = 1;
     opacityValue          = 1000;
     isAutorun             = true;
-    isTray                = false;
+    isTray                = true;
     isContextMenu         = true;
     isCheckUpdates        = true;
     updatePath            = HelperWT::pathToUpdates();
     LaunchStartTime       = QTime( 12, 00 );
-    LaunchEndTime         = QTime( 16, 00 );
+    LaunchEndTime         = QTime( 15, 00 );
     LaunchLengthTime      = QTime( 00, 45 );
     MaxTime               = QTime( 21, 00 );
-    BeforeTime            = QTime( 00, 05 );
-    AfterTime             = QTime( 00, 06 );
+    BeforeTime            = QTime( 00, 00 );
+    AfterTime             = QTime( 00, 00 );
+    UseNotifyEndWorkDay   = true;
     isViewWidget          = true;
     isTopWidget           = true;
     opacityWidget         = 1000;
+    opacityText           = 1000;
     WorkTimeGeometry      = QRect( 100, 100, 800, 600 );
     WidgetDesktopGeometry = QRect( 100, 100, 200, 80  );
     isShownMenu           = true;
@@ -60,6 +62,9 @@ CoreWorkTime::CoreWorkTime( QObject * parent ) : QObject( parent )
     connectSettings();
     connectWidget  ();
     connectSeveralDays();
+
+    connect( TrayWorkTime, SIGNAL(messageClicked()), SLOT(showWorkTime()) );
+    connect( NotifyTimer, SIGNAL(timeout()), SLOT(showMessageEndWorkDay()) );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -68,8 +73,6 @@ CoreWorkTime::~CoreWorkTime()
 #ifdef WT_INFO_CALL_FUNC
     qDebug() << "#Call CoreWorkTime::~CoreWorkTime()";
 #endif
-
-    DataBaseThread->terminate();
 
     delete Settings;
     delete WorkTime;
@@ -114,7 +117,8 @@ void CoreWorkTime::initializeWidget()
 
     DesktopWindow->setWindowFlags( flagsWidget );
     DesktopWindow->move( QPoint(WidgetDesktopGeometry.x(), WidgetDesktopGeometry.y()) );
-    DesktopWindow->setWindowOpacity( toOpacity(opacityWidget) );
+    DesktopWindow->setOpacityBackground( toOpacity(opacityWidget) );
+    //opacityText
 
     PresenterWT->setWidget( DesktopWindow );
 }
@@ -129,23 +133,25 @@ void CoreWorkTime::updateSettings()
     Settings->setWorkingRates( HelperWT::namesWorkingRates() );
     Settings->setThemes      ( themeNames()                  );
 
-    Settings->setWorkingRate  ( workingRate      );
-    Settings->setTheme        ( themeIndex       );
-    Settings->setOpacityValue ( opacityValue     );
-    Settings->setAutorun      ( isAutorun        );
-    Settings->setTray         ( isTray           );
-    Settings->setContextMenu  ( isContextMenu    );
-    Settings->setUpdates      ( isCheckUpdates   );
-    Settings->setUpdatesPath  ( updatePath       );
-    Settings->setLaunchStart  ( LaunchStartTime  );
-    Settings->setLaunchEnd    ( LaunchEndTime    );
-    Settings->setLaunchTime   ( LaunchLengthTime );
-    Settings->setMaxTime      ( MaxTime          );
-    Settings->setBeforeTime   ( BeforeTime       );
-    Settings->setAfterTime    ( AfterTime        );
-    Settings->setViewWidget   ( isViewWidget     );
-    Settings->setTopWidget    ( isTopWidget      );
-    Settings->setOpacityWidget( opacityWidget    );
+    Settings->setWorkingRate     ( workingRate         );
+    Settings->setTheme           ( themeIndex          );
+    Settings->setOpacityValue    ( opacityValue        );
+    Settings->setAutorun         ( isAutorun           );
+    Settings->setTray            ( isTray              );
+    Settings->setContextMenu     ( isContextMenu       );
+    Settings->setUpdates         ( isCheckUpdates      );
+    Settings->setUpdatesPath     ( updatePath          );
+    Settings->setLaunchStart     ( LaunchStartTime     );
+    Settings->setLaunchEnd       ( LaunchEndTime       );
+    Settings->setLaunchTime      ( LaunchLengthTime    );
+    Settings->setMaxTime         ( MaxTime             );
+    Settings->setBeforeTime      ( BeforeTime          );
+    Settings->setAfterTime       ( AfterTime           );
+    Settings->setNotifyEndWorkDay( UseNotifyEndWorkDay );
+    Settings->setViewWidget      ( isViewWidget        );
+    Settings->setTopWidget       ( isTopWidget         );
+    Settings->setOpacityWidget   ( opacityWidget       );
+    Settings->setOpacityText     ( opacityText         );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -191,9 +197,9 @@ void CoreWorkTime::start()
 
     readConfig();
 
-    WorkTime->setGeometry( WorkTimeGeometry );
+    updateAutorunRecord();
 
-    DataBaseThread->start();
+    WorkTime->setGeometry( WorkTimeGeometry );
 
     DataBase->insertWorkingRates( HelperWT::namesWorkingRates() );
 
@@ -203,7 +209,6 @@ void CoreWorkTime::start()
     {
         updateSettings();
         showWindow( Settings, true );
-
     }
     else
     {
@@ -213,10 +218,23 @@ void CoreWorkTime::start()
         if( isViewWidget )
             DesktopWindow->show();
 
-
         if( VersionMajor != VERSION_MAJOR || VersionMinor != VERSION_MINOR || VersionSubminor != VERSION_SUBMINOR )
             showWindow( ChangesWidget, false );
     }
+
+    UpdateThread = new QThread();
+    UpdaterObj = new UpdatesWorkTime();
+    UpdaterObj->setUpdatePath( updatePath );
+
+    connect( UpdaterObj, SIGNAL(foundUpdate()), SLOT(updateButtonUpdate()) );
+    connect( UpdateThread, SIGNAL(finished()), UpdaterObj, SLOT(deleteLater()) );
+
+    UpdaterObj->moveToThread( UpdateThread );
+
+    if( isAutorun )
+        UpdateThread->start();
+
+    updateNotifyEndWorkDay();
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -306,6 +324,8 @@ void CoreWorkTime::changeOpacityValue( int value )
     qDebug() << "#Call CoreWorkTime::changeOpacityValue( " << value << " )";
 #endif
 
+    qDebug() << "#Call CoreWorkTime::changeOpacityValue( " << value << " )";
+
     opacityValue = value;
 
     WorkTime->setWindowOpacity( toOpacity(value) );
@@ -326,12 +346,7 @@ void CoreWorkTime::changeAutorun( bool isSet )
 
     isAutorun = isSet;
 
-    QSettings settings("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run", QSettings::NativeFormat);
-
-    if( isSet )
-        settings.setValue(QApplication::applicationName(), "\"" + QApplication::applicationFilePath().replace("/", "\\") + "\"");
-    else
-        settings.remove( QApplication::applicationName() );
+    updateAutorunRecord();
 
     writeConfig();
 }
@@ -509,6 +524,24 @@ void CoreWorkTime::changeAfterTime( QTime time )
 // ------------------------------------------------------------------------------------ //
 
 /*!
+ * \brief CoreWorkTime::changeNotifyEndWorkDay
+ * \param isSet Признак использования оповещения о конце рабочего дня
+ */
+void CoreWorkTime::changeNotifyEndWorkDay( bool isSet )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call CoreWorkTime::changeNotifyEndWorkDay( " << isSet << " )";
+#endif
+
+    UseNotifyEndWorkDay = isSet;
+
+    writeConfig();
+
+    updateNotifyEndWorkDay();
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
  * \brief CoreWorkTime::changeViewWidget
  * \param isSet Признак использования виджета рабочего стола
  */
@@ -557,6 +590,21 @@ void CoreWorkTime::changeTopWidget( bool isSet )
 }
 // ------------------------------------------------------------------------------------ //
 
+void CoreWorkTime::resetPositionWidget()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call CoreWorkTime::resetPositionWidget( " << value << " )";
+#endif
+
+    //DesktopWindow
+
+    QWidget * Display = qApp->desktop()->screen(0);
+
+    DesktopWindow->move( QPoint( Display->x() + 100, Display->y() + 100) );
+    DesktopWindow->blink();
+}
+// ------------------------------------------------------------------------------------ //
+
 /*!
  * \brief CoreWorkTime::changeOpacityWidget
  * \param value Значение прозрачности виджет от 100 до 1000
@@ -569,9 +617,50 @@ void CoreWorkTime::changeOpacityWidget( int value )
 
     opacityWidget = value;
 
-    DesktopWindow->setWindowOpacity( toOpacity(opacityWidget) );
+    DesktopWindow->setOpacityBackground( toOpacity(opacityWidget) );
 
     writeConfig();
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief CoreWorkTime::changeOpacityText
+ * \param value Значение прозрачности текста виджет от 100 до 1000
+ */
+void CoreWorkTime::changeOpacityText( int value )
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call CoreWorkTime::changeOpacityText( " << value << " )";
+#endif
+
+    opacityText = value;
+
+    DesktopWindow->setOpacityText( toOpacity(opacityText) );
+
+    writeConfig();
+}
+// ------------------------------------------------------------------------------------ //
+
+void CoreWorkTime::updateButtonUpdate()
+{
+    WorkTime->setUpdatesExists( true );
+    UpdateThread->quit();
+
+    TrayWorkTime->showMessage( tr("WorkTime"), tr("Появилось обновление"), QSystemTrayIcon::NoIcon, 5000 );
+}
+// ------------------------------------------------------------------------------------ //
+
+void CoreWorkTime::showMessageEndWorkDay()
+{
+    WTimeExt TimeNotify = MaxTime;
+
+    TimeNotify.addMinutes( -15 );
+
+    if( TimeNotify == HelperWT::currentTime() )
+    {
+        TrayWorkTime->showMessage( tr("Конец рабочего дня"), tr("через 15 минут"), QSystemTrayIcon::NoIcon, 10000 );
+        NotifyTimer->stop();
+    }
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -742,9 +831,9 @@ void CoreWorkTime::readConfig()
     int MinutesLaunchLength = 0;
     int HoursMax            = 0;
     int MinutesMax          = 0;
-    int HourseBefore        = 0;
+    int HoursBefore         = 0;
     int MinutesBefore       = 0;
-    int HourseAfter         = 0;
+    int HoursAfter          = 0;
     int MinutesAfter        = 0;
 
     if( QFile(HelperWT::pathToConfig()).exists() == false )
@@ -767,11 +856,12 @@ void CoreWorkTime::readConfig()
     Config.endGroup(); // COMMON
 
     Config.beginGroup("DESKTOP_WIDGET");
-        if( Config.contains("VISIBLE") ) isViewWidget = Config.value("VISIBLE").toBool();
-        if( Config.contains("IS_TOP" ) ) isTopWidget  = Config.value("IS_TOP" ).toBool();
-        if( Config.contains("X")       ) WidgetDesktopGeometry.setX( Config.value("X").toInt() );
-        if( Config.contains("Y")       ) WidgetDesktopGeometry.setY( Config.value("Y").toInt() );
-        if( Config.contains("OPACITY") ) opacityWidget = Config.value("OPACITY" ).toInt();
+        if( Config.contains("VISIBLE")      ) isViewWidget = Config.value("VISIBLE").toBool();
+        if( Config.contains("IS_TOP" )      ) isTopWidget  = Config.value("IS_TOP" ).toBool();
+        if( Config.contains("X")            ) WidgetDesktopGeometry.setX( Config.value("X").toInt() );
+        if( Config.contains("Y")            ) WidgetDesktopGeometry.setY( Config.value("Y").toInt() );
+        if( Config.contains("OPACITY")      ) opacityWidget = Config.value("OPACITY" ).toInt();
+        if( Config.contains("OPACITY_TEXT") ) opacityText   = Config.value("OPACITY_TEXT" ).toInt();
     Config.endGroup(); // DESKTOP_WIDGET
 
     Config.beginGroup( "AUTO" );
@@ -782,18 +872,20 @@ void CoreWorkTime::readConfig()
     Config.endGroup(); // AUTO
 
     Config.beginGroup( "TIMES" );
-        if( Config.contains("LAUNCH_HOURS"           ) ) HoursLaunchLength   = Config.value("LAUNCH_HOURS"           ).toInt();
-        if( Config.contains("LAUNCH_MINUTES"         ) ) MinutesLaunchLength = Config.value("LAUNCH_MINUTES"         ).toInt();
-        if( Config.contains("LAUNCH_START_HOURS"     ) ) HoursLaunchStart    = Config.value("LAUNCH_START_HOURS"     ).toInt();
-        if( Config.contains("LAUNCH_START_MINUTES"   ) ) MinutesLaunchStart  = Config.value("LAUNCH_START_MINUTES"   ).toInt();
-        if( Config.contains("LAUNCH_END_HOURS"       ) ) HoursLaunchEnd      = Config.value("LAUNCH_END_HOURS"       ).toInt();
-        if( Config.contains("LAUNCH_END_MINUTES"     ) ) MinutesLaunchEnd    = Config.value("LAUNCH_END_MINUTES"     ).toInt();
-        if( Config.contains("MAX_HOURS"              ) ) HoursMax            = Config.value("MAX_HOURS"              ).toInt();
-        if( Config.contains("MAX_MINUTES"            ) ) MinutesMax          = Config.value("MAX_MINUTES"            ).toInt();
-        if( Config.contains("SUBSTRACT_START_HOURS"  ) ) HourseBefore        = Config.value("SUBSTRACT_START_HOURS"  ).toInt();
-        if( Config.contains("SUBSTRACT_START_MINUTES") ) MinutesBefore       = Config.value("SUBSTRACT_START_MINUTES").toInt();
-        if( Config.contains("SUBSTRACT_END_HOURS"    ) ) HourseAfter         = Config.value("SUBSTRACT_END_HOURS"    ).toInt();
-        if( Config.contains("SUBSTRACT_END_MINUTES"  ) ) MinutesAfter        = Config.value("SUBSTRACT_END_MINUTES"  ).toInt();
+        if( Config.contains("LAUNCH_HOURS"        ) ) HoursLaunchLength   = Config.value("LAUNCH_HOURS"         ).toInt ();
+        if( Config.contains("LAUNCH_MINUTES"      ) ) MinutesLaunchLength = Config.value("LAUNCH_MINUTES"       ).toInt ();
+        if( Config.contains("LAUNCH_START_HOURS"  ) ) HoursLaunchStart    = Config.value("LAUNCH_START_HOURS"   ).toInt ();
+        if( Config.contains("LAUNCH_START_MINUTES") ) MinutesLaunchStart  = Config.value("LAUNCH_START_MINUTES" ).toInt ();
+        if( Config.contains("LAUNCH_END_HOURS"    ) ) HoursLaunchEnd      = Config.value("LAUNCH_END_HOURS"     ).toInt ();
+        if( Config.contains("LAUNCH_END_MINUTES"  ) ) MinutesLaunchEnd    = Config.value("LAUNCH_END_MINUTES"   ).toInt ();
+        if( Config.contains("MAX_HOURS"           ) ) HoursMax            = Config.value("MAX_HOURS"            ).toInt ();
+        if( Config.contains("MAX_MINUTES"         ) ) MinutesMax          = Config.value("MAX_MINUTES"          ).toInt ();
+        if( Config.contains("BEFORE_HOURS"        ) ) HoursBefore         = Config.value("BEFORE_HOURS"         ).toInt ();
+        if( Config.contains("BEFORE_MINUTES"      ) ) MinutesBefore       = Config.value("BEFORE_MINUTES"       ).toInt ();
+        if( Config.contains("AFTER_HOURS"         ) ) HoursAfter          = Config.value("AFTER_HOURS"          ).toInt ();
+        if( Config.contains("AFTER_MINUTES"       ) ) MinutesAfter        = Config.value("AFTER_MINUTES"        ).toInt ();
+        if( Config.contains("NOTIFY_END_WORK_DAY" ) ) UseNotifyEndWorkDay = Config.value("NOTIFY_END_WORK_DAY"  ).toBool();
+
     Config.endGroup(); // TIMES
 
     Config.beginGroup( "GEOMETRY" );
@@ -807,8 +899,36 @@ void CoreWorkTime::readConfig()
     LaunchEndTime    = QTime( HoursLaunchEnd   , MinutesLaunchEnd    );
     LaunchLengthTime = QTime( HoursLaunchLength, MinutesLaunchLength );
     MaxTime          = QTime( HoursMax         , MinutesMax          );
-    BeforeTime       = QTime( HourseBefore     , MinutesBefore       );
-    AfterTime        = QTime( HourseAfter      , MinutesAfter        );
+    BeforeTime       = QTime( HoursBefore      , MinutesBefore       );
+    AfterTime        = QTime( HoursAfter       , MinutesAfter        );
+
+    if( BeforeTime > QTime(1, 0, 0) )
+    {
+        BeforeTime = QTime( 0, 0 );
+
+        writeConfig();
+
+        QMessageBox MsgBox( QMessageBox::Information, tr("Ошибка конфигурации"), tr("Время, сколько отнимать \n"\
+                                                             "от времени начала рабочего дня,\n"\
+                                                             "больше 59 минут.\n"\
+                                                             "Это неверно. Сейчас оно сброшено.\n\n"\
+                                                             "Зайдите в Настройки->Время и установите его заново!") );
+        MsgBox.exec();
+    }
+
+    if( AfterTime > QTime(1, 0, 0) )
+    {
+        AfterTime = QTime( 0, 0 );
+
+        writeConfig();
+
+        QMessageBox MsgBox( QMessageBox::Information, tr("Ошибка конфигурации"), tr("Время, сколько добалять \n"\
+                                                             "ко времени конца рабочего дня,\n"\
+                                                             "больше 59 минут.\n"\
+                                                             "Это неверно. Сейчас оно сброшено.\n\n"\
+                                                             "Зайдите в Настройки->Время и установите его заново!") );
+        MsgBox.exec();
+    }
 
     normalizeGeometryWorkTime();
 }
@@ -871,6 +991,7 @@ void CoreWorkTime::writeConfig()
         Config.setValue("X"      , WidgetDesktopGeometry.x() );
         Config.setValue("Y"      , WidgetDesktopGeometry.y() );
         Config.setValue("OPACITY", opacityWidget );
+        Config.setValue("OPACITY_TEXT", opacityText );
     Config.endGroup(); // DESKTOP_WIDGET
 
     Config.beginGroup( "AUTO" );
@@ -894,6 +1015,7 @@ void CoreWorkTime::writeConfig()
         Config.setValue( "BEFORE_MINUTES"      , BeforeTime.minute()       );
         Config.setValue( "AFTER_HOURS"         , AfterTime.hour()          );
         Config.setValue( "AFTER_MINUTES"       , AfterTime.minute()        );
+        Config.setValue( "NOTIFY_END_WORK_DAY" , UseNotifyEndWorkDay       );
     Config.endGroup(); // TIMES
 
     Config.beginGroup( "GEOMETRY" );
@@ -971,6 +1093,38 @@ void CoreWorkTime::showSeveralDays()
 // ------------------------------------------------------------------------------------ //
 
 /*!
+ * \brief CoreWorkTime::showCalcTime
+ *
+ * Отображение окна "Калькулятор времени".
+ * Если окно уже открыто, оно будет поднято на передний план.
+ */
+void CoreWorkTime::showCalcTime()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call CoreWorkTime::showCalcTime()";
+#endif
+
+    showWindow( CalcTimeWidget, false );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief CoreWorkTime::showNotify
+ *
+ * Отображение окна "Оповещение".
+ * Если окно уже открыто, оно будет поднято на передний план.
+ */
+void CoreWorkTime::showNotify()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call CoreWorkTime::showNotify()";
+#endif
+
+    showWindow( NotifyWidget, false );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
  * \brief CoreWorkTime::showChanges
  */
 void CoreWorkTime::showChanges()
@@ -1001,6 +1155,12 @@ void CoreWorkTime::normalizeGeometryWorkTime()
     {
         WorkTimeGeometry.moveTopLeft( QPoint((DesktopRect.width () - WorkTimeGeometry.width ()) / 2,
                                              (DesktopRect.height() - WorkTimeGeometry.height()) / 2) );
+    }
+
+    if( DesktopRect.contains(WidgetDesktopGeometry) == false )
+    {
+        WidgetDesktopGeometry.moveTopLeft( QPoint((DesktopRect.width () - WorkTimeGeometry.width ()) / 2,
+                                                  (DesktopRect.height() - WorkTimeGeometry.height()) / 2) );
     }
 }
 // ------------------------------------------------------------------------------------ //
@@ -1112,7 +1272,6 @@ void CoreWorkTime::applyTheme( int theme )
             break;
         }
     }
-
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -1150,6 +1309,50 @@ float CoreWorkTime::toOpacity( int value )
 #endif
 
     return float( value / 1000. );
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief updateAutorunRecord
+ *
+ * Обновление записи в реестре для автозапуска WorkTime
+ * или удаление из реестра (если автозапуск отключен)
+ */
+void CoreWorkTime::updateAutorunRecord()
+{
+    QString appPath = QApplication::applicationFilePath().replace("/", "\\");
+
+    QSettings settings("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run", QSettings::NativeFormat);
+
+    if( isAutorun )
+    {
+        settings.setValue(QApplication::applicationName(), "\"" + appPath + "\"");
+
+        if( settings.contains(QApplication::applicationName()) == false )
+            WorkTime->setInfoUser( tr("Ошибка автозапуска") );
+        else
+            WorkTime->setInfoUser( tr("OK") );
+    }
+    else
+    {
+        settings.remove( QApplication::applicationName() );
+    }
+}
+// ------------------------------------------------------------------------------------ //
+
+/*!
+ * \brief CoreWorkTime::updateNotifyEndWorkDay
+ */
+void CoreWorkTime::updateNotifyEndWorkDay()
+{
+#ifdef WT_INFO_CALL_FUNC
+    qDebug() << "#Call CoreWorkTime::updateNotifyEndWorkDay()";
+#endif
+
+    if( UseNotifyEndWorkDay )
+    {
+        NotifyTimer->start( 1000 );
+    }
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -1227,6 +1430,7 @@ void CoreWorkTime::createObjects()
     qDebug() << "#Call CoreWorkTime::createObjects()";
 #endif
 
+    NotifyTimer       = new QTimer           ( this     );
     DataBase          = new DataBaseWT       (          );
     ModelWT           = new ModelWorkTime    ( this     );
     WorkTime          = new WorkTimeWindow   (          );
@@ -1236,15 +1440,15 @@ void CoreWorkTime::createObjects()
     TablesWindow      = new TablesDataBase   ( DataBase );
     TableTimeWidget   = new TableTimeWindow  (          );
     SeveralDaysWidget = new SeveralDaysWindow(          );
+    CalcTimeWidget    = new CalcTimeWindow   (          );
+    NotifyWidget      = new NotifyWindow     (          );
     SalaryWidget      = new SalaryWindow     (          );
     ChangesWidget     = new ChangesWindow    (          );
 
-    DataBaseThread = new QThread           ( this     );
-
-    DataBase->moveToThread( DataBaseThread );
-
     WorkTime->setSalaryExists     ( true );
     WorkTime->setSettingsExists   ( true );
+    WorkTime->setNotifyExists     ( false );
+    WorkTime->setCalcTimeExists   ( true );
     WorkTime->setTableTimeExists  ( true );
     WorkTime->setSeveralDaysExists( true );
     WorkTime->setChangesExists    ( true );
@@ -1256,6 +1460,8 @@ void CoreWorkTime::createObjects()
     PresenterWT->setModel ( ModelWT       );
     PresenterWT->setView  ( WorkTime      );
     PresenterWT->setWidget( DesktopWindow );
+
+    // TablesWindow->show();
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -1321,8 +1527,11 @@ void CoreWorkTime::connectWorkTime()
     connect( WorkTime, SIGNAL(showSalary     (       )), SLOT(showSalary             (       )) );
     connect( WorkTime, SIGNAL(showTableTime  (       )), SLOT(showTableTime          (       )) );
     connect( WorkTime, SIGNAL(showSeveralDays(       )), SLOT(showSeveralDays        (       )) );
+    connect( WorkTime, SIGNAL(showCalcTime   (       )), SLOT(showCalcTime           (       )) );
+    connect( WorkTime, SIGNAL(showNotify     (       )), SLOT(showNotify             (       )) );
     connect( WorkTime, SIGNAL(showChanges    (       )), SLOT(showChanges            (       )) );
     connect( WorkTime, SIGNAL(userDropUpdate (QString)), SLOT(updateWorkTime         (QString)) );
+    connect( WorkTime, SIGNAL(userSelectPage (int    )), SLOT(changePage             (int    )) );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -1355,23 +1564,26 @@ void CoreWorkTime::connectSettings()
     connect( Settings, SIGNAL(closeApp()       ), SLOT(closeApp       ()) );
     connect( Settings, SIGNAL(resetUpdatePath()), SLOT(resetUpdatePath()) );
 
-    connect( Settings, SIGNAL(changedWorkingRate  (int    )), SLOT(changedWorkingRate (int    )) );
-    connect( Settings, SIGNAL(changedTheme        (int    )), SLOT(changeTheme        (int    )) );
-    connect( Settings, SIGNAL(changedOpacityValue (int    )), SLOT(changeOpacityValue (int    )) );
-    connect( Settings, SIGNAL(changedAutorun      (bool   )), SLOT(changeAutorun      (bool   )) );
-    connect( Settings, SIGNAL(changedTray         (bool   )), SLOT(changeTray         (bool   )) );
-    connect( Settings, SIGNAL(changedContextMenu  (bool   )), SLOT(changeContextMenu  (bool   )) );
-    connect( Settings, SIGNAL(changedUpdates      (bool   )), SLOT(changeUpdates      (bool   )) );
-    connect( Settings, SIGNAL(changedUpdatePath   (QString)), SLOT(changeUpdatePath   (QString)) );
-    connect( Settings, SIGNAL(changedLaunchStart  (QTime  )), SLOT(changeLaunchStart  (QTime  )) );
-    connect( Settings, SIGNAL(changedLaunchEnd    (QTime  )), SLOT(changeLaunchEnd    (QTime  )) );
-    connect( Settings, SIGNAL(changedLaunchTime   (QTime  )), SLOT(changeLaunchTime   (QTime  )) );
-    connect( Settings, SIGNAL(changedMaxTime      (QTime  )), SLOT(changeMaxTime      (QTime  )) );
-    connect( Settings, SIGNAL(changedBeforeTime   (QTime  )), SLOT(changeBeforeTime   (QTime  )) );
-    connect( Settings, SIGNAL(changedAfterTime    (QTime  )), SLOT(changeAfterTime    (QTime  )) );
-    connect( Settings, SIGNAL(changedViewWidget   (bool   )), SLOT(changeViewWidget   (bool   )) );
-    connect( Settings, SIGNAL(changedTopWidget    (bool   )), SLOT(changeTopWidget    (bool   )) );
-    connect( Settings, SIGNAL(changedOpacityWidget(int    )), SLOT(changeOpacityWidget(int    )) );
+    connect( Settings, SIGNAL(changedWorkingRate     (int    )), SLOT(changedWorkingRate    (int    )) );
+    connect( Settings, SIGNAL(changedTheme           (int    )), SLOT(changeTheme           (int    )) );
+    connect( Settings, SIGNAL(changedOpacityValue    (int    )), SLOT(changeOpacityValue    (int    )) );
+    connect( Settings, SIGNAL(changedAutorun         (bool   )), SLOT(changeAutorun         (bool   )) );
+    connect( Settings, SIGNAL(changedTray            (bool   )), SLOT(changeTray            (bool   )) );
+    connect( Settings, SIGNAL(changedContextMenu     (bool   )), SLOT(changeContextMenu     (bool   )) );
+    connect( Settings, SIGNAL(changedUpdates         (bool   )), SLOT(changeUpdates         (bool   )) );
+    connect( Settings, SIGNAL(changedUpdatePath      (QString)), SLOT(changeUpdatePath      (QString)) );
+    connect( Settings, SIGNAL(changedLaunchStart     (QTime  )), SLOT(changeLaunchStart     (QTime  )) );
+    connect( Settings, SIGNAL(changedLaunchEnd       (QTime  )), SLOT(changeLaunchEnd       (QTime  )) );
+    connect( Settings, SIGNAL(changedLaunchTime      (QTime  )), SLOT(changeLaunchTime      (QTime  )) );
+    connect( Settings, SIGNAL(changedMaxTime         (QTime  )), SLOT(changeMaxTime         (QTime  )) );
+    connect( Settings, SIGNAL(changedBeforeTime      (QTime  )), SLOT(changeBeforeTime      (QTime  )) );
+    connect( Settings, SIGNAL(changedAfterTime       (QTime  )), SLOT(changeAfterTime       (QTime  )) );
+    connect( Settings, SIGNAL(changedNotifyEndWorkDay(bool   )), SLOT(changeNotifyEndWorkDay( bool  )) );
+    connect( Settings, SIGNAL(changedViewWidget      (bool   )), SLOT(changeViewWidget      (bool   )) );
+    connect( Settings, SIGNAL(changedTopWidget       (bool   )), SLOT(changeTopWidget       (bool   )) );
+    connect( Settings, SIGNAL(resetPositionWidget    (       )), SLOT(resetPositionWidget   (       )) );
+    connect( Settings, SIGNAL(changedOpacityWidget   (int    )), SLOT(changeOpacityWidget   (int    )) );
+    connect( Settings, SIGNAL(changedOpacityText     (int    )), SLOT(changeOpacityText     (int    )) );
 }
 // ------------------------------------------------------------------------------------ //
 
@@ -1418,41 +1630,43 @@ void CoreWorkTime::errorLog( const QString & logText )
 
 void CoreWorkTime::updateWorkTime( QString path )
 {
+    if( path.isEmpty() )
+        path = updatePath;
+
     QString AppFilePath = QApplication::applicationFilePath();
     QString NewFilePath = QApplication::applicationDirPath() + "/new_WorkTime.exe";
     QString OldFilePath = QApplication::applicationDirPath() + "/old_WorkTime.exe";
 
     if( QFile::copy( path, NewFilePath ) )
     {
-        //qDebug() << "Success copy new file";
+        qDebug() << "Success copy new file";
 
         if( QFile::rename(QApplication::applicationFilePath(), OldFilePath) )
         {
-            //qDebug() << "Success rename old file";
+            qDebug() << "Success rename old file";
 
             if( QFile::rename(NewFilePath, AppFilePath) )
             {
-                //qDebug() << "Success rename new file";
+                qDebug() << "Success rename new file";
 
                 QProcess * ProcessWorkTime = new QProcess( NULL );
-
                 ProcessWorkTime->start( AppFilePath );
 
                 closeApp();
             }
             else
             {
-                //qDebug() << "Error rename new file";
+                qDebug() << "Error rename new file";
             }
         }
         else
         {
-            //qDebug() << "Error rename old file";
+            qDebug() << "Error rename old file";
         }
     }
     else
     {
-        //qDebug() << "Error copy new file";
+        qDebug() << "Error copy new file: " << path;
     }
 }
 // ------------------------------------------------------------------------------------ //

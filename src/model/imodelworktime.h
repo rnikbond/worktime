@@ -27,6 +27,9 @@ public:
     virtual void setTimeBefore      ( WTime time ) = 0;
     virtual void setTimeAfter       ( WTime time ) = 0;
 
+    virtual int         typeData()             = 0;
+    virtual void        setTypeData( int type) = 0;
+
     virtual int         typeDay()        = 0;
     virtual QStringList intervals()      = 0;
     virtual QString     note()           = 0;

@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>TableTimeWindow</class>
  <widget class="QWidget" name="TableTimeWindow">
+  <property name="windowModality">
+   <enum>Qt::ApplicationModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>

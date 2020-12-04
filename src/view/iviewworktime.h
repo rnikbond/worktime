@@ -26,6 +26,7 @@ public: // Members
     virtual void setTimeEnd   ( WTime       time, int id ) = 0;
     virtual void setIntervals ( QStringList list         ) = 0;
     virtual void setNote      ( QString     note         ) = 0;
+    virtual void setTypeData  ( int type                 ) = 0;
 
     virtual void setTimeWorkedInDay   ( WTime time                ) = 0;
     virtual void setTimeStatisticInDay( WTime time, QString Title ) = 0;
@@ -62,6 +63,9 @@ public: // Members
     virtual void setSeveralDaysExists( bool isExists ) = 0;
     virtual void setChangesExists    ( bool isExists ) = 0;
     virtual void setSettingsExists   ( bool isExists ) = 0;
+    virtual void setCalcTimeExists   ( bool isExists ) = 0;
+    virtual void setNotifyExists     ( bool isExists ) = 0;
+    virtual void setUpdatesExists    ( bool isExists ) = 0;
 
 public: // Signals
 
@@ -77,6 +81,8 @@ public: // Signals
     virtual void userChangeTimeNeed ( WTime   time          ) = 0;
     virtual void userChangeNote     ( QString note          ) = 0;
 
+    virtual void userChangeTypeData ( int type ) = 0;
+
     virtual void userChangeVisibleMenu( bool ) = 0;
     virtual void userSelectPage       ( int  ) = 0;
 
@@ -87,6 +93,8 @@ public: // Signals
     virtual void showTableTime  () = 0;
     virtual void showSchedule   () = 0;
     virtual void showSeveralDays() = 0;
+    virtual void showCalcTime   () = 0;
+    virtual void showNotify     () = 0;
     virtual void showChanges    () = 0;
     virtual void showSettings   () = 0;
 

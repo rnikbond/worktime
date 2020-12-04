@@ -31,6 +31,8 @@ class ModelWorkTime : public QObject, public IModelWorkTime
     WTime BeforeTime      ;
     WTime AfterTime       ;
 
+    WTime TimeOnStopped;
+
     bool isTickTimer;
 
 public:
@@ -73,6 +75,9 @@ public: // From Interfaces
     void setTimeMax         ( WTime time );
     void setTimeBefore      ( WTime time );
     void setTimeAfter       ( WTime time );
+
+    int typeData();
+    void setTypeData( int type );
 
     int         typeDay();
     QStringList intervals();

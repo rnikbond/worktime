@@ -87,6 +87,30 @@ QTextEdit:focus
 	background-color: #383838;
 }
 
+/* ---------------------------------------------------------- */
+/**************** QPlainTextEdit ****************/
+/* ---------------------------------------------------------- */
+
+QPlainTextEdit
+{
+        border: none;
+
+        color: #BABABA;
+        font-size: 14px;
+}
+
+QTextEdit:hover
+{
+        color: #FFFFFF;
+        background-color: #383838;
+}
+
+QTextEdit:focus
+{
+        color: #FFFFFF;
+        background-color: #383838;
+}
+
 
 /* ---------------------------------------------------------- */
 /***************** QLabel ******************/
@@ -394,7 +418,7 @@ QCalendarWidget QAbstractItemView:enabled
 {
 	border: 0px solid #323232; /* Рамка вокруг всех всех дней без заголовка */
 
-    color: #BABABA;                    /* Цвет текста дней и названия дней недели */
+        color: #BABABA;                    /* Цвет текста дней и названия дней недели */
 	background-color: #282828;  /* Цвет фона дней календаря */
 
 	selection-color: #FFFFFF;                   /* Цвет текста выбранного дня */
@@ -495,25 +519,43 @@ QPushButton#ScheduleButton
 
 QPushButton#ScheduleButton:hover
 {
-	background-repeat: no-repeat;
+    background-repeat: no-repeat;
     background-position: left;
-	background-image: url(:/themes/dark/menu/schedule_hover.png);
+    background-image: url(:/themes/dark/menu/schedule_hover.png);
 }
 
 QPushButton#SeveralDaysButton
 {
-	text-align: left;
-	padding-left: 60;
-	background-repeat: no-repeat;
+    text-align: left;
+    padding-left: 60;
+    background-repeat: no-repeat;
     background-position: left;
-	background-image: url(:/themes/dark/menu/several_days.png);
+    background-image: url(:/themes/dark/menu/several_days.png);
 }
 
 QPushButton#SeveralDaysButton:hover
 {
-	background-repeat: no-repeat;
+    background-repeat: no-repeat;
     background-position: left;
-	background-image: url(:/themes/dark/menu/several_days_hover.png);
+    background-image: url(:/themes/dark/menu/several_days_hover.png);
+}
+
+QPushButton#CalcTimeButton
+{
+    text-align: left;
+    padding-left: 60;
+    background-repeat: no-repeat;
+    background-position: left;
+    background-image: url(:/themes/dark/menu/calc.png);
+}
+
+QPushButton#CalcTimeButton:hover
+{
+    text-align: left;
+    padding-left: 60;
+    background-repeat: no-repeat;
+    background-position: left;
+    background-image: url(:/themes/dark/menu/calc_hover.png);
 }
 
 QPushButton#SettingsButton
@@ -532,20 +574,20 @@ QPushButton#SettingsButton:hover
 	background-image: url(:/themes/dark/menu/settings_hover.png);
 }
 
-QPushButton#UpdateWorkTimeButton
+QPushButton#UpdateButton
 {
-	text-align: left;
-	padding-left: 60;
-	background-repeat: no-repeat;
+    text-align: left;
+    padding-left: 60;
+    background-repeat: no-repeat;
     background-position: left;
-	background-image: url(:/themes/dark/menu/update.png);
+    background-image: url(:/themes/dark/menu/update.png);
 }
 
-QPushButton#UpdateWorkTimeButton:hover
+QPushButton#UpdateButton:hover
 {
-	background-repeat: no-repeat;
+    background-repeat: no-repeat;
     background-position: left;
-	background-image: url(:/themes/dark/menu/update_hover.png);
+    background-image: url(:/themes/dark/menu/update_hover.png);
 }
 
 QPushButton#ChangesButton
@@ -606,7 +648,7 @@ QPushButton#RunTimeButton
 QPushButton#RunTimeButton:hover
 {
 	background-repeat: no-repeat;
-    background-position: center;
+        background-position: center;
 	background-image: url(:/themes/dark/common/play_hover.png);
 }
 
@@ -618,4 +660,20 @@ QPushButton#TodayButton
 QLabel#ReverseTimer
 {
 	font-size: 24px;
+}
+
+CalcTimeWindow QPushButton
+{
+    border: 1px solid #505050;
+    font-size: 16px;
+}
+
+CalcTimeWindow QLabel#InfoLabel
+{
+    color: #F8173E;
+}
+
+CalcTimeWindow QLabel#DisplayEdit
+{
+    font-size: 12pt;
 }

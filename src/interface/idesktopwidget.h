@@ -15,6 +15,9 @@ public:
 
     virtual void setReverseInfo( QString info ) = 0;
 
+    virtual void setOpacityBackground( float value ) = 0;
+    virtual void setOpacityText( float value ) = 0;
+
 public: // Signals
 
     virtual void switchVisible() = 0;

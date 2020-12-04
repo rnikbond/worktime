@@ -26,6 +26,12 @@ const QList<Interval*> & DayWorkTime::intervals()
 }
 // --------------------------------------------------------------------------------- //
 
+DayWorkTime::TypesData DayWorkTime::typeData()
+{
+    return TypeData;
+}
+// --------------------------------------------------------------------------------- //
+
 void DayWorkTime::addInterval(const QString title)
 {
     IntervalsList.append( new Interval( title, this ) );
@@ -135,6 +141,12 @@ void DayWorkTime::setTimeNeed( const WTime time )
 void DayWorkTime::setTimeNeedSchedule ( const WTime time )
 {
     TimeNeedSchedule = time;
+}
+// --------------------------------------------------------------------------------- //
+
+void DayWorkTime::setTypeData( TypesData type )
+{
+    TypeData = type;
 }
 // --------------------------------------------------------------------------------- //
 

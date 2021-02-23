@@ -53,6 +53,11 @@ void ChangesWindow::setInfo()
                               .arg(VERSION_MINOR   )
                               .arg(VERSION_SUBMINOR) );
 
+    addInfoAboutVersion( tr("1.2.1"),
+                         tr("Bug fix"),
+                         tr("Исправлен запуск программы.<br/>"\
+                            "Особенно проявлялось, если Вы открывали программу в выходной день.") );
+
     addInfoAboutVersion( tr("1.1.21"),
                          tr("В зарплате"),
                          tr("В статистике добавлены разделители в числа.<br/>") );

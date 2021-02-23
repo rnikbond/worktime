@@ -266,10 +266,17 @@ WTime MonthWorkTime::timeStart( const QDate& date, const int interval)
 
     if( Day != NULL )
     {
-        if( Day->typeDay() == DayWorkTime::WorkDay || Day->typeDay() == DayWorkTime::Secondment )
-            return Day->timeStart( interval );
-        else
-            return WTime();
+        // TODO :: Тут падало, если сначала ставили выходной день, а затем начинали работать в этот день.
+        // После этого прога начинала ставить время начала - он устанавливалось,
+        // Затем была проверка времени. Проверка запрашивала у дня время начала, и если оно нулевое, то
+        // заново шла установка времени. Т.к. по условию время возвращалось только если день - рабочий,
+        // то из-за этого условия в выходной день возвращалось нулевое время и так по кругу.
+//        if( Day->typeDay() == DayWorkTime::WorkDay || Day->typeDay() == DayWorkTime::Secondment )
+//            return Day->timeStart( interval );
+//        else
+//            return WTime();
+
+        return Day->timeStart( interval );
     }
     else
     {
